@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    
+    <!-- Outer subtle radiance ring -->
+    <path
+        android:pathData="M54,26 C69.46,26 82,38.54 82,54 C82,69.46 69.46,82 54,82 C38.54,82 26,69.46 26,54 C26,38.54 38.54,26 54,26 Z"
+        android:strokeWidth="1.5"
+        android:strokeColor="#40E5A93C"
+        android:fillColor="#00000000" />
+
+    <!-- Radiant aura flame / leaf emblem -->
+    <path
+        android:pathData="M54,30 C55.5,35 64,44 64,55 C64,61 60,67 54,69 C48,67 44,61 44,55 C44,48 49,42 54,30 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="54"
+                android:startY="30"
+                android:endX="54"
+                android:endY="69"
+                android:type="linear">
+                <item android:color="#F7D08A" android:offset="0.0" />
+                <item android:color="#E5A93C" android:offset="0.6" />
+                <item android:color="#C67D28" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Inner flame core -->
+    <path
+        android:pathData="M54,44 C56,48 59,52 59,57 C59,60 57,63 54,64 C51,63 49,60 49,57 C49,53 52,50 54,44 Z"
+        android:fillColor="#FFF6E0" />
+
+    <!-- Elegant quotation mark left -->
+    <path
+        android:pathData="M37,42 C34.5,42 32.5,44 32.5,46.5 C32.5,48.5 34,50 36,50.3 C35.2,52.5 33.5,54 31,54.5 L31.5,56 C35,55 37.5,52 37.5,46.5 C37.5,44 37.3,42 37,42 Z"
+        android:fillColor="#FDFBF7" />
+
+    <!-- Elegant quotation mark right -->
+    <path
+        android:pathData="M44,42 C41.5,42 39.5,44 39.5,46.5 C39.5,48.5 41,50 43,50.3 C42.2,52.5 40.5,54 38,54.5 L38.5,56 C42,55 44.5,52 44.5,46.5 C44.5,44 44.3,42 44,42 Z"
+        android:fillColor="#FDFBF7" />
+
+    <!-- Spark star top right -->
+    <path
+        android:pathData="M70,36 L71.2,39.2 L74.4,40.4 L71.2,41.6 L70,44.8 L68.8,41.6 L65.6,40.4 L68.8,39.2 Z"
+        android:fillColor="#F7D08A" />
+
+    <!-- Small spark bottom left -->
+    <path
+        android:pathData="M35,66 L35.8,68.2 L38,69 L35.8,69.8 L35,72 L34.2,69.8 L32,69 L34.2,68.2 Z"
+        android:fillColor="#F7D08A" />
+</vector>
