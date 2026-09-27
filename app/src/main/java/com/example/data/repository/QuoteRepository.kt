@@ -177,7 +177,11 @@ class QuoteRepository(
         if (mood.equals("All", ignoreCase = true)) return allQuotesFlow
         return allQuotesFlow.map { quotes ->
             quotes.filter { quote ->
-                quote.moods.any { it.equals(mood, ignoreCase = true) }
+                quote.moods.any { it.equals(mood, ignoreCase = true) } ||
+                (mood.equals("Need encouragement", ignoreCase = true) &&
+                    (quote.situations.any { it.contains("difficult", ignoreCase = true) || it.contains("confidence", ignoreCase = true) || it.contains("starting", ignoreCase = true) } ||
+                     quote.tags.any { it.contains("courage", ignoreCase = true) || it.contains("perseverance", ignoreCase = true) || it.contains("strength", ignoreCase = true) || it.contains("mindset", ignoreCase = true) } ||
+                     quote.category.equals("Confidence", ignoreCase = true) || quote.category.equals("Resilience", ignoreCase = true) || quote.category.equals("Motivation", ignoreCase = true)))
             }
         }
     }

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="160dp"
+    android:height="140dp"
+    android:viewportWidth="160"
+    android:viewportHeight="140">
+
+    <!-- Soft aura ring -->
+    <path
+        android:pathData="M80,20 C110,20 135,45 135,75 C135,105 110,130 80,130 C50,130 25,105 25,75 C25,45 50,20 80,20 Z"
+        android:fillColor="#15E5A93C" />
+
+    <!-- Open book / empty parchment -->
+    <path
+        android:pathData="M40,55 Q60,50 80,56 Q100,50 120,55 L120,105 Q100,100 80,106 Q60,100 40,105 Z"
+        android:fillColor="#24201C" />
+    <path
+        android:pathData="M40,55 Q60,50 80,56 Q100,50 120,55 L120,105 Q100,100 80,106 Q60,100 40,105 Z"
+        android:strokeWidth="1.5"
+        android:strokeColor="#45E5A93C"
+        android:fillColor="#00000000" />
+    <!-- Book spine -->
+    <path
+        android:pathData="M80,56 L80,106"
+        android:strokeWidth="1.5"
+        android:strokeColor="#E5A93C"
+        android:strokeLineCap="round" />
+
+    <!-- Gentle bookmark heart hanging from center -->
+    <path
+        android:pathData="M80,106 L80,118"
+        android:strokeWidth="1.2"
+        android:strokeColor="#E5A93C" />
+    <path
+        android:pathData="M80,118 C77,114 72,115 70,118 C68,122 74,126 80,131 C86,126 92,122 90,118 C88,115 83,114 80,118 Z"
+        android:fillColor="#E5A93C" />
+
+    <!-- Subtle lines on pages -->
+    <path
+        android:pathData="M48,70 L72,70"
+        android:strokeWidth="1"
+        android:strokeColor="#40FDFBF7"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M48,80 L68,80"
+        android:strokeWidth="1"
+        android:strokeColor="#40FDFBF7"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M88,70 L112,70"
+        android:strokeWidth="1"
+        android:strokeColor="#40FDFBF7"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M88,80 L108,80"
+        android:strokeWidth="1"
+        android:strokeColor="#40FDFBF7"
+        android:strokeLineCap="round" />
+</vector>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="200dp"
+    android:height="150dp"
+    android:viewportWidth="200"
+    android:viewportHeight="150">
+
+    <!-- Soft aura bell halo -->
+    <path
+        android:pathData="M100,15 C135,15 160,40 160,75 C160,110 135,135 100,135 C65,135 40,110 40,75 C40,40 65,15 100,15 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="100"
+                android:startY="15"
+                android:endX="100"
+                android:endY="135"
+                android:type="linear">
+                <item android:color="#25E5A93C" android:offset="0.0" />
+                <item android:color="#00181512" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Warm cup / tea ritual emblem -->
+    <path
+        android:pathData="M75,70 C75,95 85,110 100,110 C115,110 125,95 125,70 L75,70 Z"
+        android:fillColor="#E5A93C" />
+    <!-- Cup handle -->
+    <path
+        android:pathData="M125,78 C135,78 140,84 140,90 C140,96 135,102 125,102"
+        android:strokeWidth="2.5"
+        android:strokeColor="#E5A93C"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+    <!-- Cup saucer -->
+    <path
+        android:pathData="M65,114 L135,114"
+        android:strokeWidth="2"
+        android:strokeColor="#A8A29E"
+        android:strokeLineCap="round" />
+
+    <!-- Rising gentle steam lines -->
+    <path
+        android:pathData="M92,62 Q90,52 96,44 Q102,36 94,26"
+        android:strokeWidth="1.8"
+        android:strokeColor="#F7D08A"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+    <path
+        android:pathData="M104,62 Q102,50 108,42 Q114,34 106,24"
+        android:strokeWidth="1.8"
+        android:strokeColor="#F7D08A"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+
+    <!-- Sparkles -->
+    <path
+        android:pathData="M60,45 L62,50 L67,52 L62,54 L60,59 L58,54 L53,52 L58,50 Z"
+        android:fillColor="#E5A93C" />
+    <path
+        android:pathData="M145,40 L146.5,44 L150.5,45.5 L146.5,47 L145,51 L143.5,47 L139.5,45.5 L143.5,44 Z"
+        android:fillColor="#F7D08A" />
+</vector>

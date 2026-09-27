@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="200dp"
+    android:height="150dp"
+    android:viewportWidth="200"
+    android:viewportHeight="150">
+
+    <!-- Outer aura flame ring -->
+    <path
+        android:pathData="M100,20 C138,20 170,52 170,90 C170,128 138,145 100,145 C62,145 30,128 30,90 C30,52 62,20 100,20 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="100"
+                android:startY="20"
+                android:endX="100"
+                android:endY="145"
+                android:type="linear">
+                <item android:color="#35E5A93C" android:offset="0.0" />
+                <item android:color="#156B5B95" android:offset="0.5" />
+                <item android:color="#00181512" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Star radiance rays -->
+    <path
+        android:pathData="M100,32 L103,48 L119,51 L103,54 L100,70 L97,54 L81,51 L97,48 Z"
+        android:fillColor="#FFE8B5" />
+
+    <!-- Center heart / embrace motif -->
+    <path
+        android:pathData="M100,68 C92,54 75,55 70,68 C64,82 78,98 100,116 C122,98 136,82 130,68 C125,55 108,54 100,68 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="70"
+                android:startY="60"
+                android:endX="130"
+                android:endY="116"
+                android:type="linear">
+                <item android:color="#F7D08A" android:offset="0.0" />
+                <item android:color="#E5A93C" android:offset="0.6" />
+                <item android:color="#C67D28" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Inner glowing spark -->
+    <path
+        android:pathData="M100,78 L101.5,82 L105.5,83.5 L101.5,85 L100,89 L98.5,85 L94.5,83.5 L98.5,82 Z"
+        android:fillColor="#FFFDF7" />
+
+    <!-- Harmony stars -->
+    <path
+        android:pathData="M52,70 L53.5,74 L57.5,75.5 L53.5,77 L52,81 L50.5,77 L46.5,75.5 L50.5,74 Z"
+        android:fillColor="#E5A93C" />
+    <path
+        android:pathData="M148,70 L149.5,74 L153.5,75.5 L149.5,77 L148,81 L146.5,77 L142.5,75.5 L146.5,74 Z"
+        android:fillColor="#E5A93C" />
+</vector>

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="200dp"
+    android:height="150dp"
+    android:viewportWidth="200"
+    android:viewportHeight="150">
+
+    <!-- Card 1: Bottom left tilted card (Sage / Earth) -->
+    <group
+        android:pivotX="60"
+        android:pivotY="85"
+        android:rotation="-8">
+        <path
+            android:pathData="M30,30 L90,30 A8,8 0 0,1 98,38 L98,122 A8,8 0 0,1 90,130 L30,130 A8,8 0 0,1 22,122 L22,38 A8,8 0 0,1 30,30 Z"
+            android:fillColor="#3B4738" />
+        <path
+            android:pathData="M34,50 L64,50"
+            android:strokeWidth="2"
+            android:strokeColor="#A8C0A0"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M34,62 L86,62"
+            android:strokeWidth="1.5"
+            android:strokeColor="#F5EEDB"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M34,72 L78,72"
+            android:strokeWidth="1.5"
+            android:strokeColor="#F5EEDB"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M34,112 L56,112"
+            android:strokeWidth="1.2"
+            android:strokeColor="#A8C0A0"
+            android:strokeLineCap="round" />
+    </group>
+
+    <!-- Card 2: Bottom right tilted card (Warm Terracotta / Ochre) -->
+    <group
+        android:pivotX="140"
+        android:pivotY="85"
+        android:rotation="8">
+        <path
+            android:pathData="M110,32 L170,32 A8,8 0 0,1 178,40 L178,124 A8,8 0 0,1 170,132 L110,132 A8,8 0 0,1 102,124 L102,40 A8,8 0 0,1 110,32 Z"
+            android:fillColor="#D48B38" />
+        <path
+            android:pathData="M114,52 L144,52"
+            android:strokeWidth="2"
+            android:strokeColor="#FFE2B8"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M114,64 L166,64"
+            android:strokeWidth="1.5"
+            android:strokeColor="#1A1208"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M114,74 L158,74"
+            android:strokeWidth="1.5"
+            android:strokeColor="#1A1208"
+            android:strokeLineCap="round" />
+        <path
+            android:pathData="M114,114 L136,114"
+            android:strokeWidth="1.2"
+            android:strokeColor="#3D2B12"
+            android:strokeLineCap="round" />
+    </group>
+
+    <!-- Card 3: Hero center card (Noir & Gold) -->
+    <path
+        android:pathData="M66,16 L134,16 A10,10 0 0,1 144,26 L144,130 A10,10 0 0,1 134,140 L66,140 A10,10 0 0,1 56,130 L56,26 A10,10 0 0,1 66,16 Z"
+        android:fillColor="#161412" />
+    <!-- Border -->
+    <path
+        android:pathData="M66,16 L134,16 A10,10 0 0,1 144,26 L144,130 A10,10 0 0,1 134,140 L66,140 A10,10 0 0,1 56,130 L56,26 A10,10 0 0,1 66,16 Z"
+        android:strokeWidth="1.5"
+        android:strokeColor="#E5A93C"
+        android:fillColor="#00000000" />
+
+    <!-- Quotation mark icon in hero card -->
+    <path
+        android:pathData="M78,36 C76.5,36 75,37 75,39 C75,40.5 76,41.5 77.5,41.5 C77,43 75.8,44 74,44.5 L74.5,46 C77,45 78.5,43 78.5,39 C78.5,37 78.2,36 78,36 Z"
+        android:fillColor="#E5A93C" />
+    <path
+        android:pathData="M83,36 C81.5,36 80,37 80,39 C80,40.5 81,41.5 82.5,41.5 C82,43 80.8,44 79,44.5 L79.5,46 C82,45 83.5,43 83.5,39 C83.5,37 83.2,36 83,36 Z"
+        android:fillColor="#E5A93C" />
+
+    <!-- Center Card Text lines -->
+    <path
+        android:pathData="M72,58 L128,58"
+        android:strokeWidth="2"
+        android:strokeColor="#FDFBF7"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M72,70 L124,70"
+        android:strokeWidth="2"
+        android:strokeColor="#FDFBF7"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M72,82 L112,82"
+        android:strokeWidth="2"
+        android:strokeColor="#FDFBF7"
+        android:strokeLineCap="round" />
+    <!-- Author line -->
+    <path
+        android:pathData="M72,118 L98,118"
+        android:strokeWidth="1.5"
+        android:strokeColor="#E5A93C"
+        android:strokeLineCap="round" />
+</vector>

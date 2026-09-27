@@ -41,10 +41,11 @@ fun OnboardingScreen(
     var currentStep by remember { mutableStateOf(0) }
 
     val categories = listOf(
-        "Motivation", "Mindfulness", "Wisdom", "Courage", "Peace",
-        "Growth", "Discipline", "Self-Love", "Confidence", "Gratitude"
+        "Motivation", "Confidence", "Gratitude", "Mindfulness",
+        "Relationships", "Resilience", "Creativity", "Growth",
+        "Wisdom", "Peace", "Discipline", "Self-Love"
     )
-    val selectedInterests = remember { mutableStateListOf("Motivation", "Growth", "Confidence", "Mindfulness") }
+    val selectedInterests = remember { mutableStateListOf("Motivation", "Confidence", "Gratitude", "Mindfulness") }
 
     var selectedHour by remember { mutableStateOf(8) }
     var selectedMinute by remember { mutableStateOf(30) }

@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="200dp"
+    android:height="160dp"
+    android:viewportWidth="200"
+    android:viewportHeight="160">
+
+    <!-- Soft radiant sun / morning aura backdrop -->
+    <path
+        android:pathData="M100,20 C135,20 164,49 164,84 C164,119 135,148 100,148 C65,148 36,119 36,84 C36,49 65,20 100,20 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="100"
+                android:startY="20"
+                android:endX="100"
+                android:endY="148"
+                android:type="linear">
+                <item android:color="#35E5A93C" android:offset="0.0" />
+                <item android:color="#00181512" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Concentric horizon rings -->
+    <path
+        android:pathData="M50,110 Q100,85 150,110"
+        android:strokeWidth="1.5"
+        android:strokeColor="#50E5A93C"
+        android:fillColor="#00000000" />
+    <path
+        android:pathData="M65,122 Q100,102 135,122"
+        android:strokeWidth="1.2"
+        android:strokeColor="#30E5A93C"
+        android:fillColor="#00000000" />
+
+    <!-- Center sunrise glowing crest -->
+    <path
+        android:pathData="M100,52 C114,52 125,63 125,77 C125,86 120,93 112,98 L88,98 C80,93 75,86 75,77 C75,63 86,52 100,52 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="100"
+                android:startY="52"
+                android:endX="100"
+                android:endY="98"
+                android:type="linear">
+                <item android:color="#FFF2D6" android:offset="0.0" />
+                <item android:color="#E5A93C" android:offset="0.7" />
+                <item android:color="#C67D28" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Radiating sun rays -->
+    <path
+        android:pathData="M100,34 L100,44"
+        android:strokeWidth="2.5"
+        android:strokeColor="#F7D08A"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M72,46 L79,53"
+        android:strokeWidth="2"
+        android:strokeColor="#F7D08A"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M128,46 L121,53"
+        android:strokeWidth="2"
+        android:strokeColor="#F7D08A"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M58,74 L68,74"
+        android:strokeWidth="2"
+        android:strokeColor="#F7D08A"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M142,74 L132,74"
+        android:strokeWidth="2"
+        android:strokeColor="#F7D08A"
+        android:strokeLineCap="round" />
+
+    <!-- Peaceful morning horizon baseline -->
+    <path
+        android:pathData="M30,132 L170,132"
+        android:strokeWidth="1.5"
+        android:strokeColor="#40A8A29E"
+        android:strokeLineCap="round" />
+</vector>

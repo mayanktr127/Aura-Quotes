@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="200dp"
+    android:height="140dp"
+    android:viewportWidth="200"
+    android:viewportHeight="140">
+
+    <!-- Soft aura backdrop glow -->
+    <path
+        android:pathData="M100,10 C140,10 170,40 170,80 C170,120 140,135 100,135 C60,135 30,120 30,80 C30,40 60,10 100,10 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="100"
+                android:startY="10"
+                android:endX="100"
+                android:endY="135"
+                android:type="linear">
+                <item android:color="#256B5B95" android:offset="0.0" />
+                <item android:color="#00181512" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+
+    <!-- Main botanical curved stem -->
+    <path
+        android:pathData="M100,125 Q102,80 88,40 Q84,28 78,20"
+        android:strokeWidth="2"
+        android:strokeColor="#C5A880"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+
+    <!-- Leaf 1 (Left low) -->
+    <path
+        android:pathData="M98,95 Q80,95 76,82 Q88,80 98,95 Z"
+        android:fillColor="#5A6B56" />
+
+    <!-- Leaf 2 (Right low) -->
+    <path
+        android:pathData="M99,85 Q118,80 120,68 Q108,68 99,85 Z"
+        android:fillColor="#768A72" />
+
+    <!-- Leaf 3 (Left mid) -->
+    <path
+        android:pathData="M95,68 Q78,64 74,52 Q86,52 95,68 Z"
+        android:fillColor="#768A72" />
+
+    <!-- Leaf 4 (Right mid) -->
+    <path
+        android:pathData="M92,54 Q110,48 112,36 Q100,38 92,54 Z"
+        android:fillColor="#5A6B56" />
+
+    <!-- Leaf 5 (Left high) -->
+    <path
+        android:pathData="M88,38 Q74,32 72,22 Q82,24 88,38 Z"
+        android:fillColor="#8BA386" />
+
+    <!-- Tip leaf -->
+    <path
+        android:pathData="M78,20 Q82,12 80,6 Q74,12 78,20 Z"
+        android:fillColor="#E5A93C" />
+
+    <!-- Companion subtle second stem -->
+    <path
+        android:pathData="M104,125 Q115,100 124,75"
+        android:strokeWidth="1.2"
+        android:strokeColor="#60C5A880"
+        android:strokeLineCap="round"
+        android:fillColor="#00000000" />
+    <path
+        android:pathData="M112,105 Q125,102 128,94 Q120,94 112,105 Z"
+        android:fillColor="#455A6B56" />
+    <path
+        android:pathData="M120,86 Q134,80 135,72 Q126,73 120,86 Z"
+        android:fillColor="#45768A72" />
+</vector>

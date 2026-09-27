@@ -25,11 +25,15 @@ class SettingsViewModel(
             initialValue = UserPreferences()
         )
 
-    val availableCategories = listOf(
-        "Motivation", "Mindfulness", "Wisdom", "Courage", "Peace",
-        "Gratitude", "Growth", "Discipline", "Self-Love", "Success",
-        "Creativity", "Love", "Friendship", "Leadership", "Fitness", "Study"
-    )
+    val availableCategories: StateFlow<List<String>> = quoteRepository.allCategoriesFlow
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = listOf(
+                "Motivation", "Confidence", "Gratitude", "Mindfulness", "Relationships",
+                "Resilience", "Creativity", "Growth", "Discipline", "Wisdom", "Peace", "Success"
+            )
+        )
 
     fun setThemeMode(mode: String) {
         viewModelScope.launch {

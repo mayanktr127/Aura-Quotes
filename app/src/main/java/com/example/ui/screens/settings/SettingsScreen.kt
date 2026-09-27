@@ -34,11 +34,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 @Composable
 fun SettingsScreen(
     viewModel: SettingsViewModel,
-    onNavigateBack: () -> Unit,
+    onNavigateBack: (() -> Unit)? = null,
     onOpenOnboarding: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val prefs by viewModel.preferences.collectAsStateWithLifecycle()
+    val availableCategories by viewModel.availableCategories.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     var showTimeDialog by remember { mutableStateOf(false) }
@@ -68,15 +69,17 @@ fun SettingsScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(
-                        onClick = onNavigateBack,
-                        modifier = Modifier.testTag("settings_back_button")
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
+                    if (onNavigateBack != null) {
+                        IconButton(
+                            onClick = onNavigateBack,
+                            modifier = Modifier.testTag("settings_back_button")
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = "Back",
+                                tint = MaterialTheme.colorScheme.onBackground
+                            )
+                        }
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -270,7 +273,7 @@ fun SettingsScreen(
                     )
 
                     // Multiselect categories chips
-                    val chunked = viewModel.availableCategories.chunked(3)
+                    val chunked = availableCategories.chunked(3)
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         chunked.forEach { rowList ->
                             Row(

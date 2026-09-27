@@ -20,8 +20,8 @@ data class HomeUiState(
     val popularQuotes: List<Quote> = emptyList(),
     val greeting: String = "Good morning",
     val subGreeting: String = "Find something meaningful today.",
-    val moods: List<String> = listOf("All", "Mindset", "Motivated", "Calm", "Healing", "Growth", "Confidence", "Focused", "Peace", "Hopeful"),
-    val categories: List<String> = listOf("Motivation", "Wisdom", "Mindfulness", "Courage", "Peace", "Gratitude", "Discipline", "Self-Love"),
+    val moods: List<String> = listOf("All", "Calm", "Focused", "Hopeful", "Need encouragement", "Motivated", "Growth", "Confidence", "Gratitude"),
+    val categories: List<String> = listOf("Motivation", "Confidence", "Gratitude", "Mindfulness", "Relationships", "Resilience", "Creativity", "Growth", "Wisdom"),
     val isLoading: Boolean = false
 )
 

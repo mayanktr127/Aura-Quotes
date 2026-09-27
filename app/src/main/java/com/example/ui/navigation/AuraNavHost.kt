@@ -44,10 +44,11 @@ data class BottomNavItem(
 )
 
 val bottomNavItems = listOf(
-    BottomNavItem("Home", Screen.Home.route, Icons.Filled.Home, Icons.Outlined.Home),
+    BottomNavItem("Today", Screen.Home.route, Icons.Filled.WbSunny, Icons.Outlined.WbSunny),
     BottomNavItem("Explore", Screen.Explore.route, Icons.Filled.GridView, Icons.Outlined.GridView),
     BottomNavItem("Create", Screen.Create.createRoute(), Icons.Filled.AddCircle, Icons.Outlined.AddCircleOutline),
-    BottomNavItem("Saved", Screen.Favorites.route, Icons.Filled.Favorite, Icons.Outlined.FavoriteBorder)
+    BottomNavItem("Saved", Screen.Favorites.route, Icons.Filled.Bookmark, Icons.Outlined.BookmarkBorder),
+    BottomNavItem("Settings", Screen.Settings.route, Icons.Filled.Settings, Icons.Outlined.Settings)
 )
 
 @Composable
@@ -68,7 +69,8 @@ fun AuraApp(
         Screen.Explore.route,
         Screen.Create.route,
         "create",
-        Screen.Favorites.route
+        Screen.Favorites.route,
+        Screen.Settings.route
     )
 
     val startDestination = if (userPreferences.onboardingCompleted) {
@@ -227,6 +229,9 @@ private fun AppNavigationHost(
                 },
                 onNavigateToCategory = { category ->
                     navController.navigate(Screen.Explore.route)
+                },
+                onNavigateToSaved = {
+                    navController.navigate(Screen.Favorites.route)
                 }
             )
         }
@@ -336,7 +341,9 @@ private fun AppNavigationHost(
             )
             SettingsScreen(
                 viewModel = settingsViewModel,
-                onNavigateBack = { navController.popBackStack() },
+                onNavigateBack = if (navController.previousBackStackEntry != null) {
+                    { navController.popBackStack() }
+                } else null,
                 onOpenOnboarding = {
                     navController.navigate(Screen.Onboarding.route)
                 }
