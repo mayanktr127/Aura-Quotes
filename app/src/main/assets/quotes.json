@@ -519,7 +519,7 @@
   },
   {
     "id": "q_cour_6",
-    "text": "The dark night does not extinguish the candle flame; it only proves how much darkness one tiny spark can conquer.",
+    "text": "Courage is not the absence of fear, but the refusal to surrender your conviction to the prevailing wind.",
     "author": "Stillwords",
     "category": "Courage",
     "isOriginal": true,
@@ -1289,7 +1289,7 @@
   },
   {
     "id": "q_disc_1",
-    "text": "Discipline is simply choosing what you want most over what you want right now.",
+    "text": "Discipline is keeping a quiet promise to yourself long after the emotion of the moment has passed.",
     "author": "Stillwords",
     "category": "Discipline",
     "isOriginal": true,
@@ -2927,7 +2927,7 @@
   },
   {
     "id": "q_grat_30",
-    "text": "Hold this day gently in your palms. It will never pass this way again.",
+    "text": "Notice the small gifts of this ordinary morning: hot bread, a quiet hallway, and the steady beat of an unworried heart.",
     "author": "Stillwords",
     "category": "Gratitude",
     "isOriginal": true,
@@ -3697,7 +3697,7 @@
   },
   {
     "id": "q_happ_25",
-    "text": "Happiness is wanting what you have, not having what you want.",
+    "text": "Happiness enters quietly through the side door while you are paying gentle attention to someone else.",
     "author": "Stillwords",
     "category": "Happiness",
     "isOriginal": true,
@@ -4607,7 +4607,7 @@
   },
   {
     "id": "q_lead_30",
-    "text": "Leadership is serving the common good with clean hands and an unhurried heart.",
+    "text": "True leadership does not cast a long shadow; it holds up a lantern so others can see where to step.",
     "author": "Stillwords",
     "category": "Leadership",
     "isOriginal": true,
@@ -5391,7 +5391,7 @@
   },
   {
     "id": "q_love_26",
-    "text": "Stand beside those you love when winter tests their boughs.",
+    "text": "Love is the willingness to walk beside someone through the long winter of their grief without rushing them toward spring.",
     "author": "Stillwords",
     "category": "Love",
     "isOriginal": true,
@@ -6539,7 +6539,7 @@
   },
   {
     "id": "q_peace_17",
-    "text": "Rest is not a luxury you must earn; it is the rhythm by which life survives.",
+    "text": "Peace returns when you surrender the urge to manage outcomes that belong to tomorrow.",
     "author": "Stillwords",
     "category": "Peace",
     "isOriginal": true,
@@ -7113,7 +7113,7 @@
   },
   {
     "id": "q_rela_29",
-    "text": "Walk hand in hand when the road turns steep. Two pairs of eyes spot the stones twice as fast.",
+    "text": "Good companions do not eliminate the climb; they simply make the stones along the path feel lighter.",
     "author": "Stillwords",
     "category": "Relationships",
     "isOriginal": true,
@@ -7211,7 +7211,7 @@
   },
   {
     "id": "q_self_6",
-    "text": "Stop setting yourself on fire to keep people warm who only complain about the smoke.",
+    "text": "You are under no obligation to deplete your own well to quench the endless thirst of someone who refuses to carry their own bucket.",
     "author": "Stillwords",
     "category": "Self-Love",
     "isOriginal": true,
@@ -7561,9 +7561,9 @@
   },
   {
     "id": "q_40",
-    "text": "Concentrate all your thoughts upon the work in hand. The sun's rays do not burn until brought to a focus.",
+    "text": "Concentrate all your thoughts upon the work at hand. The sun's rays do not burn until brought to a focus.",
     "author": "Alexander Graham Bell",
-    "category": "Study",
+    "category": "Work",
     "isOriginal": false,
     "tags": "study,inspiration,wisdom",
     "moods": "Focused,Determined",
@@ -8401,7 +8401,7 @@
   },
   {
     "id": "q_49",
-    "text": "Dwell on the beauty of life. Watch the stars, and see yourself running with them.",
+    "text": "The universe is change; our life is what our thoughts make it.",
     "author": "Marcus Aurelius",
     "category": "Wisdom",
     "isOriginal": false,

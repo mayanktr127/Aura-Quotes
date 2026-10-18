@@ -181,46 +181,62 @@ object ImageExportUtil {
             QuoteFont.MONOSPACE_POETIC -> Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL)
         }
 
-        // Quote Text Paint
-        val baseFontSize = when {
-            quoteText.length > 200 -> 48f
-            quoteText.length > 120 -> 56f
-            quoteText.length > 60 -> 68f
-            else -> 78f
+        // Quote Text Paint with dynamic auto-shrinking: adapts text size so it never overflows or clips
+        val initialFontSize = when {
+            quoteText.length > 180 -> 46f
+            quoteText.length > 120 -> 52f
+            quoteText.length > 60  -> 64f
+            else -> 74f
         }
 
         val textPaint = TextPaint().apply {
             isAntiAlias = true
-            textSize = baseFontSize
+            textSize = initialFontSize
             color = activeTextColor
             typeface = mainTypeface
             letterSpacing = quoteFont.letterSpacing
         }
 
-        val contentWidth = (targetWidth * 0.78f).toInt()
+        val contentWidth = (targetWidth * 0.80f).toInt()
         val formattedText = if (quoteFont.isAllCaps) quoteText.uppercase() else quoteText
 
-        @Suppress("DEPRECATION")
-        val staticLayout = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            StaticLayout.Builder.obtain(formattedText, 0, formattedText.length, textPaint, contentWidth)
-                .setAlignment(Layout.Alignment.ALIGN_CENTER)
-                .setLineSpacing(16f, 1.15f)
-                .build()
-        } else {
-            StaticLayout(
-                formattedText,
-                textPaint,
-                contentWidth,
-                Layout.Alignment.ALIGN_CENTER,
-                1.15f,
-                16f,
-                false
-            )
+        val maxAvailableTextHeight = when (aspectRatio) {
+            CardAspectRatio.LANDSCAPE_16_9 -> targetHeight * 0.46f
+            CardAspectRatio.SQUARE_1_1 -> targetHeight * 0.54f
+            else -> targetHeight * 0.60f
         }
 
-        // Center quote vertically
+        var currentFontSize = initialFontSize
+        var staticLayout: StaticLayout
+        while (true) {
+            textPaint.textSize = currentFontSize
+            @Suppress("DEPRECATION")
+            staticLayout = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                StaticLayout.Builder.obtain(formattedText, 0, formattedText.length, textPaint, contentWidth)
+                    .setAlignment(Layout.Alignment.ALIGN_CENTER)
+                    .setLineSpacing(16f, 1.15f)
+                    .build()
+            } else {
+                StaticLayout(
+                    formattedText,
+                    textPaint,
+                    contentWidth,
+                    Layout.Alignment.ALIGN_CENTER,
+                    1.15f,
+                    16f,
+                    false
+                )
+            }
+
+            if (staticLayout.height <= maxAvailableTextHeight || currentFontSize <= 26f) {
+                break
+            }
+            currentFontSize -= 2f
+        }
+
+        // Center quote vertically safely between header and author
         val textHeight = staticLayout.height
-        val startY = (targetHeight - textHeight) / 2f - 40f
+        val startY = ((targetHeight - textHeight) / 2f - 30f).coerceAtLeast(topY + 60f)
         val startX = (targetWidth - contentWidth) / 2f
 
         canvas.save()

@@ -79,5 +79,44 @@ class ExampleRobolectricTest {
         val isFavAfterRemove = dao.isFavorite(testQuoteId).first()
         assertTrue(!isFavAfterRemove)
     }
+
+    @Test
+    fun photoCreditsContainNoAiEntries() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val data = com.myplanetservices.stillwords.data.model.PhotoCreditsLoader.load(context)
+        assertTrue(data.credits.isNotEmpty())
+        assertTrue(!data.hasAiEntries)
+        assertTrue(data.statement.isEmpty())
+    }
+
+    @Test
+    fun longestQuotesExportBitmapsSuccessfully() = runBlocking {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val quotes = SeedQuotes.loadQuotesFromAssets(context)
+        val longestQuotes = quotes.sortedByDescending { it.text.length }.take(3)
+        assertEquals(3, longestQuotes.size)
+
+        val bgRepo = com.myplanetservices.stillwords.data.repository.BackgroundRepository(context)
+
+        for (q in longestQuotes) {
+            val photoPath = bgRepo.getBackgroundAssetPath(q.id, q.category)
+            for (ratio in com.myplanetservices.stillwords.data.model.CardAspectRatio.entries) {
+                val bitmap = com.myplanetservices.stillwords.util.ImageExportUtil.createQuoteBitmap(
+                    context = context,
+                    quoteText = q.text,
+                    author = q.author,
+                    category = q.category,
+                    cardStyle = com.myplanetservices.stillwords.data.model.CardStyle.NOIR_STILLWORDS,
+                    quoteFont = com.myplanetservices.stillwords.data.model.QuoteFont.EDITORIAL_SERIF,
+                    aspectRatio = ratio,
+                    photoAssetPath = photoPath
+                )
+                assertNotNull(bitmap)
+                assertTrue(bitmap.width > 0)
+                assertTrue(bitmap.height > 0)
+                bitmap.recycle()
+            }
+        }
+    }
 }
 

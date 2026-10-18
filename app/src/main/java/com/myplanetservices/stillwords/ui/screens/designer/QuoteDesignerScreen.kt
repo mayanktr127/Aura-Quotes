@@ -246,9 +246,21 @@ fun QuoteDesignerScreen(
                         ) {
                             val displayText = if (state.quoteFont.isAllCaps) state.quoteText.uppercase() else state.quoteText
                             val quoteFontSize = when (state.aspectRatio) {
-                                CardAspectRatio.STORY_9_16 -> if (displayText.length > 100) 18.sp else 22.sp
-                                CardAspectRatio.LANDSCAPE_16_9 -> if (displayText.length > 100) 16.sp else 20.sp
-                                else -> if (displayText.length > 100) 19.sp else 24.sp
+                                CardAspectRatio.LANDSCAPE_16_9 -> when {
+                                    displayText.length > 140 -> 12.sp
+                                    displayText.length > 90  -> 14.sp
+                                    else                     -> 17.sp
+                                }
+                                CardAspectRatio.STORY_9_16 -> when {
+                                    displayText.length > 140 -> 15.sp
+                                    displayText.length > 90  -> 18.sp
+                                    else                     -> 22.sp
+                                }
+                                else -> when { // SQUARE_1_1, PORTRAIT_4_5
+                                    displayText.length > 140 -> 14.sp
+                                    displayText.length > 90  -> 17.sp
+                                    else                     -> 21.sp
+                                }
                             }
 
                             Text(
@@ -260,7 +272,8 @@ fun QuoteDesignerScreen(
                                 fontWeight = state.quoteFont.fontWeight,
                                 letterSpacing = state.quoteFont.letterSpacing.sp,
                                 textAlign = TextAlign.Center,
-                                color = activeTextColor
+                                color = activeTextColor,
+                                softWrap = true
                             )
 
                             Spacer(modifier = Modifier.height(14.dp))

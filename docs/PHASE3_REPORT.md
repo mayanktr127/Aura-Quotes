@@ -25,12 +25,12 @@ This report documents the completion of **Phase 3** for **Stillwords** in strict
   * Converts images to modern **WebP** format at quality 75.
   * Completely strips EXIF metadata for privacy and minimal payload.
   * Retains original file stems with `.webp` extensions.
-* **Asset Statistics:**
+* **Asset Statistics (Adaptive Quality Re-run):**
   * **Total background files processed:** 84 files across 7 theme directories.
-  * **Total asset directory size:** 11.41 MB (11,959,860 bytes).
-  * **Largest file:** `forest-botanical/forest-botanical-01.webp` (391.1 KB / 400,508 bytes).
-  * **Average file size:** 142.3 KB (well within the target under 180 KB per image).
-* Processed and merged `design-assets/credits.csv` and `design-assets/ai-sources.csv` into `app/src/main/assets/credits.json` containing 84 photographer credits with source URLs, license designations, and the official AI disclosure statement.
+  * **Total asset directory size:** 13.09 MB (13,721,706 bytes).
+  * **Largest file:** `forest-botanical/forest-botanical-01.webp` (480.2 KB / 491,676 bytes; stepped down to quality 60 floor per strict requirement "never below quality 60").
+  * **Target compliance:** 62 of 84 files fit $\le$ 180 KB; 22 complex foliage files stepped down to quality 60.
+* Processed and merged `design-assets/credits.csv` and `design-assets/ai-sources.csv` into `app/src/main/assets/credits.json` containing 84 photographer credits with source URLs and license designations. AI disclosure statement is set to empty string because all images are from Pexels and `ai-sources.csv` contains 0 entries.
 
 ### B. Theme-to-Category Mapping
 * Created a single, centralized configuration in code: `com.myplanetservices.stillwords.data.model.BackgroundTheme.kt`.
@@ -57,10 +57,11 @@ This report documents the completion of **Phase 3** for **Stillwords** in strict
   1. **Background Layer:** Full-bleed portrait photo loaded from `assets:///backgrounds/<theme>/<file>.webp` via Coil (or procedural gradient fallback).
   2. **Contrast Scrim Layer:** Vertical gradient scrim running from `0x66000000` (40% black) at the top to `0xDD000000` (86.7% black) at the bottom. Ensures foreground text consistently exceeds WCAG AA 4.5:1 contrast ratio across any photo brightness.
   3. **Foreground Content Layer:** Gold metallic quotation marks, category badge pill, responsive quote typography, author attribution, and action buttons.
-* **Auto-Sizing Typography & Overflow Prevention:**
-  * Implemented dynamic font sizing calculating base size from quote text character count (down to 15.sp for quotes exceeding 200 characters).
-  * Factored in system font scaling up to 1.3x (`LocalDensity.current.fontScale`), capping effective text line heights.
-  * Enforced safety line limits (`maxLines = if (isHero) 10 else 7`) with `TextOverflow.Ellipsis`, guaranteeing zero layout clipping on compact 360dp-wide screens.
+* **Auto-Shrinking Typography & Zero Truncation:**
+  * Completely eliminated `maxLines` limits and `TextOverflow.Ellipsis`: quotes are never cut off with "..." or hidden.
+  * Implemented responsive auto-shrinking typography (`QuoteCard.kt`, `QuoteDesignerScreen.kt`) calculating font size dynamically based on text length (scaling smoothly down to 12.5sp) with compensation for system font scaling up to 1.3x.
+  * Updated `ImageExportUtil.kt` with a dynamic layout-measuring loop that scales down text size (down to 26f canvas pixels) to fit within the designated card text bounds.
+  * Verified that the 3 longest quotes in `quotes.json` display completely without overflow or clipping on 360dp-wide screens at 1.3x font scale both on-screen and across all 4 export aspect ratios.
   * Validated readability and visual balance across both Light and Dark application themes.
 * **Pixel-Identical Image Export & Share (`ImageExportUtil.kt`):**
   * Updated canvas renderer to decode the identical asset WebP photo, center-crop and scale to target bitmap dimensions, paint the identical dark gradient scrim, and render contrasting gold/white typography.
@@ -132,19 +133,19 @@ All verification commands executed from clean state with zero errors:
 
 | Test / Check | Result | Execution Time | Notes |
 | :--- | :---: | :---: | :--- |
-| `./gradlew clean assembleDebug` | **BUILD SUCCESSFUL** | 52s | 0 compiler errors. Debug APK generated. |
-| `./gradlew testDebugUnitTest` | **BUILD SUCCESSFUL** | 25s | 0 unit test failures. |
-| `./gradlew lintDebug` | **BUILD SUCCESSFUL** | 29s | 0 lint errors. |
-| `./gradlew assembleRelease` | **BUILD SUCCESSFUL** | 6m 26s | Full R8 minification & resource shrinking verified. Keystore and properties immediately purged after build. |
+| `./gradlew clean assembleDebug` | **BUILD SUCCESSFUL** | 56s | 0 compiler errors. Debug APK generated. |
+| `./gradlew testDebugUnitTest` | **BUILD SUCCESSFUL** | 55s | 0 unit test failures. All Robolectric tests pass. |
+| `./gradlew lintDebug` | **BUILD SUCCESSFUL** | 2m 21s | 0 lint errors. |
+| `./gradlew assembleRelease` | **BUILD SUCCESSFUL** | 9m 29s | Full R8 minification & resource shrinking verified. Temporary keystore and properties immediately purged after build. |
 
 ---
 
 ## 5. APK Size Comparison
 
-| Build Variant | Phase 1 Size | Phase 2 Size | Phase 3 Size | Delta vs Phase 2 | Explanation |
+| Build Variant | Phase 1 Size | Phase 2 Size | Phase 3 Size (Follow-up) | Delta vs Phase 2 | Explanation |
 | :--- | :---: | :---: | :---: | :---: | :--- |
-| **Debug APK** | 23.30 MB | 19.65 MB | **33.89 MB** (`33,891,528` B) | +14.24 MB | Includes 84 uncompressed debug assets (11.41 MB WebP images + quotes/credits JSON) + debug symbols. |
-| **Release APK** | N/A | 2.17 MB (`2,279,742` B) | **13.62 MB** (`14,286,227` B) | +11.45 MB | Base R8 release binary (~2.18 MB) + 84 WebP background photos (11.41 MB) + `quotes.json` (222 KB) + `credits.json` (15 KB). |
+| **Debug APK** | 23.30 MB | 19.65 MB | **35.65 MB** (`35,653,368` B) | +16.00 MB | Includes 84 uncompressed debug assets (13.09 MB WebP images + quotes/credits JSON) + debug symbols. |
+| **Release APK** | N/A | 2.17 MB (`2,279,742` B) | **15.30 MB** (`16,048,115` B) | +13.13 MB | Base R8 release binary (~2.18 MB) + 84 WebP background photos (13.09 MB) + `quotes.json` (222 KB) + `credits.json` (15 KB). |
 
 ---
 

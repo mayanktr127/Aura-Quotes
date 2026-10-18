@@ -12,10 +12,21 @@ data class PhotoCreditItem(
     val isAi: Boolean = false
 )
 
+data class AiSourceItem(
+    val file: String,
+    val originalFile: String = "",
+    val tool: String = "",
+    val date: String = ""
+)
+
 data class PhotoCreditsData(
     val statement: String,
-    val credits: List<PhotoCreditItem>
-)
+    val credits: List<PhotoCreditItem>,
+    val aiSources: List<AiSourceItem> = emptyList()
+) {
+    val hasAiEntries: Boolean
+        get() = credits.any { it.isAi } || aiSources.isNotEmpty()
+}
 
 object PhotoCreditsLoader {
     private var cachedData: PhotoCreditsData? = null
@@ -26,7 +37,7 @@ object PhotoCreditsLoader {
         return try {
             val jsonString = context.assets.open("credits.json").bufferedReader().use { it.readText() }
             val root = JSONObject(jsonString)
-            val statement = root.optString("statement", "Some backgrounds were created with AI tools.")
+            val statement = root.optString("statement", "")
             val creditsArray = root.optJSONArray("credits")
             val list = mutableListOf<PhotoCreditItem>()
 
@@ -45,11 +56,32 @@ object PhotoCreditsLoader {
                     )
                 }
             }
-            val data = PhotoCreditsData(statement = statement, credits = list)
+
+            val aiSourcesArray = root.optJSONArray("aiSources")
+            val aiSourcesList = mutableListOf<AiSourceItem>()
+            if (aiSourcesArray != null) {
+                for (i in 0 until aiSourcesArray.length()) {
+                    val obj = aiSourcesArray.getJSONObject(i)
+                    aiSourcesList.add(
+                        AiSourceItem(
+                            file = obj.getString("file"),
+                            originalFile = obj.optString("originalFile", ""),
+                            tool = obj.optString("tool", ""),
+                            date = obj.optString("date", "")
+                        )
+                    )
+                }
+            }
+
+            val data = PhotoCreditsData(
+                statement = statement,
+                credits = list,
+                aiSources = aiSourcesList
+            )
             cachedData = data
             data
         } catch (e: Exception) {
-            PhotoCreditsData("Some backgrounds were created with AI tools.", emptyList())
+            PhotoCreditsData("", emptyList(), emptyList())
         }
     }
 }

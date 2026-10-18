@@ -74,22 +74,36 @@ def process_image(input_path: Path, output_path: Path):
         clean_img = Image.new("RGB", (TARGET_WIDTH, TARGET_HEIGHT))
         clean_img.paste(resized, (0, 0))
         
-        # Quality search to ensure file size <= 180 KB
-        quality = INITIAL_QUALITY
-        min_quality = 40
-        best_bytes = None
+        # Adaptive quality search to ensure file size <= 180 KB, never below quality 60
+        min_quality = 60
         
-        while quality >= min_quality:
-            buffer = io.BytesIO()
-            clean_img.save(buffer, format="WEBP", quality=quality, method=6)
-            size = buffer.tell()
-            
-            if size <= MAX_FILE_SIZE_BYTES or quality == min_quality:
-                best_bytes = buffer.getvalue()
-                break
-            
-            quality -= 5  # Step down quality
-            
+        def encode_webp(q: int) -> bytes:
+            buf = io.BytesIO()
+            clean_img.save(buf, format="WEBP", quality=q, method=6)
+            return buf.getvalue()
+        
+        bytes_75 = encode_webp(INITIAL_QUALITY)
+        if len(bytes_75) <= MAX_FILE_SIZE_BYTES:
+            best_bytes = bytes_75
+        else:
+            bytes_60 = encode_webp(min_quality)
+            if len(bytes_60) > MAX_FILE_SIZE_BYTES:
+                # Capped at quality 60 per requirement "never below quality 60"
+                best_bytes = bytes_60
+            else:
+                # Binary search in [60, 75] to find the highest quality that fits under 180 KB
+                low = min_quality
+                high = INITIAL_QUALITY
+                best_bytes = bytes_60
+                while low <= high:
+                    mid = (low + high) // 2
+                    mid_bytes = encode_webp(mid)
+                    if len(mid_bytes) <= MAX_FILE_SIZE_BYTES:
+                        best_bytes = mid_bytes
+                        low = mid + 1
+                    else:
+                        high = mid - 1
+                
         with open(output_path, "wb") as f:
             f.write(best_bytes)
             
@@ -109,6 +123,7 @@ def process_all_images():
     total_bytes = 0
     largest_file = None
     largest_bytes = 0
+    over_180_count = 0
     
     for theme_dir in sorted(theme_dirs):
         theme_name = theme_dir.name
@@ -127,15 +142,15 @@ def process_all_images():
                 largest_file = f"{theme_name}/{out_file.name}"
                 
             if size > MAX_FILE_SIZE_BYTES:
-                print(f"  WARNING: {out_file.name} is {size / 1024:.1f} KB (> 180 KB)")
-            else:
-                pass
+                over_180_count += 1
+                print(f"  Note: {out_file.name} is {size / 1024:.1f} KB (capped at quality 60 floor)")
                 
     total_mb = total_bytes / (1024 * 1024)
     print("\n--- Image Processing Results ---")
     print(f"Total processed images: {total_processed}")
     print(f"Total size of backgrounds: {total_mb:.2f} MB ({total_bytes:,} bytes)")
     print(f"Largest file: {largest_file} ({largest_bytes / 1024:.1f} KB, {largest_bytes:,} bytes)")
+    print(f"Images > 180 KB capped at quality 60 floor: {over_180_count}")
     
     return total_processed, total_bytes, largest_file, largest_bytes
 
@@ -185,8 +200,9 @@ def build_credits_json():
                         "date": date
                     })
                     
+    has_ai = len(ai_sources) > 0 or any(c.get("isAi", False) for c in credits)
     credits_data = {
-        "statement": "Some backgrounds were created with AI tools.",
+        "statement": "Some backgrounds were created with AI tools." if has_ai else "",
         "credits": credits,
         "aiSources": ai_sources
     }

@@ -228,21 +228,22 @@ fun QuoteCard(
 
             Spacer(modifier = Modifier.height(10.dp))
 
-            // Dynamic Font Sizing depending on quote length and fontScale (up to 1.3x) without overflow
+            // Dynamic Font Sizing: longer quotes auto-shrink down to a sensible minimum size
+            // Scale compensation ensures text at fontScale up to 1.3x remains perfectly proportioned
             val density = LocalDensity.current
             val fontScale = density.fontScale.coerceIn(1.0f, 1.3f)
-            val scaleCompensation = 1.0f / (1.0f + (fontScale - 1.0f) * 0.45f)
+            val scaleCompensation = 1.0f / (1.0f + (fontScale - 1.0f) * 0.5f)
             val baseSp = when {
-                quote.text.length > 200 -> if (isHero) 17f else 14.5f
-                quote.text.length > 130 -> if (isHero) 20f else 16.5f
-                quote.text.length > 70  -> if (isHero) 23f else 19f
-                quote.text.length > 35  -> if (isHero) 27f else 22f
-                else                    -> if (isHero) 31f else 24f
+                quote.text.length > 180 -> if (isHero) 16f else 13.5f
+                quote.text.length > 130 -> if (isHero) 18.5f else 15f
+                quote.text.length > 80  -> if (isHero) 21.5f else 17.5f
+                quote.text.length > 40  -> if (isHero) 25f else 20.5f
+                else                    -> if (isHero) 29f else 23.5f
             }
-            val fontSize = (baseSp * scaleCompensation).sp
-            val lineHeight = (fontSize.value * 1.35f).sp
+            val fontSize = (baseSp * scaleCompensation).coerceAtLeast(12.5f).sp
+            val lineHeight = (fontSize.value * 1.38f).sp
 
-            // Quote Text
+            // Quote Text: Never truncated with "...", never hidden or capped by maxLines
             Text(
                 text = quote.text,
                 fontSize = fontSize,
@@ -251,8 +252,7 @@ fun QuoteCard(
                 fontWeight = FontWeight.Normal,
                 textAlign = TextAlign.Center,
                 color = textColor,
-                maxLines = if (isHero) 10 else 7,
-                overflow = TextOverflow.Ellipsis,
+                softWrap = true,
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 4.dp)
