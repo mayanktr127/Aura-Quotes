@@ -1,5 +1,6 @@
-﻿package com.myplanetservices.auraquotes.util
+package com.myplanetservices.auraquotes.util
 
+import android.content.ClipData
 import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
@@ -20,7 +21,9 @@ import androidx.core.content.FileProvider
 import com.myplanetservices.auraquotes.data.model.CardAspectRatio
 import com.myplanetservices.auraquotes.data.model.CardStyle
 import com.myplanetservices.auraquotes.data.model.QuoteFont
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
@@ -227,9 +230,9 @@ object ImageExportUtil {
         try {
             val cachePath = File(context.cacheDir, "shared_quotes")
             if (!cachePath.exists()) cachePath.mkdirs()
-            val file = File(cachePath, "shared_quote_${System.currentTimeMillis()}.png")
+            val file = File(cachePath, "shared_quote_${System.currentTimeMillis()}.jpg")
             FileOutputStream(file).use { out ->
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, out)
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 95, out)
             }
             FileProvider.getUriForFile(
                 context,
@@ -244,12 +247,48 @@ object ImageExportUtil {
 
     fun shareImage(context: Context, uri: Uri, quoteText: String, author: String) {
         val shareIntent = Intent(Intent.ACTION_SEND).apply {
-            type = "image/png"
+            type = "image/jpeg"
             putExtra(Intent.EXTRA_STREAM, uri)
-            putExtra(Intent.EXTRA_TEXT, "“$quoteText” — $author\n\nShared from Aura")
+            putExtra(Intent.EXTRA_TEXT, "“$quoteText” — $author\n\nShared from Aura Quotes")
+            clipData = ClipData.newUri(context.contentResolver, "Aura Quote", uri)
             addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         }
-        context.startActivity(Intent.createChooser(shareIntent, "Share Quote Card"))
+        val chooser = Intent.createChooser(shareIntent, "Share Quote Card").apply {
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+        context.startActivity(chooser)
+    }
+
+    fun shareCardImage(
+        context: Context,
+        quoteText: String,
+        author: String,
+        cardStyle: CardStyle = CardStyle.NOIR_AURA,
+        quoteFont: QuoteFont = QuoteFont.EDITORIAL_SERIF,
+        category: String = "Inspiration"
+    ) {
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                val bitmap = createQuoteBitmap(
+                    quoteText = quoteText,
+                    author = author,
+                    category = category,
+                    cardStyle = cardStyle,
+                    quoteFont = quoteFont,
+                    aspectRatio = CardAspectRatio.SQUARE_1_1,
+                    showWatermark = true
+                )
+                val uri = cacheBitmapForSharing(context, bitmap)
+                if (uri != null) {
+                    shareImage(context, uri, quoteText, author)
+                } else {
+                    shareText(context, quoteText, author)
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                shareText(context, quoteText, author)
+            }
+        }
     }
 
     fun shareText(context: Context, quoteText: String, author: String) {

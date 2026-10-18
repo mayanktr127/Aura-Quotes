@@ -185,7 +185,7 @@ fun FavoritesScreen(
                                 isHero = false,
                                 modifier = Modifier.fillMaxWidth(),
                                 onFavoriteToggle = { viewModel.toggleFavorite(quote.id) },
-                                onShare = { ImageExportUtil.shareText(context, quote.text, quote.author) },
+                                onShare = { ImageExportUtil.shareCardImage(context, quote.text, quote.author, quote.defaultStyle, category = quote.category) },
                                 onOpenDesigner = { onNavigateToDesigner(quote.id) },
                                 onClick = { onNavigateToDetail(quote.id) }
                             )
@@ -282,7 +282,7 @@ fun FavoritesScreen(
                                     isHero = false,
                                     modifier = Modifier.fillMaxWidth(),
                                     onFavoriteToggle = { viewModel.toggleFavorite(quote.id) },
-                                    onShare = { ImageExportUtil.shareText(context, quote.text, quote.author) },
+                                    onShare = { ImageExportUtil.shareCardImage(context, quote.text, quote.author, quote.defaultStyle, category = quote.category) },
                                     onOpenDesigner = { onNavigateToDesigner(quote.id) },
                                     onClick = { onNavigateToDetail(quote.id) }
                                 )
@@ -455,7 +455,7 @@ fun FavoritesScreen(
                                 isHero = false,
                                 modifier = Modifier.fillMaxWidth(),
                                 onFavoriteToggle = { viewModel.toggleFavorite(quote.id) },
-                                onShare = { ImageExportUtil.shareText(context, quote.text, quote.author) },
+                                onShare = { ImageExportUtil.shareCardImage(context, quote.text, quote.author, quote.defaultStyle, category = quote.category) },
                                 onOpenDesigner = { onNavigateToDesigner(quote.id) },
                                 onClick = { onNavigateToDetail(quote.id) }
                             )

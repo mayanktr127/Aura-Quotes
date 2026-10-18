@@ -1,4 +1,4 @@
-﻿package com.myplanetservices.auraquotes.ui.screens.detail
+package com.myplanetservices.auraquotes.ui.screens.detail
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -94,7 +94,7 @@ fun QuoteDetailScreen(
                         )
                     }
                     IconButton(
-                        onClick = { ImageExportUtil.shareText(context, quote.text, quote.author) },
+                        onClick = { ImageExportUtil.shareCardImage(context, quote.text, quote.author, state.cardStyle, category = quote.category) },
                         modifier = Modifier.testTag("detail_share_button")
                     ) {
                         Icon(
@@ -126,7 +126,7 @@ fun QuoteDetailScreen(
                     cardStyle = state.cardStyle,
                     isHero = true,
                     onFavoriteToggle = { viewModel.toggleFavorite() },
-                    onShare = { ImageExportUtil.shareText(context, quote.text, quote.author) },
+                    onShare = { ImageExportUtil.shareCardImage(context, quote.text, quote.author, state.cardStyle, category = quote.category) },
                     onOpenDesigner = { onNavigateToDesigner(quote.id) }
                 )
             }
@@ -396,7 +396,7 @@ fun QuoteDetailScreen(
                         isHero = false,
                         modifier = Modifier.fillMaxWidth(),
                         onFavoriteToggle = { /* handled in repo */ },
-                        onShare = { ImageExportUtil.shareText(context, relQuote.text, relQuote.author) },
+                        onShare = { ImageExportUtil.shareCardImage(context, relQuote.text, relQuote.author, relQuote.defaultStyle, category = relQuote.category) },
                         onOpenDesigner = { onNavigateToDesigner(relQuote.id) },
                         onClick = { onNavigateToOtherQuote(relQuote.id) }
                     )

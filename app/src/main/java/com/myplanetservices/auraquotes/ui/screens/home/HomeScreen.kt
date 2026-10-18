@@ -173,7 +173,7 @@ fun HomeScreen(
                         cardStyle = state.heroStyle,
                         isHero = true,
                         onFavoriteToggle = { viewModel.toggleFavorite(qotd.id) },
-                        onShare = { ImageExportUtil.shareText(context, qotd.text, qotd.author) },
+                        onShare = { ImageExportUtil.shareCardImage(context, qotd.text, qotd.author, state.heroStyle, category = qotd.category) },
                         onOpenDesigner = { onNavigateToDesigner(qotd.id) },
                         onClick = {
                             viewModel.recordHistory(qotd.id)
@@ -233,7 +233,7 @@ fun HomeScreen(
                             isHero = false,
                             modifier = Modifier.width(300.dp),
                             onFavoriteToggle = { viewModel.toggleFavorite(quote.id) },
-                            onShare = { ImageExportUtil.shareText(context, quote.text, quote.author) },
+                            onShare = { ImageExportUtil.shareCardImage(context, quote.text, quote.author, quote.defaultStyle, category = quote.category) },
                             onOpenDesigner = { onNavigateToDesigner(quote.id) },
                             onClick = {
                                 viewModel.recordHistory(quote.id)
@@ -333,7 +333,7 @@ fun HomeScreen(
                                 isHero = false,
                                 modifier = Modifier.width(280.dp),
                                 onFavoriteToggle = { viewModel.toggleFavorite(quote.id) },
-                                onShare = { ImageExportUtil.shareText(context, quote.text, quote.author) },
+                                onShare = { ImageExportUtil.shareCardImage(context, quote.text, quote.author, quote.defaultStyle, category = quote.category) },
                                 onOpenDesigner = { onNavigateToDesigner(quote.id) },
                                 onClick = {
                                     viewModel.recordHistory(quote.id)
@@ -435,7 +435,7 @@ fun HomeScreen(
                         isHero = false,
                         modifier = Modifier.fillMaxWidth(),
                         onFavoriteToggle = { viewModel.toggleFavorite(quote.id) },
-                        onShare = { ImageExportUtil.shareText(context, quote.text, quote.author) },
+                        onShare = { ImageExportUtil.shareCardImage(context, quote.text, quote.author, quote.defaultStyle, category = quote.category) },
                         onOpenDesigner = { onNavigateToDesigner(quote.id) },
                         onClick = {
                             viewModel.recordHistory(quote.id)
