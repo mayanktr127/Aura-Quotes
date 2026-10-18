@@ -1,6 +1,6 @@
 # PHASE 1 — AUDIT & BASELINE BUILD REPORT
 
-This document represents the complete, unverified-to-verified code audit of **Aura Quotes** in accordance with the rules established in AGENTS.md. **No features were added or redesigned in this phase.**
+This document represents the complete, unverified-to-verified code audit of **Stillwords** (formerly Aura Quotes) in accordance with the rules established in AGENTS.md. **No features were added or redesigned in this phase.**
 
 ---
 
@@ -27,11 +27,11 @@ c:\Users\Mayank\Downloads\Aura Quotes\
     └── src/
         ├── main/
         │   ├── AndroidManifest.xml        # App manifest declaring MainActivity, FileProvider, permissions
-        │   ├── java/com/example/
-        │   │   ├── MainActivity.kt        # Single Activity entry point with Edge-to-Edge & AuraTheme
+        │   ├── java/com/myplanetservices/stillwords/
+        │   │   ├── MainActivity.kt        # Single Activity entry point with Edge-to-Edge & StillwordsTheme
         │   │   ├── data/
         │   │   │   ├── local/
-        │   │   │   │   ├── AuraDatabase.kt           # Room Database definition with 7 entities (version 1)
+        │   │   │   │   ├── StillwordsDatabase.kt     # Room Database definition with 7 entities (version 1)
         │   │   │   │   ├── QuoteDao.kt               # Room DAO for quotes, favorites, collections, history
         │   │   │   │   ├── QuoteEntity.kt            # Room entities (Quote, Favorite, Collection, Reflection, History, UserQuote)
         │   │   │   │   └── SeedQuotes.kt             # 700+ lines of initial offline quotes & metadata
@@ -51,7 +51,7 @@ c:\Users\Mayank\Downloads\Aura Quotes\
         │   │   │   │   └── StyleSelectorCarousel.kt  # Horizontal row of card style preset selector pills
         │   │   │   ├── navigation/
         │   │   │   │   ├── Screen.kt                 # Sealed class defining 9 navigation route strings & helpers
-        │   │   │   │   └── AuraNavHost.kt            # NavHost graph, 5-tab bottom navigation, startDestination routing
+        │   │   │   │   └── StillwordsNavHost.kt      # NavHost graph, 5-tab bottom navigation, startDestination routing
         │   │   │   ├── screens/
         │   │   │   │   ├── home/
         │   │   │   │   │   ├── HomeScreen.kt         # Composable: Today view, hero quote, mood chips, saved shortcut
@@ -78,7 +78,7 @@ c:\Users\Mayank\Downloads\Aura Quotes\
         │   │   │   │       └── OnboardingScreen.kt   # Composable: 3-step intro (welcome, interest picker, reminder time)
         │   │   │   ├── theme/
         │   │   │   │   ├── Color.kt                  # Noir/Gold color tokens and card gradient definitions
-        │   │   │   │   └── Theme.kt                  # Material 3 dark/light AuraColorScheme and typography theme
+        │   │   │   │   └── Theme.kt                  # Material 3 dark/light ColorScheme and typography theme
         │   │   │   │   └── Type.kt                   # Typography styles with Editorial Serif & Sans font families
         │   │   │   └── util/
         │   │   │       └── ImageExportUtil.kt        # Canvas bitmap generator & MediaStore/FileProvider image exporter
@@ -177,7 +177,7 @@ BUILD SUCCESSFUL in 1m 59s
 
 ### A. Crashes or Obvious Bugs Found in Code
 1. **Notification Scheduling is Incomplete:** `SettingsViewModel.kt` saves the reminder hour/minute to DataStore, but **never registers an `AlarmManager` or `WorkManager` task**. Notifications will not trigger at the scheduled time unless manually prompted via the "Send Test Notification" button.
-2. **Collection Detail Navigation Route:** `Screen.CollectionDetail` is defined in routes, but there is no Composable route registered in `AuraNavHost.kt`. Tapping a collection in Favorites could result in an unhandled navigation.
+2. **Collection Detail Navigation Route:** `Screen.CollectionDetail` is defined in routes, but there is no Composable route registered in `StillwordsNavHost.kt` (originally `AuraNavHost.kt`). Tapping a collection in Favorites could result in an unhandled navigation.
 
 ### B. Dead or Unused Code
 1. **Unused Network & AI Dependencies:** `Retrofit`, `Moshi`, `OkHttp`, and `firebase-ai` are imported in `build.gradle.kts`, but there is **zero network code or Gemini AI calls in any Kotlin file**.
@@ -190,7 +190,7 @@ BUILD SUCCESSFUL in 1m 59s
 
 ### D. Violations of `AGENTS.md` Rules Found
 1. **MinSdk:** Current `minSdk = 24` in `app/build.gradle.kts#L17`. `AGENTS.md` mandates `minSdk = 26`.
-2. **Room Schema Export:** Current `AuraDatabase.kt#L19` has `exportSchema = false`. `AGENTS.md` mandates `exportSchema = true` with committed schemas folder.
+2. **Room Schema Export:** Current `StillwordsDatabase.kt#L19` (formerly `AuraDatabase.kt`) had `exportSchema = false`. `AGENTS.md` mandates `exportSchema = true` with committed schemas folder.
 3. **No AdMob SDK Configured:** `AGENTS.md` specifies BuildConfig-based test vs release ad IDs. Neither the Google Mobile Ads SDK nor AdMob IDs exist in the app yet.
 
 ### E. Google Play Policy Risks
@@ -210,7 +210,7 @@ BUILD SUCCESSFUL in 1m 59s
 | **Explore & Category Browse** | `ExploreScreen.kt` | **Working** | Filter by category, mood, author, or moment with back handler. |
 | **Search Functionality** | `SearchScreen.kt` | **Working** | Debounced search queries text, author, and tags. |
 | **Quote Designer (Creator)** | `QuoteDesignerScreen.kt` | **Working** | Custom text, font picker, ratio selector, watermark toggle. |
-| **Image Export to Gallery** | `ImageExportUtil.kt` | **Working** | Renders Bitmap canvas and saves to MediaStore `Pictures/AuraQuotes`. |
+| **Image Export to Gallery** | `ImageExportUtil.kt` | **Working** | Renders Bitmap canvas and saves to MediaStore `Pictures/Stillwords` (originally `Pictures/AuraQuotes`). |
 | **Favorites & Saved Quotes** | `FavoritesScreen.kt` | **Working** | Displays favorited quotes, history list, and custom user quotes. |
 | **Reflection Notes** | `QuoteDetailScreen.kt` | **Working** | Saves personal reflections to Room database per quote. |
 | **Theme Mode Switching** | `SettingsScreen.kt` | **Working** | Switches between System, Light, and Dark themes. |

@@ -1,6 +1,6 @@
-# Aura Quotes — Release & Signing Guide
+# Stillwords — Release & Signing Guide
 
-This guide describes how to configure signing, generate production builds, and release updates to Google Play for **Aura Quotes**.
+This guide describes how to configure signing, generate production builds, and release updates to Google Play for **Stillwords**.
 
 ---
 
@@ -12,7 +12,7 @@ Release builds require a dedicated signing keystore. **Never commit keystores or
 Run the following `keytool` command in your terminal (included with JDK 17+):
 
 ```bash
-keytool -genkey -v -keystore aura-upload-key.jks -alias aura-upload -keyalg RSA -keysize 2048 -validity 10000
+keytool -genkey -v -keystore stillwords-upload-key.jks -alias stillwords-upload -keyalg RSA -keysize 2048 -validity 10000
 ```
 When prompted, provide:
 - Keystore password (store securely in a password manager)
@@ -20,12 +20,12 @@ When prompted, provide:
 - Key password (can match keystore password)
 
 ### B. Configuring `keystore.properties`
-Create a file named `keystore.properties` in the project root directory (`c:\Users\Mayank\Downloads\Aura Quotes\keystore.properties`):
+Create a file named `keystore.properties` in the project root directory (`keystore.properties`):
 
 ```properties
-storeFile=aura-upload-key.jks
+storeFile=stillwords-upload-key.jks
 storePassword=YOUR_STORE_PASSWORD
-keyAlias=aura-upload
+keyAlias=stillwords-upload
 keyPassword=YOUR_KEY_PASSWORD
 ```
 
@@ -33,13 +33,13 @@ keyPassword=YOUR_KEY_PASSWORD
 > If `keystore.properties` is missing or incomplete, `./gradlew assembleRelease` and `./gradlew bundleRelease` will immediately fail with an explicit error message. Release builds never fall back to debug signing.
 
 ### C. Keystore Backup & Disaster Recovery
-- Keep safe offline copies of `aura-upload-key.jks` and `keystore.properties` (e.g. encrypted cloud vault or offline backup drive).
+- Keep safe offline copies of `stillwords-upload-key.jks` and `keystore.properties` (e.g. encrypted cloud vault or offline backup drive).
 - Loss of the upload key requires contacting Google Play Console support to reset the upload key.
 
 ---
 
 ## 2. Google Play App Signing
-Aura Quotes is configured for Google Play App Signing:
+Stillwords is configured for Google Play App Signing:
 1. You sign your Android App Bundle (`.aab`) with your local **upload key**.
 2. Google Play verifies your upload key, strips the upload signature, and re-signs the delivered APKs with your secure **app signing key** managed by Google.
 3. Enroll in Google Play App Signing when creating the app entry in the Google Play Console.

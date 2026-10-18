@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">Aura Quotes</string>
+    <string name="app_name">Stillwords</string>
     <string name="tagline">Daily Inspiration &amp; Quotes</string>
-    <string name="notification_channel_name">Daily Quote Inspiration</string>
-    <string name="notification_channel_desc">Daily uplifting thoughts and wisdom</string>
+    <string name="notification_channel_name">Stillwords Daily Inspiration</string>
+    <string name="notification_channel_desc">Daily uplifting thoughts and wisdom from Stillwords</string>
 </resources>

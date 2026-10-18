@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
     android:width="200dp"
@@ -6,7 +6,7 @@
     android:viewportWidth="200"
     android:viewportHeight="160">
 
-    <!-- Soft radiant sun / morning aura backdrop -->
+    <!-- Soft radiant sun / morning stillwords backdrop -->
     <path
         android:pathData="M100,20 C135,20 164,49 164,84 C164,119 135,148 100,148 C65,148 36,119 36,84 C36,49 65,20 100,20 Z">
         <aapt:attr name="android:fillColor">
@@ -85,3 +85,4 @@
         android:strokeColor="#40A8A29E"
         android:strokeLineCap="round" />
 </vector>
+

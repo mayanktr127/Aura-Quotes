@@ -1,0 +1,678 @@
+{
+  "statement": "Some backgrounds were created with AI tools.",
+  "credits": [
+    {
+      "file": "forest-botanical-01.webp",
+      "originalFile": "forest-botanical-01.jpg",
+      "theme": "forest-botanical",
+      "photographer": "User 2148460223",
+      "sourceUrl": "https://www.pexels.com/photo/30109938",
+      "isAi": false
+    },
+    {
+      "file": "forest-botanical-02.webp",
+      "originalFile": "forest-botanical-02.jpg",
+      "theme": "forest-botanical",
+      "photographer": "Arnu",
+      "sourceUrl": "https://www.pexels.com/photo/36501689",
+      "isAi": false
+    },
+    {
+      "file": "forest-botanical-03.webp",
+      "originalFile": "forest-botanical-03.jpg",
+      "theme": "forest-botanical",
+      "photographer": "Bruthethe",
+      "sourceUrl": "https://www.pexels.com/photo/25972482",
+      "isAi": false
+    },
+    {
+      "file": "forest-botanical-04.webp",
+      "originalFile": "forest-botanical-04.jpg",
+      "theme": "forest-botanical",
+      "photographer": "Framephoriaa",
+      "sourceUrl": "https://www.pexels.com/photo/33965389",
+      "isAi": false
+    },
+    {
+      "file": "forest-botanical-05.webp",
+      "originalFile": "forest-botanical-05.jpg",
+      "theme": "forest-botanical",
+      "photographer": "Framephoriaa",
+      "sourceUrl": "https://www.pexels.com/photo/33965389",
+      "isAi": false
+    },
+    {
+      "file": "forest-botanical-06.webp",
+      "originalFile": "forest-botanical-06.jpg",
+      "theme": "forest-botanical",
+      "photographer": "Jiafan Shi",
+      "sourceUrl": "https://www.pexels.com/photo/37571153",
+      "isAi": false
+    },
+    {
+      "file": "forest-botanical-07.webp",
+      "originalFile": "forest-botanical-07.jpg",
+      "theme": "forest-botanical",
+      "photographer": "Jolien Hermans",
+      "sourceUrl": "https://www.pexels.com/photo/34113949",
+      "isAi": false
+    },
+    {
+      "file": "forest-botanical-08.webp",
+      "originalFile": "forest-botanical-08.jpg",
+      "theme": "forest-botanical",
+      "photographer": "Melih Cengil",
+      "sourceUrl": "https://www.pexels.com/photo/17692122",
+      "isAi": false
+    },
+    {
+      "file": "forest-botanical-09.webp",
+      "originalFile": "forest-botanical-09.jpg",
+      "theme": "forest-botanical",
+      "photographer": "Moklebust",
+      "sourceUrl": "https://www.pexels.com/photo/12218730",
+      "isAi": false
+    },
+    {
+      "file": "forest-botanical-10.webp",
+      "originalFile": "forest-botanical-10.jpg",
+      "theme": "forest-botanical",
+      "photographer": "Monika Izabela Koziel",
+      "sourceUrl": "https://www.pexels.com/photo/16027765",
+      "isAi": false
+    },
+    {
+      "file": "forest-botanical-11.webp",
+      "originalFile": "forest-botanical-11.jpg",
+      "theme": "forest-botanical",
+      "photographer": "Monika Izabela Koziel",
+      "sourceUrl": "https://www.pexels.com/photo/16027765",
+      "isAi": false
+    },
+    {
+      "file": "forest-botanical-12.webp",
+      "originalFile": "forest-botanical-12.jpg",
+      "theme": "forest-botanical",
+      "photographer": "Nurhossen Sarder",
+      "sourceUrl": "https://www.pexels.com/photo/36060523",
+      "isAi": false
+    },
+    {
+      "file": "golden-hour-01.webp",
+      "originalFile": "golden-hour-01.jpg",
+      "theme": "golden-hour",
+      "photographer": "Alexeydemidov",
+      "sourceUrl": "https://www.pexels.com/photo/9314025",
+      "isAi": false
+    },
+    {
+      "file": "golden-hour-02.webp",
+      "originalFile": "golden-hour-02.jpg",
+      "theme": "golden-hour",
+      "photographer": "Alexeydemidov",
+      "sourceUrl": "https://www.pexels.com/photo/9325347",
+      "isAi": false
+    },
+    {
+      "file": "golden-hour-03.webp",
+      "originalFile": "golden-hour-03.jpg",
+      "theme": "golden-hour",
+      "photographer": "Anna Klymenko",
+      "sourceUrl": "https://www.pexels.com/photo/37451541",
+      "isAi": false
+    },
+    {
+      "file": "golden-hour-04.webp",
+      "originalFile": "golden-hour-04.jpg",
+      "theme": "golden-hour",
+      "photographer": "Birkaybolushikayesi",
+      "sourceUrl": "https://www.pexels.com/photo/19283559",
+      "isAi": false
+    },
+    {
+      "file": "golden-hour-05.webp",
+      "originalFile": "golden-hour-05.jpg",
+      "theme": "golden-hour",
+      "photographer": "Damian Elsner",
+      "sourceUrl": "https://www.pexels.com/photo/35609885",
+      "isAi": false
+    },
+    {
+      "file": "golden-hour-06.webp",
+      "originalFile": "golden-hour-06.jpg",
+      "theme": "golden-hour",
+      "photographer": "Ibnulharezmi",
+      "sourceUrl": "https://www.pexels.com/photo/5410900",
+      "isAi": false
+    },
+    {
+      "file": "golden-hour-07.webp",
+      "originalFile": "golden-hour-07.jpg",
+      "theme": "golden-hour",
+      "photographer": "Kelly",
+      "sourceUrl": "https://www.pexels.com/photo/28845642",
+      "isAi": false
+    },
+    {
+      "file": "golden-hour-08.webp",
+      "originalFile": "golden-hour-08.jpg",
+      "theme": "golden-hour",
+      "photographer": "Kublizz",
+      "sourceUrl": "https://www.pexels.com/photo/17894539",
+      "isAi": false
+    },
+    {
+      "file": "golden-hour-09.webp",
+      "originalFile": "golden-hour-09.jpg",
+      "theme": "golden-hour",
+      "photographer": "Maria Fernanda Fotografia",
+      "sourceUrl": "https://www.pexels.com/photo/13925600",
+      "isAi": false
+    },
+    {
+      "file": "golden-hour-10.webp",
+      "originalFile": "golden-hour-10.jpg",
+      "theme": "golden-hour",
+      "photographer": "Miami302",
+      "sourceUrl": "https://www.pexels.com/photo/17815412",
+      "isAi": false
+    },
+    {
+      "file": "golden-hour-11.webp",
+      "originalFile": "golden-hour-11.jpg",
+      "theme": "golden-hour",
+      "photographer": "Rodrigo Viana",
+      "sourceUrl": "https://www.pexels.com/photo/7166175",
+      "isAi": false
+    },
+    {
+      "file": "golden-hour-12.webp",
+      "originalFile": "golden-hour-12.jpg",
+      "theme": "golden-hour",
+      "photographer": "Xbx",
+      "sourceUrl": "https://www.pexels.com/photo/38580755",
+      "isAi": false
+    },
+    {
+      "file": "mountains-01.webp",
+      "originalFile": "mountains-01.jpg",
+      "theme": "mountains",
+      "photographer": "Ahmetmert",
+      "sourceUrl": "https://www.pexels.com/photo/38230491",
+      "isAi": false
+    },
+    {
+      "file": "mountains-02.webp",
+      "originalFile": "mountains-02.jpg",
+      "theme": "mountains",
+      "photographer": "Anna Photosmaslom",
+      "sourceUrl": "https://www.pexels.com/photo/38321812",
+      "isAi": false
+    },
+    {
+      "file": "mountains-03.webp",
+      "originalFile": "mountains-03.jpg",
+      "theme": "mountains",
+      "photographer": "Arian Hoti",
+      "sourceUrl": "https://www.pexels.com/photo/14593926",
+      "isAi": false
+    },
+    {
+      "file": "mountains-04.webp",
+      "originalFile": "mountains-04.jpg",
+      "theme": "mountains",
+      "photographer": "Danieljschwarz",
+      "sourceUrl": "https://www.pexels.com/photo/39827155",
+      "isAi": false
+    },
+    {
+      "file": "mountains-05.webp",
+      "originalFile": "mountains-05.jpg",
+      "theme": "mountains",
+      "photographer": "Denis Poltoradnev",
+      "sourceUrl": "https://www.pexels.com/photo/8904890",
+      "isAi": false
+    },
+    {
+      "file": "mountains-06.webp",
+      "originalFile": "mountains-06.jpg",
+      "theme": "mountains",
+      "photographer": "Dmitry93",
+      "sourceUrl": "https://www.pexels.com/photo/13881250",
+      "isAi": false
+    },
+    {
+      "file": "mountains-07.webp",
+      "originalFile": "mountains-07.jpg",
+      "theme": "mountains",
+      "photographer": "Eberhardgross",
+      "sourceUrl": "https://www.pexels.com/photo/19780241",
+      "isAi": false
+    },
+    {
+      "file": "mountains-08.webp",
+      "originalFile": "mountains-08.jpg",
+      "theme": "mountains",
+      "photographer": "Going To The River",
+      "sourceUrl": "https://www.pexels.com/photo/26146555",
+      "isAi": false
+    },
+    {
+      "file": "mountains-09.webp",
+      "originalFile": "mountains-09.jpg",
+      "theme": "mountains",
+      "photographer": "Micklejandro",
+      "sourceUrl": "https://www.pexels.com/photo/10757816",
+      "isAi": false
+    },
+    {
+      "file": "mountains-10.webp",
+      "originalFile": "mountains-10.jpg",
+      "theme": "mountains",
+      "photographer": "Riedelmax",
+      "sourceUrl": "https://www.pexels.com/photo/33664891",
+      "isAi": false
+    },
+    {
+      "file": "mountains-11.webp",
+      "originalFile": "mountains-11.jpg",
+      "theme": "mountains",
+      "photographer": "Taraschuiko",
+      "sourceUrl": "https://www.pexels.com/photo/18297445",
+      "isAi": false
+    },
+    {
+      "file": "mountains-12.webp",
+      "originalFile": "mountains-12.jpg",
+      "theme": "mountains",
+      "photographer": "Tournesolvg",
+      "sourceUrl": "https://www.pexels.com/photo/14576039",
+      "isAi": false
+    },
+    {
+      "file": "night-sky-01.webp",
+      "originalFile": "night-sky-01.jpg",
+      "theme": "night-sky",
+      "photographer": "Adem Albayrak",
+      "sourceUrl": "https://www.pexels.com/photo/39965276",
+      "isAi": false
+    },
+    {
+      "file": "night-sky-02.webp",
+      "originalFile": "night-sky-02.jpg",
+      "theme": "night-sky",
+      "photographer": "Aliciazinn",
+      "sourceUrl": "https://www.pexels.com/photo/11564053",
+      "isAi": false
+    },
+    {
+      "file": "night-sky-03.webp",
+      "originalFile": "night-sky-03.jpg",
+      "theme": "night-sky",
+      "photographer": "Artem Makarov",
+      "sourceUrl": "https://www.pexels.com/photo/27696086",
+      "isAi": false
+    },
+    {
+      "file": "night-sky-04.webp",
+      "originalFile": "night-sky-04.jpg",
+      "theme": "night-sky",
+      "photographer": "Debphotography",
+      "sourceUrl": "https://www.pexels.com/photo/25853777",
+      "isAi": false
+    },
+    {
+      "file": "night-sky-05.webp",
+      "originalFile": "night-sky-05.jpg",
+      "theme": "night-sky",
+      "photographer": "Esteban Arango",
+      "sourceUrl": "https://www.pexels.com/photo/11296633",
+      "isAi": false
+    },
+    {
+      "file": "night-sky-06.webp",
+      "originalFile": "night-sky-06.jpg",
+      "theme": "night-sky",
+      "photographer": "Hobiphotography",
+      "sourceUrl": "https://www.pexels.com/photo/34768887",
+      "isAi": false
+    },
+    {
+      "file": "night-sky-07.webp",
+      "originalFile": "night-sky-07.jpg",
+      "theme": "night-sky",
+      "photographer": "Igorferreirafotografia",
+      "sourceUrl": "https://www.pexels.com/photo/6734225",
+      "isAi": false
+    },
+    {
+      "file": "night-sky-08.webp",
+      "originalFile": "night-sky-08.jpg",
+      "theme": "night-sky",
+      "photographer": "Jaweria Fatima",
+      "sourceUrl": "https://www.pexels.com/photo/17321652",
+      "isAi": false
+    },
+    {
+      "file": "night-sky-09.webp",
+      "originalFile": "night-sky-09.jpg",
+      "theme": "night-sky",
+      "photographer": "Kadirakman",
+      "sourceUrl": "https://www.pexels.com/photo/9868932",
+      "isAi": false
+    },
+    {
+      "file": "night-sky-10.webp",
+      "originalFile": "night-sky-10.jpg",
+      "theme": "night-sky",
+      "photographer": "Learnersoumya",
+      "sourceUrl": "https://www.pexels.com/photo/33824672",
+      "isAi": false
+    },
+    {
+      "file": "night-sky-11.webp",
+      "originalFile": "night-sky-11.jpg",
+      "theme": "night-sky",
+      "photographer": "Oktay Koseoglu",
+      "sourceUrl": "https://www.pexels.com/photo/30644180",
+      "isAi": false
+    },
+    {
+      "file": "night-sky-12.webp",
+      "originalFile": "night-sky-12.jpg",
+      "theme": "night-sky",
+      "photographer": "Rebornfilmes",
+      "sourceUrl": "https://www.pexels.com/photo/27638159",
+      "isAi": false
+    },
+    {
+      "file": "quiet-spaces-01.webp",
+      "originalFile": "quiet-spaces-01.jpg",
+      "theme": "quiet-spaces",
+      "photographer": "Beyzanur Gungor",
+      "sourceUrl": "https://www.pexels.com/photo/20203986",
+      "isAi": false
+    },
+    {
+      "file": "quiet-spaces-02.webp",
+      "originalFile": "quiet-spaces-02.jpg",
+      "theme": "quiet-spaces",
+      "photographer": "Duygugungor",
+      "sourceUrl": "https://www.pexels.com/photo/16618330",
+      "isAi": false
+    },
+    {
+      "file": "quiet-spaces-03.webp",
+      "originalFile": "quiet-spaces-03.jpg",
+      "theme": "quiet-spaces",
+      "photographer": "Ellusionist",
+      "sourceUrl": "https://www.pexels.com/photo/17199825",
+      "isAi": false
+    },
+    {
+      "file": "quiet-spaces-04.webp",
+      "originalFile": "quiet-spaces-04.jpg",
+      "theme": "quiet-spaces",
+      "photographer": "Inspirative Studio",
+      "sourceUrl": "https://www.pexels.com/photo/8066335",
+      "isAi": false
+    },
+    {
+      "file": "quiet-spaces-05.webp",
+      "originalFile": "quiet-spaces-05.jpg",
+      "theme": "quiet-spaces",
+      "photographer": "Khang Too",
+      "sourceUrl": "https://www.pexels.com/photo/29574837",
+      "isAi": false
+    },
+    {
+      "file": "quiet-spaces-06.webp",
+      "originalFile": "quiet-spaces-06.jpg",
+      "theme": "quiet-spaces",
+      "photographer": "Margarita Shabanova",
+      "sourceUrl": "https://www.pexels.com/photo/15577881",
+      "isAi": false
+    },
+    {
+      "file": "quiet-spaces-07.webp",
+      "originalFile": "quiet-spaces-07.jpg",
+      "theme": "quiet-spaces",
+      "photographer": "Nazlisanova",
+      "sourceUrl": "https://www.pexels.com/photo/31199128",
+      "isAi": false
+    },
+    {
+      "file": "quiet-spaces-08.webp",
+      "originalFile": "quiet-spaces-08.jpg",
+      "theme": "quiet-spaces",
+      "photographer": "Omergulen",
+      "sourceUrl": "https://www.pexels.com/photo/20036257",
+      "isAi": false
+    },
+    {
+      "file": "quiet-spaces-09.webp",
+      "originalFile": "quiet-spaces-09.jpg",
+      "theme": "quiet-spaces",
+      "photographer": "Sinan Aslan",
+      "sourceUrl": "https://www.pexels.com/photo/32765955",
+      "isAi": false
+    },
+    {
+      "file": "quiet-spaces-10.webp",
+      "originalFile": "quiet-spaces-10.jpg",
+      "theme": "quiet-spaces",
+      "photographer": "Tafsinnaeem",
+      "sourceUrl": "https://www.pexels.com/photo/34711481",
+      "isAi": false
+    },
+    {
+      "file": "quiet-spaces-11.webp",
+      "originalFile": "quiet-spaces-11.jpg",
+      "theme": "quiet-spaces",
+      "photographer": "Theonlyabdulla",
+      "sourceUrl": "https://www.pexels.com/photo/33401746",
+      "isAi": false
+    },
+    {
+      "file": "quiet-spaces-12.webp",
+      "originalFile": "quiet-spaces-12.jpg",
+      "theme": "quiet-spaces",
+      "photographer": "Thoinamcao",
+      "sourceUrl": "https://www.pexels.com/photo/10566618",
+      "isAi": false
+    },
+    {
+      "file": "still-water-01.webp",
+      "originalFile": "still-water-01.jpg",
+      "theme": "still-water",
+      "photographer": "User 3245439",
+      "sourceUrl": "https://www.pexels.com/photo/4875513",
+      "isAi": false
+    },
+    {
+      "file": "still-water-02.webp",
+      "originalFile": "still-water-02.jpg",
+      "theme": "still-water",
+      "photographer": "Andrey",
+      "sourceUrl": "https://www.pexels.com/photo/10043423",
+      "isAi": false
+    },
+    {
+      "file": "still-water-03.webp",
+      "originalFile": "still-water-03.jpg",
+      "theme": "still-water",
+      "photographer": "Bingqian Li",
+      "sourceUrl": "https://www.pexels.com/photo/33388471",
+      "isAi": false
+    },
+    {
+      "file": "still-water-04.webp",
+      "originalFile": "still-water-04.jpg",
+      "theme": "still-water",
+      "photographer": "Damir",
+      "sourceUrl": "https://www.pexels.com/photo/15819470",
+      "isAi": false
+    },
+    {
+      "file": "still-water-05.webp",
+      "originalFile": "still-water-05.jpg",
+      "theme": "still-water",
+      "photographer": "Damir",
+      "sourceUrl": "https://www.pexels.com/photo/34741061",
+      "isAi": false
+    },
+    {
+      "file": "still-water-06.webp",
+      "originalFile": "still-water-06.jpg",
+      "theme": "still-water",
+      "photographer": "Karola G",
+      "sourceUrl": "https://www.pexels.com/photo/4749937",
+      "isAi": false
+    },
+    {
+      "file": "still-water-07.webp",
+      "originalFile": "still-water-07.jpg",
+      "theme": "still-water",
+      "photographer": "Maheshwar Reddy",
+      "sourceUrl": "https://www.pexels.com/photo/16502965",
+      "isAi": false
+    },
+    {
+      "file": "still-water-08.webp",
+      "originalFile": "still-water-08.jpg",
+      "theme": "still-water",
+      "photographer": "Meltem B",
+      "sourceUrl": "https://www.pexels.com/photo/32925186",
+      "isAi": false
+    },
+    {
+      "file": "still-water-09.webp",
+      "originalFile": "still-water-09.jpg",
+      "theme": "still-water",
+      "photographer": "Molnartamasphotography",
+      "sourceUrl": "https://www.pexels.com/photo/27075441",
+      "isAi": false
+    },
+    {
+      "file": "still-water-10.webp",
+      "originalFile": "still-water-10.jpg",
+      "theme": "still-water",
+      "photographer": "Olavi Anttila",
+      "sourceUrl": "https://www.pexels.com/photo/12810456",
+      "isAi": false
+    },
+    {
+      "file": "still-water-11.webp",
+      "originalFile": "still-water-11.jpg",
+      "theme": "still-water",
+      "photographer": "Priscila Almeida",
+      "sourceUrl": "https://www.pexels.com/photo/15267415",
+      "isAi": false
+    },
+    {
+      "file": "still-water-12.webp",
+      "originalFile": "still-water-12.jpg",
+      "theme": "still-water",
+      "photographer": "Route2tushar",
+      "sourceUrl": "https://www.pexels.com/photo/30165947",
+      "isAi": false
+    },
+    {
+      "file": "sunrise-roads-01.webp",
+      "originalFile": "sunrise-roads-01.jpg",
+      "theme": "sunrise-roads",
+      "photographer": "User 2162122689",
+      "sourceUrl": "https://www.pexels.com/photo/38000702",
+      "isAi": false
+    },
+    {
+      "file": "sunrise-roads-02.webp",
+      "originalFile": "sunrise-roads-02.jpg",
+      "theme": "sunrise-roads",
+      "photographer": "Abdulkayum97",
+      "sourceUrl": "https://www.pexels.com/photo/14716174",
+      "isAi": false
+    },
+    {
+      "file": "sunrise-roads-03.webp",
+      "originalFile": "sunrise-roads-03.jpg",
+      "theme": "sunrise-roads",
+      "photographer": "Alrz Azr",
+      "sourceUrl": "https://www.pexels.com/photo/3877415",
+      "isAi": false
+    },
+    {
+      "file": "sunrise-roads-04.webp",
+      "originalFile": "sunrise-roads-04.jpg",
+      "theme": "sunrise-roads",
+      "photographer": "Dumitru Bumbu",
+      "sourceUrl": "https://www.pexels.com/photo/29018396",
+      "isAi": false
+    },
+    {
+      "file": "sunrise-roads-05.webp",
+      "originalFile": "sunrise-roads-05.jpg",
+      "theme": "sunrise-roads",
+      "photographer": "Emir Anik",
+      "sourceUrl": "https://www.pexels.com/photo/10801304",
+      "isAi": false
+    },
+    {
+      "file": "sunrise-roads-06.webp",
+      "originalFile": "sunrise-roads-06.jpg",
+      "theme": "sunrise-roads",
+      "photographer": "Griffinw",
+      "sourceUrl": "https://www.pexels.com/photo/3654867",
+      "isAi": false
+    },
+    {
+      "file": "sunrise-roads-07.webp",
+      "originalFile": "sunrise-roads-07.jpg",
+      "theme": "sunrise-roads",
+      "photographer": "Guihankenne",
+      "sourceUrl": "https://www.pexels.com/photo/6114016",
+      "isAi": false
+    },
+    {
+      "file": "sunrise-roads-08.webp",
+      "originalFile": "sunrise-roads-08.jpg",
+      "theme": "sunrise-roads",
+      "photographer": "Jonathanborba",
+      "sourceUrl": "https://www.pexels.com/photo/2888490",
+      "isAi": false
+    },
+    {
+      "file": "sunrise-roads-09.webp",
+      "originalFile": "sunrise-roads-09.jpg",
+      "theme": "sunrise-roads",
+      "photographer": "Mohsin Mirza",
+      "sourceUrl": "https://www.pexels.com/photo/28666420",
+      "isAi": false
+    },
+    {
+      "file": "sunrise-roads-10.webp",
+      "originalFile": "sunrise-roads-10.jpg",
+      "theme": "sunrise-roads",
+      "photographer": "Shardar Tarikul Islam",
+      "sourceUrl": "https://www.pexels.com/photo/9092015",
+      "isAi": false
+    },
+    {
+      "file": "sunrise-roads-11.webp",
+      "originalFile": "sunrise-roads-11.jpg",
+      "theme": "sunrise-roads",
+      "photographer": "Tomfisk",
+      "sourceUrl": "https://www.pexels.com/photo/18425298",
+      "isAi": false
+    },
+    {
+      "file": "sunrise-roads-12.webp",
+      "originalFile": "sunrise-roads-12.jpg",
+      "theme": "sunrise-roads",
+      "photographer": "Violetta B",
+      "sourceUrl": "https://www.pexels.com/photo/28574011",
+      "isAi": false
+    }
+  ],
+  "aiSources": []
+}

@@ -22,6 +22,6 @@ dependencyResolutionManagement {
   }
 }
 
-rootProject.name = "Aura Quotes"
+rootProject.name = "Stillwords"
 
 include(":app")

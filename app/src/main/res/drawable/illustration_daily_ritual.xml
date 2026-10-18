@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:aapt="http://schemas.android.com/aapt"
     android:width="200dp"
@@ -6,7 +6,7 @@
     android:viewportWidth="200"
     android:viewportHeight="150">
 
-    <!-- Soft aura bell halo -->
+    <!-- Soft stillwords bell halo -->
     <path
         android:pathData="M100,15 C135,15 160,40 160,75 C160,110 135,135 100,135 C65,135 40,110 40,75 C40,40 65,15 100,15 Z">
         <aapt:attr name="android:fillColor">
@@ -62,3 +62,4 @@
         android:pathData="M145,40 L146.5,44 L150.5,45.5 L146.5,47 L145,51 L143.5,47 L139.5,45.5 L143.5,44 Z"
         android:fillColor="#F7D08A" />
 </vector>
+

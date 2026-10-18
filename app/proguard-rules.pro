@@ -1,4 +1,4 @@
-# ProGuard and R8 rules for Aura Quotes
+# ProGuard and R8 rules for Stillwords
 
 # Keep line numbers and file names for debuggable crash reports
 -keepattributes SourceFile,LineNumberTable
@@ -10,10 +10,10 @@
     <init>();
 }
 -dontwarn androidx.room.paging.**
--keep class com.myplanetservices.auraquotes.data.local.** { *; }
+-keep class com.myplanetservices.stillwords.data.local.** { *; }
 
 # Domain and Data Models
--keep class com.myplanetservices.auraquotes.data.model.** { *; }
+-keep class com.myplanetservices.stillwords.data.model.** { *; }
 
 # Coil rules
 -keep class coil.** { *; }
@@ -35,7 +35,7 @@
 -keep class * extends androidx.work.CoroutineWorker {
     <init>(...);
 }
--keep class com.myplanetservices.auraquotes.notification.** { *; }
+-keep class com.myplanetservices.stillwords.notification.** { *; }
 
 # Google Play In-App Updates
 -keep class com.google.android.play.core.appupdate.** { *; }

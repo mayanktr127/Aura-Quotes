@@ -1,5 +1,5 @@
 {
-  "name": "Aura Quotes",
+  "name": "Stillwords",
   "description": "A calm, editorial daily quotes & inspiration companion with personalized discovery, card styling, and reflection.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]

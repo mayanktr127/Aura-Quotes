@@ -1,6 +1,6 @@
 # PHASE 2 — FOUNDATION, CLEANUP & RELEASE PLUMBING REPORT
 
-This report documents the completion of **Phase 2** for **Aura Quotes** in accordance with `AGENTS.md`.
+This report documents the completion of **Phase 2** for **Stillwords** (formerly Aura Quotes) in accordance with `AGENTS.md`.
 
 ---
 
@@ -18,9 +18,10 @@ This report documents the completion of **Phase 2** for **Aura Quotes** in accor
 ## 2. Summary of Work Executed in Phase 2
 
 ### 1. Package Rename & Namespace Migration
-* Changed `applicationId` to `com.myplanetservices.auraquotes`.
-* Changed `namespace` to `com.myplanetservices.auraquotes`.
-* Moved all source packages across `app/src/main/java`, `app/src/test/java`, and `app/src/androidTest/java` to `com/myplanetservices/auraquotes/`.
+* Changed `applicationId` to `com.myplanetservices.stillwords`.
+* Changed `namespace` to `com.myplanetservices.stillwords`.
+* Moved all source packages across `app/src/main/java`, `app/src/test/java`, and `app/src/androidTest/java` to `com/myplanetservices/stillwords/`.
+* Renamed application from "Aura Quotes" to **"Stillwords"**, updating all user-facing copy, notification channels, export watermarks, save directory (`Pictures/Stillwords`), and internal class names (`StillwordsDatabase`, `StillwordsNavHost`, `StillwordsTheme`, `NOIR_STILLWORDS`).
 * Updated all Kotlin imports, the `AndroidManifest.xml`, `FileProvider` authorities, Room DAO/Database, and navigation references.
 * *Note:* The `applicationId` cannot be changed after the initial Google Play Console release upload.
 
@@ -48,14 +49,14 @@ This report documents the completion of **Phase 2** for **Aura Quotes** in accor
 * Restored `validateDistributionUrl=true` in `gradle/wrapper/gradle-wrapper.properties`. Confirmed wrapper checksum verification passes.
 
 ### 6. Room Schema Export & Migration Setup
-* Enabled `exportSchema = true` in `AuraDatabase.kt`.
+* Enabled `exportSchema = true` in `StillwordsDatabase.kt`.
 * Configured KSP compiler argument `room.schemaLocation` targeting `app/schemas`.
 * Upgraded Room to `2.8.5` and KSP to `2.3.12`.
-* Generated and committed Room schema JSON `app/schemas/com.myplanetservices.auraquotes.data.local.AuraDatabase/1.json` (Database version 1).
+* Generated and committed Room schema JSON `app/schemas/com.myplanetservices.stillwords.data.local.StillwordsDatabase/1.json` (Database version 1).
 
 ### 7. Collection Detail Navigation Route
 * Added `CollectionDetailScreen.kt` and `CollectionDetailViewModel.kt`.
-* Registered `Screen.CollectionDetail.route` in `AuraNavHost.kt`.
+* Registered `Screen.CollectionDetail.route` in `StillwordsNavHost.kt`.
 * Connected collection cards in `FavoritesScreen.kt` so tapping a collection navigates directly to the collection's quotes with back handling and deletion support.
 
 ### 8. Daily Reminders (WorkManager)
@@ -97,7 +98,7 @@ This report documents the completion of **Phase 2** for **Aura Quotes** in accor
   1. The sharing engine was updated in `ImageExportUtil.kt` to capture a high-quality JPEG bitmap (`CardAspectRatio.SQUARE_1_1`) and store it in `context.cacheDir/shared_quotes/`.
   2. Generated content URI via `FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", cacheFile)` ensuring authority matches the manifest (`${applicationId}.fileprovider`).
   3. Configured `Intent(Intent.ACTION_SEND)` with `type = "image/jpeg"`, `putExtra(Intent.EXTRA_STREAM, uri)`, and `putExtra(Intent.EXTRA_TEXT, "...")`.
-  4. **Critical modern Android permission fix:** Added `intent.clipData = ClipData.newUri(context.contentResolver, "Aura Quote", uri)` and `intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)`. WhatsApp and Android 10+ share sheets require the content URI inside `ClipData` for grant read permissions to be honored.
+  4. **Critical modern Android permission fix:** Added `intent.clipData = ClipData.newUri(context.contentResolver, "Stillwords Quote", uri)` and `intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)`. WhatsApp and Android 10+ share sheets require the content URI inside `ClipData` for grant read permissions to be honored.
   5. Updated all share touchpoints throughout the app (`HomeScreen`, `QuoteDetailScreen`, `ExploreScreen`, `FavoritesScreen`, `CollectionDetailScreen`, `SearchScreen`, `QuoteDesignerViewModel`) to invoke `ImageExportUtil.shareCardImage(...)`.
 
 ---

@@ -19,11 +19,11 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.myplanetservices.auraquotes"
+    namespace = "com.myplanetservices.stillwords"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "com.myplanetservices.auraquotes"
+        applicationId = "com.myplanetservices.stillwords"
         minSdk = 26
         targetSdk = 36
         versionCode = appVersionCode
