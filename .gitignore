@@ -16,4 +16,5 @@ build/
 *.keystore
 keystore.properties
 Thumbs.db
+design-assets/backgrounds/
 
