@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stillwords · Create</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Figtree:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#0F0E0C}
+.ico{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.bg-water{background:linear-gradient(180deg,#26303a,#5d6b72 48%,#a9aba0 52%,#3b474e 54%,#1d252a)}
+.bg-mtn{background:linear-gradient(180deg,#232634,#7c6158 55%,#d29a6c 64%,#2b2326 65%,#151210)}
+.bg-gold{background:radial-gradient(circle at 50% 60%,#f1cf92 0,#d79a5c 14%,transparent 30%),linear-gradient(180deg,#3b2a24,#9a643f 50%,#5a3e26 62%,#21170f)}
+.bg-night{background:radial-gradient(1.4px 1.4px at 20% 25%,#F3EDE3 99%,transparent),radial-gradient(1px 1px at 70% 18%,#F3EDE3 99%,transparent),radial-gradient(1.2px 1.2px at 45% 40%,#F3EDE3 99%,transparent),radial-gradient(1px 1px at 85% 45%,#F3EDE3 99%,transparent),linear-gradient(180deg,#0b0f1c,#1d2640 75%,#0c0d12)}
+.bg-forest{background:radial-gradient(ellipse at 70% 0%,rgba(200,164,106,.35),transparent 55%),repeating-linear-gradient(90deg,rgba(8,12,9,.55) 0 10px,transparent 10px 34px),linear-gradient(180deg,#1c241e,#2e3b30 50%,#0f1410)}
+.bg-ink{background:#1A1816}
+.bg-dusk{background:linear-gradient(160deg,#1f2433,#3a2f3a 55%,#6b4a3e)}
+.bg-sand{background:linear-gradient(160deg,#cdb994,#a88c62)}
+.bg-forest-ink{background:linear-gradient(160deg,#18211b,#2c3a2f)}
+.scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,14,12,.2),rgba(15,14,12,.65))}
+.seg{flex:1;height:36px;border-radius:10px;border:none;font:500 12px 'Figtree',sans-serif;cursor:pointer}
+</style>
+</helmet>
+<div style="width:390px;height:844px;box-sizing:border-box;background:#0F0E0C;color:#F3EDE3;font-family:'Figtree',system-ui,sans-serif;display:flex;flex-direction:column;overflow:hidden">
+  <header style="padding:52px 12px 8px 20px;display:flex;align-items:center;justify-content:space-between">
+    <h1 style="margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:24px">Create</h1>
+    <div style="display:flex">
+      <button aria-label="Download image" style="width:44px;height:44px;border:none;background:transparent;color:#F3EDE3;display:flex;align-items:center;justify-content:center"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg></button>
+      <button aria-label="Share" style="width:44px;height:44px;border:none;background:transparent;color:#F3EDE3;display:flex;align-items:center;justify-content:center"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"></path></svg></button>
+    </div>
+  </header>
+
+  <div style="padding:0 40px;display:flex;justify-content:center">
+    <div class="{{previewClass}}" style="position:relative;width:264px;height:330px;border-radius:22px;overflow:hidden">
+      <div class="scrim"></div>
+      <div style="position:absolute;inset:0;padding:26px 24px 18px;display:flex;flex-direction:column;justify-content:center;gap:12px">
+        <p style="margin:0;font-family:'Newsreader',Georgia,serif;font-size:21px;line-height:1.3;text-wrap:balance">Rest is not the opposite of progress. It is part of it.</p>
+        <span style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:14px;color:rgba(243,237,227,.75)">— Stillwords</span>
+      </div>
+      <span style="position:absolute;left:0;right:0;bottom:14px;text-align:center;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:rgba(243,237,227,.55)">Stillwords</span>
+    </div>
+  </div>
+
+  <div style="flex:1;display:flex;flex-direction:column;gap:12px;padding:14px 20px 12px">
+    <div role="tablist" aria-label="Format" style="display:flex;gap:6px;padding:4px;background:#1A1816;border-radius:14px;border:1px solid #2E2A26">
+      <button class="seg" style="background:transparent;color:#A69F94">1:1</button>
+      <button class="seg" style="background:#2E2A26;color:#F3EDE3">4:5 Post</button>
+      <button class="seg" style="background:transparent;color:#A69F94">9:16 Story</button>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:baseline">
+      <h2 style="margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:18px">Backgrounds</h2>
+      <span style="font-size:12px;color:#A69F94">Photos · Ink · Text · Font</span>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px">
+      <sc-for list="{{bgs}}" as="b" hint-placeholder-count="8">
+        <button class="{{b.cls}}" onClick="{{b.pick}}" aria-label="{{b.label}}" style="{{b.ring}}" type="button">
+          <sc-if value="{{b.locked}}" hint-placeholder-val="{{false}}">
+            <span style="position:absolute;right:6px;top:6px;width:22px;height:22px;border-radius:50%;background:rgba(15,14,12,.7);color:#C8A46A;display:flex;align-items:center;justify-content:center"><svg viewBox="0 0 24 24" aria-hidden="true" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round"><rect x="5" y="11" width="14" height="9" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg></span>
+          </sc-if>
+        </button>
+      </sc-for>
+    </div>
+
+    <a href="UnlockSheet.dc.html" style="height:46px;border-radius:14px;border:1px dashed #8A6A30;background:rgba(200,164,106,.08);color:#E8D3A8;font:500 13px 'Figtree',sans-serif;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none">Watch a short video to unlock premium looks for 24 hours</a>
+
+    <div style="display:flex;gap:10px;margin-top:auto">
+      <button style="flex:1;height:52px;border-radius:16px;border:1px solid #2E2A26;background:transparent;color:#F3EDE3;font:500 15px 'Figtree',sans-serif">Save to gallery</button>
+      <button style="flex:1;height:52px;border-radius:16px;border:none;background:#C8A46A;color:#0F0E0C;font:600 15px 'Figtree',sans-serif">Share</button>
+    </div>
+  </div>
+
+  <nav aria-label="Main" style="height:76px;border-top:1px solid #2E2A26;background:#0F0E0C;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:8px 8px 14px;box-sizing:border-box;flex-shrink:0">
+    <a href="Main.dc.html" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;color:#A69F94;font-size:11px;font-weight:500"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>Today</a>
+    <a href="Explore.dc.html" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;color:#A69F94;font-size:11px;font-weight:500"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M15.5 8.5l-2 5-5 2 2-5z"></path></svg>Explore</a>
+    <a href="Designer.dc.html" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;color:#C8A46A;font-size:11px;font-weight:600"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"></rect><path d="M12 8v8M8 12h8"></path></svg>Create</a>
+    <a href="Saved.dc.html" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;color:#A69F94;font-size:11px;font-weight:500"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v16l-5-4-5 4z"></path></svg>Saved</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(props) { super(props); this.state = { picked: 0 }; }
+  renderVals() {
+    const list = [
+      { k: 'bg-water', label: 'Still water' },
+      { k: 'bg-mtn', label: 'Mountains' },
+      { k: 'bg-gold', label: 'Golden hour' },
+      { k: 'bg-night', label: 'Night sky' },
+      { k: 'bg-forest', label: 'Forest', locked: true },
+      { k: 'bg-ink', label: 'Ink' },
+      { k: 'bg-dusk', label: 'Dusk', locked: true },
+      { k: 'bg-forest-ink', label: 'Moss' }
+    ];
+    const picked = this.state.picked;
+    const bgs = list.map((b, i) => ({
+      cls: b.k,
+      label: b.label,
+      locked: !!b.locked,
+      pick: () => this.setState({ picked: i }),
+      ring: 'position:relative;height:72px;border-radius:12px;padding:0;cursor:pointer;' +
+        (i === picked ? 'border:2px solid #C8A46A;box-shadow:0 0 0 2px #0F0E0C inset' : 'border:1px solid #2E2A26')
+    }));
+    return { bgs, previewClass: list[picked].k };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stillwords · Welcome</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Figtree:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#0F0E0C}
+.sky{background:radial-gradient(1.4px 1.4px at 18% 14%,#F3EDE3 99%,transparent),radial-gradient(1px 1px at 72% 10%,#F3EDE3 99%,transparent),radial-gradient(1.2px 1.2px at 44% 22%,#F3EDE3 99%,transparent),radial-gradient(1px 1px at 86% 28%,#F3EDE3 99%,transparent),radial-gradient(1px 1px at 30% 32%,#F3EDE3 99%,transparent),radial-gradient(1px 1px at 60% 36%,#F3EDE3 99%,transparent),radial-gradient(circle at 74% 20%,#efe4cc 0,#efe4cc 22px,transparent 23px),linear-gradient(180deg,#0b0f1c 0%,#1c2540 48%,#5a5266 66%,#a07a62 74%,#0f0e0c 100%)}
+.hill{position:absolute;left:0;right:0;bottom:30%;height:22%;background:#141210;clip-path:polygon(0 60%,22% 28%,45% 52%,68% 18%,100% 46%,100% 100%,0 100%)}
+.fade{position:absolute;left:0;right:0;bottom:0;height:52%;background:linear-gradient(180deg,rgba(15,14,12,0),#0F0E0C 45%)}
+</style>
+</helmet>
+<div class="sky" style="width:390px;height:844px;position:relative;overflow:hidden;color:#F3EDE3;font-family:'Figtree',system-ui,sans-serif">
+  <div class="hill"></div><div class="fade"></div>
+  <div style="position:absolute;inset:0;display:flex;flex-direction:column;justify-content:flex-end;gap:26px;padding:0 28px 44px">
+    <div style="display:flex;align-items:center;gap:10px">
+      <svg width="28" height="22" viewBox="0 0 34 26" aria-hidden="true"><path d="M2 24V14C2 7 6 3 13 2v5c-4 1-6 3-6 7h6v10zM20 24V14c0-7 4-11 11-12v5c-4 1-6 3-6 7h6v10z" fill="#C8A46A"></path></svg>
+      <span style="font-family:'Newsreader',Georgia,serif;font-size:20px;letter-spacing:0.5px">Stillwords</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <h1 style="margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:40px;line-height:1.1;letter-spacing:-0.5px;text-wrap:balance">Words for the quiet moments.</h1>
+      <p style="margin:0;font-size:15px;line-height:1.55;color:#A69F94;max-width:300px">One thoughtful quote a day, with room to pause, save what stays with you, and share it beautifully.</p>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <a href="Onboarding2.dc.html" style="height:56px;border-radius:16px;background:#C8A46A;color:#0F0E0C;font:600 16px 'Figtree',sans-serif;display:flex;align-items:center;justify-content:center;text-decoration:none">Begin</a>
+      <a href="Main.dc.html" style="height:48px;display:flex;align-items:center;justify-content:center;color:#A69F94;font-size:14px;text-decoration:none">Skip for now</a>
+    </div>
+    <div style="display:flex;gap:6px;justify-content:center" aria-hidden="true">
+      <span style="width:22px;height:4px;border-radius:2px;background:#C8A46A"></span>
+      <span style="width:8px;height:4px;border-radius:2px;background:#2E2A26"></span>
+      <span style="width:8px;height:4px;border-radius:2px;background:#2E2A26"></span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

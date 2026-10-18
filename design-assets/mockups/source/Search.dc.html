@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stillwords · Search</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Figtree:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#0F0E0C}
+a{color:#C8A46A}a:hover{color:#E0C08A}
+.ico{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.lbl{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#C8A46A;font-weight:500}
+.res{display:flex;gap:14px;padding:16px 0;border-top:1px solid #2E2A26;text-decoration:none;color:#F3EDE3}
+.thumb{width:56px;height:72px;border-radius:12px;flex-shrink:0}
+.th-water{background:linear-gradient(180deg,#26303a,#5d6b72 48%,#a9aba0 52%,#3b474e 54%,#1d252a)}
+.th-forest{background:radial-gradient(ellipse at 70% 0%,rgba(200,164,106,.35),transparent 55%),repeating-linear-gradient(90deg,rgba(8,12,9,.55) 0 6px,transparent 6px 16px),linear-gradient(180deg,#1c241e,#2e3b30 50%,#0f1410)}
+.th-night{background:radial-gradient(1.2px 1.2px at 30% 30%,#F3EDE3 99%,transparent),radial-gradient(1px 1px at 70% 50%,#F3EDE3 99%,transparent),linear-gradient(180deg,#0b0f1c,#1d2640 75%,#0c0d12)}
+.th-quiet{background:radial-gradient(ellipse at 30% 30%,rgba(232,211,168,.35),transparent 60%),linear-gradient(180deg,#2a2622,#4a4038 60%,#1c1916)}
+mark{background:rgba(200,164,106,.22);color:#F3EDE3;border-radius:3px;padding:0 2px}
+</style>
+</helmet>
+<div style="width:390px;height:844px;box-sizing:border-box;background:#0F0E0C;color:#F3EDE3;font-family:'Figtree',system-ui,sans-serif;display:flex;flex-direction:column;overflow:hidden">
+
+  <header style="padding:44px 12px 0 8px;display:flex;align-items:center;gap:4px">
+    <a href="Main.dc.html" aria-label="Back" style="width:44px;height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#F3EDE3"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+    <label for="q" style="flex:1;display:flex;align-items:center;gap:10px;height:48px;padding:0 8px 0 14px;border-radius:14px;background:#1A1816;border:1px solid #C8A46A;color:#A69F94">
+      <span style="position:absolute;left:-9999px">Search quotes</span>
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px"><circle cx="11" cy="11" r="6"></circle><path d="M20 20l-4.5-4.5"></path></svg>
+      <input id="q" value="calm" style="flex:1;min-width:0;border:none;background:transparent;color:#F3EDE3;font:400 15px 'Figtree',sans-serif;outline:none">
+      <button aria-label="Clear search" style="width:36px;height:36px;border:none;background:transparent;color:#A69F94;display:flex;align-items:center;justify-content:center;cursor:pointer"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+    </label>
+  </header>
+
+  <main style="flex:1;display:flex;flex-direction:column;gap:16px;padding:16px 20px 0;overflow:hidden">
+    <div role="tablist" aria-label="Filter results" style="display:flex;gap:8px">
+      <sc-for list="{{filters}}" as="f" hint-placeholder-count="4">
+        <button role="tab" aria-selected="{{f.on}}" onClick="{{f.pick}}" style="{{f.style}}">{{f.label}}</button>
+      </sc-for>
+    </div>
+
+    <span class="lbl">24 quotes · 2 topics</span>
+
+    <div style="display:flex;gap:8px">
+      <a href="Read.dc.html" style="flex:1;display:flex;align-items:center;gap:10px;height:56px;padding:0 12px;border-radius:14px;background:#1A1816;border:1px solid #2E2A26;text-decoration:none;color:#F3EDE3;font-size:14px"><span class="th-water" style="width:32px;height:32px;border-radius:8px"></span>Peace</a>
+      <a href="Read.dc.html" style="flex:1;display:flex;align-items:center;gap:10px;height:56px;padding:0 12px;border-radius:14px;background:#1A1816;border:1px solid #2E2A26;text-decoration:none;color:#F3EDE3;font-size:14px"><span class="th-forest" style="width:32px;height:32px;border-radius:8px"></span>Mindfulness</a>
+    </div>
+
+    <div style="display:flex;flex-direction:column">
+      <a class="res" href="Quote.dc.html"><span class="thumb th-water"></span><span style="display:flex;flex-direction:column;gap:6px"><span style="font-family:'Newsreader',Georgia,serif;font-size:17px;line-height:1.35">A <mark>calm</mark> mind is not empty. It is simply not in a hurry.</span><span style="font-size:12px;color:#A69F94">Peace · Stillwords</span></span></a>
+      <a class="res" href="Quote.dc.html"><span class="thumb th-forest"></span><span style="display:flex;flex-direction:column;gap:6px"><span style="font-family:'Newsreader',Georgia,serif;font-size:17px;line-height:1.35">Breathe first. The answer can wait for <mark>calm</mark> to arrive.</span><span style="font-size:12px;color:#A69F94">Mindfulness · Stillwords</span></span></a>
+      <a class="res" href="Quote.dc.html"><span class="thumb th-night"></span><span style="display:flex;flex-direction:column;gap:6px"><span style="font-family:'Newsreader',Georgia,serif;font-size:17px;line-height:1.35">Wisdom often speaks in a <mark>calm</mark> voice. Lean in to hear it.</span><span style="font-size:12px;color:#A69F94">Wisdom · Stillwords</span></span></a>
+      <a class="res" href="Quote.dc.html"><span class="thumb th-quiet"></span><span style="display:flex;flex-direction:column;gap:6px"><span style="font-family:'Newsreader',Georgia,serif;font-size:17px;line-height:1.35">Study with a <mark>calm</mark> desk and a clear hour.</span><span style="font-size:12px;color:#A69F94">Study · Stillwords</span></span></a>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p){ super(p); this.state = { f: 'All' }; }
+  renderVals() {
+    const filters = ['All','Quotes','Topics','Authors'].map(l => {
+      const on = this.state.f === l;
+      return {
+        label: l,
+        on: on ? 'true' : 'false',
+        pick: () => this.setState({ f: l }),
+        style: 'height:36px;padding:0 14px;border-radius:999px;font:500 13px Figtree,sans-serif;cursor:pointer;' + (on
+          ? 'border:1px solid #C8A46A;background:rgba(200,164,106,.12);color:#E8D3A8'
+          : 'border:1px solid #2E2A26;background:transparent;color:#F3EDE3')
+      };
+    });
+    return { filters };
+  }
+}
+</script>
+</body>
+</html>

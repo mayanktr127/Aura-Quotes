@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stillwords · Saved (empty)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Figtree:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#0F0E0C}
+a{color:#C8A46A}a:hover{color:#E0C08A}
+.ico{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.tab{flex:1;height:38px;border-radius:10px;border:none;font:500 13px 'Figtree',sans-serif;cursor:pointer}
+</style>
+</helmet>
+<div style="width:390px;height:844px;box-sizing:border-box;background:#0F0E0C;color:#F3EDE3;font-family:'Figtree',system-ui,sans-serif;display:flex;flex-direction:column;overflow:hidden">
+  <main style="flex:1;display:flex;flex-direction:column;gap:18px;padding:52px 20px 0;overflow:hidden">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h1 style="margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:30px;letter-spacing:-0.3px">Saved</h1>
+      <button aria-label="New collection" style="width:44px;height:44px;border-radius:50%;border:1px solid #2E2A26;background:transparent;color:#C8A46A;display:flex;align-items:center;justify-content:center"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v12M6 12h12"></path></svg></button>
+    </div>
+
+    <div role="tablist" aria-label="Saved sections" style="display:flex;gap:6px;padding:4px;background:#1A1816;border-radius:14px;border:1px solid #2E2A26">
+      <button class="tab" role="tab" aria-selected="true" style="background:#2E2A26;color:#F3EDE3">Quotes</button>
+      <button class="tab" role="tab" aria-selected="false" style="background:transparent;color:#A69F94">Collections</button>
+      <button class="tab" role="tab" aria-selected="false" style="background:transparent;color:#A69F94">History</button>
+    </div>
+
+    <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;padding:0 20px 40px;text-align:center">
+      <div style="position:relative;width:150px;height:170px" aria-hidden="true">
+        <span style="position:absolute;left:8px;top:22px;width:104px;height:136px;border-radius:16px;border:1px solid #2E2A26;background:#1A1816;transform:rotate(-8deg)"></span>
+        <span style="position:absolute;left:38px;top:10px;width:104px;height:136px;border-radius:16px;border:1px dashed #4A443D;background:#0F0E0C;transform:rotate(6deg);display:flex;align-items:center;justify-content:center;color:#C8A46A"><svg class="ico" viewBox="0 0 24 24" style="width:30px;height:30px"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"></path></svg></span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <h2 style="margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:24px;line-height:1.2">Nothing saved yet</h2>
+        <p style="margin:0;font-size:14px;line-height:1.55;color:#A69F94;max-width:270px">When a quote stays with you, tap the heart. It will wait for you here.</p>
+      </div>
+      <a href="Read.dc.html" style="height:52px;padding:0 28px;border-radius:16px;background:#C8A46A;color:#0F0E0C;font:600 15px 'Figtree',sans-serif;display:flex;align-items:center;justify-content:center;text-decoration:none">Start reading</a>
+    </div>
+  </main>
+
+  <nav aria-label="Main" style="height:76px;border-top:1px solid #2E2A26;background:#0F0E0C;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:8px 8px 14px;box-sizing:border-box;flex-shrink:0">
+    <a href="Main.dc.html" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;color:#A69F94;font-size:11px;font-weight:500"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>Today</a>
+    <a href="Explore.dc.html" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;color:#A69F94;font-size:11px;font-weight:500"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M15.5 8.5l-2 5-5 2 2-5z"></path></svg>Explore</a>
+    <a href="Designer.dc.html" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;color:#A69F94;font-size:11px;font-weight:500"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"></rect><path d="M12 8v8M8 12h8"></path></svg>Create</a>
+    <a href="Saved.dc.html" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;color:#C8A46A;font-size:11px;font-weight:600"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v16l-5-4-5 4z"></path></svg>Saved</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

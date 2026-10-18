@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stillwords · Unlock premium looks</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Figtree:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#0F0E0C}
+a{color:#C8A46A}a:hover{color:#E0C08A}
+.ico{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.dusk{background:linear-gradient(160deg,#1f2433,#3a2f3a 55%,#6b4a3e)}
+.forest{background:radial-gradient(ellipse at 70% 0%,rgba(200,164,106,.35),transparent 55%),repeating-linear-gradient(90deg,rgba(8,12,9,.55) 0 8px,transparent 8px 22px),linear-gradient(180deg,#1c241e,#2e3b30 50%,#0f1410)}
+.sand{background:linear-gradient(160deg,#cdb994,#a88c62)}
+.water{background:linear-gradient(180deg,#26303a,#5d6b72 48%,#a9aba0 52%,#3b474e 54%,#1d252a)}
+.sw{width:64px;height:80px;border-radius:12px;flex-shrink:0;position:relative}
+</style>
+</helmet>
+<div style="width:390px;height:844px;box-sizing:border-box;background:#0F0E0C;color:#F3EDE3;font-family:'Figtree',system-ui,sans-serif;position:relative;overflow:hidden">
+
+  <div aria-hidden="true" style="position:absolute;inset:0;display:flex;flex-direction:column">
+    <div style="padding:52px 20px 8px;font-family:'Newsreader',Georgia,serif;font-size:24px">Create</div>
+    <div style="display:flex;justify-content:center;padding-top:8px">
+      <div class="dusk" style="width:264px;height:330px;border-radius:22px"></div>
+    </div>
+  </div>
+  <div style="position:absolute;inset:0;background:rgba(8,7,6,.62)"></div>
+
+  <section role="dialog" aria-modal="true" aria-labelledby="unlock-title" style="position:absolute;left:0;right:0;bottom:0;background:#1A1816;border-top:1px solid #2E2A26;border-radius:28px 28px 0 0;padding:10px 24px 34px;display:flex;flex-direction:column;gap:20px">
+    <span aria-hidden="true" style="align-self:center;width:40px;height:4px;border-radius:2px;background:#4A443D"></span>
+
+    <sc-if value="{{locked}}" hint-placeholder-val="{{true}}">
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#C8A46A;font-weight:500">Premium look · Dusk</span>
+          <h2 id="unlock-title" style="margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:26px;line-height:1.2">Unlock every premium look for 24 hours</h2>
+          <p style="margin:0;font-size:14px;line-height:1.55;color:#A69F94">Watch one short video and use all locked backgrounds, fonts and frames until this time tomorrow.</p>
+        </div>
+
+        <div style="display:flex;gap:10px" aria-label="Looks you unlock">
+          <span class="sw dusk"></span><span class="sw forest"></span><span class="sw sand"></span>
+          <span class="sw" style="background:#0F0E0C;border:1px solid #2E2A26;display:flex;align-items:center;justify-content:center;font-size:13px;color:#A69F94">+ more</span>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <button onClick="{{unlock}}" style="height:56px;border-radius:16px;border:none;background:#C8A46A;color:#0F0E0C;font:600 16px 'Figtree',sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="width:20px;height:20px"><path d="M8 5l11 7-11 7z"></path></svg>Watch video</button>
+          <span style="text-align:center;font-size:12px;color:#A69F94">Ad · about 30 seconds</span>
+          <a href="Designer.dc.html" style="height:48px;display:flex;align-items:center;justify-content:center;color:#A69F94;font-size:14px;text-decoration:none">Not now</a>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{unlocked}}" hint-placeholder-val="{{false}}">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center;padding-top:8px">
+        <span aria-hidden="true" style="width:64px;height:64px;border-radius:50%;background:rgba(200,164,106,.14);border:1px solid #C8A46A;color:#C8A46A;display:flex;align-items:center;justify-content:center"><svg class="ico" viewBox="0 0 24 24" style="width:28px;height:28px"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg></span>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <h2 style="margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:26px">Premium looks unlocked</h2>
+          <p style="margin:0;font-size:14px;line-height:1.55;color:#A69F94">Enjoy them until 4:07 AM tomorrow.</p>
+        </div>
+        <a href="Designer.dc.html" style="align-self:stretch;height:56px;border-radius:16px;background:#C8A46A;color:#0F0E0C;font:600 16px 'Figtree',sans-serif;display:flex;align-items:center;justify-content:center;text-decoration:none">Use Dusk</a>      </div>
+    </sc-if>
+
+    <sc-if value="{{locked}}" hint-placeholder-val="{{true}}">
+      <p style="margin:0;font-size:11px;line-height:1.5;color:#6E675E;text-align:center">If no video is available, try again in a little while. Your design is kept.</p>
+    </sc-if>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p){ super(p); this.state = { done: false }; }
+  renderVals() {
+    const d = this.state.done;
+    return {
+      locked: !d,
+      unlocked: d,
+      unlock: () => this.setState({ done: true })
+    };
+  }
+}
+</script>
+</body>
+</html>

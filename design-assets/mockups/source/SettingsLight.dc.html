@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stillwords · Settings (light)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Figtree:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#F7F3EC}
+a{color:#8A6A30}a:hover{color:#6E5426}
+.ico{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.lbl{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#8A6A30;font-weight:500;padding:0 4px}
+.group{background:#EFE9DF;border:1px solid #DCD3C4;border-radius:18px;overflow:hidden;display:flex;flex-direction:column}
+.row{display:flex;align-items:center;gap:14px;min-height:54px;padding:0 16px;border-top:1px solid #DCD3C4;text-decoration:none;color:#1C1A17;font-size:14px}
+.row:first-child{border-top:none}
+.row .val{margin-left:auto;font-size:13px;color:#6B645A}
+.row .chev{width:16px;height:16px;color:#9A9184}
+.seg{display:flex;gap:4px;padding:3px;border-radius:10px;background:#F7F3EC;border:1px solid #DCD3C4;margin-left:auto}
+.seg button{height:30px;padding:0 10px;border-radius:8px;border:none;font:500 12px 'Figtree',sans-serif;cursor:pointer}
+</style>
+</helmet>
+<div style="width:390px;height:844px;box-sizing:border-box;background:#F7F3EC;color:#1C1A17;font-family:'Figtree',system-ui,sans-serif;display:flex;flex-direction:column;overflow:hidden">
+
+  <header style="padding:44px 12px 8px;display:flex;align-items:center;gap:4px">
+    <a href="MainLight.dc.html" aria-label="Back to Today" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#1C1A17"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+    <h1 style="margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:26px;letter-spacing:-0.3px">Settings</h1>
+  </header>
+
+  <main style="flex:1;display:flex;flex-direction:column;gap:20px;padding:8px 20px 24px;overflow:hidden">
+
+    <section style="display:flex;flex-direction:column;gap:10px">
+      <span class="lbl">Daily quote</span>
+      <div class="group">
+        <div class="row">
+          <span style="display:flex;flex-direction:column;gap:2px">Morning reminder<small style="font-size:12px;color:#6B645A">A gentle note with today's quote</small></span>
+          <button role="switch" aria-checked="{{remindOn}}" aria-label="Morning reminder" onClick="{{toggleRemind}}" style="{{switchStyle}}"><span style="{{knobStyle}}"></span></button>
+        </div>
+        <a class="row" href="#">Reminder time<span class="val">{{remindTime}}</span><svg class="ico chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></a>
+        <a class="row" href="#">Topics I like<span class="val">Peace, Courage +3</span><svg class="ico chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></a>
+      </div>
+    </section>
+
+    <section style="display:flex;flex-direction:column;gap:10px">
+      <span class="lbl">Look</span>
+      <div class="group">
+        <div class="row">Theme
+          <div class="seg" role="radiogroup" aria-label="Theme">
+            <sc-for list="{{themes}}" as="t" hint-placeholder-count="3">
+              <button role="radio" aria-checked="{{t.on}}" onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button>
+            </sc-for>
+          </div>
+        </div>
+        <div class="row" style="flex-direction:column;align-items:stretch;gap:10px;padding:14px 16px">
+          <div style="display:flex;justify-content:space-between"><span>Quote text size</span><span style="font-size:13px;color:#6B645A">Medium</span></div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-family:'Newsreader',Georgia,serif;font-size:14px;color:#6B645A">Aa</span>
+            <div style="flex:1;height:4px;border-radius:2px;background:#DCD3C4;position:relative"><div style="position:absolute;left:0;top:0;bottom:0;width:50%;border-radius:2px;background:#8A6A30"></div><div style="position:absolute;left:50%;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:#1C1A17"></div></div>
+            <span style="font-family:'Newsreader',Georgia,serif;font-size:22px;color:#6B645A">Aa</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="display:flex;flex-direction:column;gap:10px">
+      <span class="lbl">About</span>
+      <div class="group">
+        <a class="row" href="#">Rate Stillwords<svg class="ico chev" viewBox="0 0 24 24" aria-hidden="true" style="margin-left:auto"><path d="M9 5l7 7-7 7"></path></svg></a>
+        <a class="row" href="#">Share with a friend<svg class="ico chev" viewBox="0 0 24 24" aria-hidden="true" style="margin-left:auto"><path d="M9 5l7 7-7 7"></path></svg></a>
+        <a class="row" href="#">Photo credits<span class="val">84 Pexels photos</span><svg class="ico chev" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"></path></svg></a>
+        <a class="row" href="#">Privacy policy<svg class="ico chev" viewBox="0 0 24 24" aria-hidden="true" style="margin-left:auto"><path d="M9 5l7 7-7 7"></path></svg></a>
+        <a class="row" href="#">Ad privacy choices<svg class="ico chev" viewBox="0 0 24 24" aria-hidden="true" style="margin-left:auto"><path d="M9 5l7 7-7 7"></path></svg></a>
+      </div>
+    </section>
+
+    <p style="margin:auto 0 0;text-align:center;font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:13px;color:#9A9184">Stillwords · version [1.0.0]</p>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p){ super(p); this.state = { remind: true, theme: 'Light' }; }
+  renderVals() {
+    const on = this.state.remind;
+    const themes = ['System','Dark','Light'].map(l => ({
+      label: l,
+      on: this.state.theme === l ? 'true' : 'false',
+      pick: () => this.setState({ theme: l }),
+      style: this.state.theme === l
+        ? 'height:30px;padding:0 10px;border-radius:8px;border:none;font:500 12px Figtree,sans-serif;background:#DCD3C4;color:#1C1A17;cursor:pointer'
+        : 'height:30px;padding:0 10px;border-radius:8px;border:none;font:500 12px Figtree,sans-serif;background:transparent;color:#6B645A;cursor:pointer'
+    }));
+    return {
+      remindOn: on ? 'true' : 'false',
+      remindTime: on ? '7:30 AM' : 'Off',
+      toggleRemind: () => this.setState({ remind: !on }),
+      switchStyle: 'margin-left:auto;width:48px;height:28px;border-radius:999px;border:none;padding:3px;cursor:pointer;display:flex;box-sizing:border-box;' + (on ? 'background:#8A6A30;justify-content:flex-end' : 'background:#DCD3C4;justify-content:flex-start'),
+      knobStyle: 'display:block;width:22px;height:22px;border-radius:50%;background:' + (on ? '#F7F3EC' : '#6B645A'),
+      themes
+    };
+  }
+}
+</script>
+</body>
+</html>

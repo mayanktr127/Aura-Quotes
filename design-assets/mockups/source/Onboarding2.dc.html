@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stillwords · Choose topics</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Figtree:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#0F0E0C}
+a{color:#C8A46A}a:hover{color:#E0C08A}
+.ico{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+</style>
+</helmet>
+<div style="width:390px;height:844px;box-sizing:border-box;background:#0F0E0C;color:#F3EDE3;font-family:'Figtree',system-ui,sans-serif;display:flex;flex-direction:column;padding:44px 0 34px;overflow:hidden">
+
+  <header style="display:flex;justify-content:space-between;align-items:center;padding:0 12px 0 8px">
+    <a href="Welcome.dc.html" aria-label="Back" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#F3EDE3"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+    <div style="display:flex;gap:6px" aria-label="Step 2 of 3">
+      <span style="width:8px;height:4px;border-radius:2px;background:#4A443D"></span>
+      <span style="width:22px;height:4px;border-radius:2px;background:#C8A46A"></span>
+      <span style="width:8px;height:4px;border-radius:2px;background:#2E2A26"></span>
+    </div>
+    <a href="Main.dc.html" style="height:44px;padding:0 8px;display:flex;align-items:center;color:#A69F94;font-size:14px;text-decoration:none">Skip</a>
+  </header>
+
+  <div style="padding:20px 24px 0;display:flex;flex-direction:column;gap:10px">
+    <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#C8A46A;font-weight:500">Step 2 of 3</span>
+    <h1 style="margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:32px;line-height:1.15;letter-spacing:-0.3px">What would you like to hear more of?</h1>
+    <p style="margin:0;font-size:14px;line-height:1.5;color:#A69F94">Pick three or more. Your daily quote will lean towards these.</p>
+  </div>
+
+  <div style="flex:1;padding:22px 24px 0;display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start;overflow:hidden">
+    <sc-for list="{{topics}}" as="t" hint-placeholder-count="22">
+      <button aria-pressed="{{t.on}}" onClick="{{t.pick}}" style="{{t.style}}">{{t.label}}</button>
+    </sc-for>
+  </div>
+
+  <div style="padding:0 24px;display:flex;flex-direction:column;gap:10px">
+    <span style="text-align:center;font-size:13px;color:#A69F94">{{countText}}</span>
+    <a href="Onboarding3.dc.html" style="{{ctaStyle}}">Continue</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p){ super(p); this.state = { sel: ['Peace','Courage','Gratitude','Study'] }; }
+  renderVals() {
+    const all = ['Motivation','Success','Discipline','Fitness','Work','Courage','Confidence','Leadership','Growth','Peace','Mindfulness','Healing','Life','Gratitude','Self-Love','Love','Relationships','Friendship','Happiness','Wisdom','Creativity','Study'];
+    const sel = this.state.sel;
+    const topics = all.map(l => {
+      const on = sel.indexOf(l) > -1;
+      return {
+        label: l,
+        on: on ? 'true' : 'false',
+        pick: () => this.setState({ sel: on ? sel.filter(x => x !== l) : sel.concat([l]) }),
+        style: 'height:42px;padding:0 16px;border-radius:999px;font:500 14px Figtree,sans-serif;cursor:pointer;' + (on
+          ? 'border:1px solid #C8A46A;background:rgba(200,164,106,.14);color:#E8D3A8'
+          : 'border:1px solid #2E2A26;background:transparent;color:#F3EDE3')
+      };
+    });
+    const n = sel.length;
+    const ready = n >= 3;
+    return {
+      topics,
+      countText: ready ? n + ' topics chosen' : 'Choose ' + (3 - n) + ' more',
+      ctaStyle: 'height:56px;border-radius:16px;font:600 16px Figtree,sans-serif;display:flex;align-items:center;justify-content:center;text-decoration:none;' + (ready
+        ? 'background:#C8A46A;color:#0F0E0C'
+        : 'background:#2E2A26;color:#8C857B;pointer-events:none')
+    };
+  }
+}
+</script>
+</body>
+</html>

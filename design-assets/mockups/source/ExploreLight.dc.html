@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stillwords · Explore (light)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Figtree:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#F7F3EC}
+.ico{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.tile{position:relative;height:120px;border-radius:18px;overflow:hidden;display:flex;align-items:flex-end;padding:14px;box-sizing:border-box;text-decoration:none;color:#F3EDE3}
+.tile::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,14,12,0) 30%,rgba(15,14,12,.8) 100%)}
+.tile span{position:relative;z-index:1;font-family:'Newsreader',Georgia,serif;font-size:20px}
+.t-water{background:linear-gradient(180deg,#26303a,#5d6b72 48%,#a9aba0 52%,#3b474e 54%,#1d252a)}
+.t-mtn{background:linear-gradient(180deg,#232634,#7c6158 55%,#d29a6c 64%,#2b2326 65%,#151210)}
+.t-gold{background:radial-gradient(circle at 50% 60%,#f1cf92 0,#d79a5c 14%,transparent 30%),linear-gradient(180deg,#3b2a24,#9a643f 50%,#5a3e26 62%,#21170f)}
+.t-night{background:radial-gradient(1.4px 1.4px at 20% 25%,#F3EDE3 99%,transparent),radial-gradient(1px 1px at 70% 18%,#F3EDE3 99%,transparent),radial-gradient(1.2px 1.2px at 45% 40%,#F3EDE3 99%,transparent),radial-gradient(1px 1px at 85% 45%,#F3EDE3 99%,transparent),radial-gradient(1px 1px at 30% 55%,#F3EDE3 99%,transparent),linear-gradient(180deg,#0b0f1c,#1d2640 75%,#0c0d12)}
+.quick{display:flex;align-items:center;gap:12px;height:60px;padding:0 14px;border-radius:16px;background:#EFE9DF;border:1px solid #DCD3C4;text-decoration:none;color:#1C1A17;font-size:14px;font-weight:500}
+.quick i{width:34px;height:34px;border-radius:10px;background:rgba(200,164,106,.12);color:#8A6A30;display:flex;align-items:center;justify-content:center;font-style:normal}
+.chip{flex-shrink:0;height:40px;padding:0 16px;border-radius:999px;border:1px solid #DCD3C4;background:transparent;color:#1C1A17;font:500 13px 'Figtree',sans-serif}
+</style>
+</helmet>
+<div style="width:390px;height:844px;box-sizing:border-box;background:#F7F3EC;color:#1C1A17;font-family:'Figtree',system-ui,sans-serif;display:flex;flex-direction:column;overflow:hidden">
+  <main style="flex:1;display:flex;flex-direction:column;gap:22px;padding:52px 20px 0;overflow:hidden">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <h1 style="margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:30px;letter-spacing:-0.3px">Explore</h1>
+      <label for="explore-search" style="display:flex;align-items:center;gap:10px;height:48px;padding:0 16px;border-radius:14px;background:#EFE9DF;border:1px solid #DCD3C4;color:#6B645A">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"></circle><path d="M20 20l-4.5-4.5"></path></svg>
+        <input id="explore-search" placeholder="Search words, topics or authors" style="flex:1;border:none;background:transparent;color:#1C1A17;font:400 14px 'Figtree',sans-serif;outline:none">
+      </label>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+      <a class="quick" href="SavedLight.dc.html"><i><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"></path></svg></i>Favourites</a>
+      <a class="quick" href="SavedLight.dc.html"><i><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px"><path d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"></path></svg></i>Collections</a>
+      <a class="quick" href="Designer.dc.html"><i><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4"></path></svg></i>My quotes</a>
+      <a class="quick" href="SavedLight.dc.html"><i><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px"><circle cx="12" cy="12" r="8"></circle><path d="M12 8v4l3 2"></path></svg></i>Recently read</a>
+    </div>
+
+    <section style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <h2 style="margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:20px">Topics</h2>
+        <a href="#" style="font-size:13px;color:#8A6A30;text-decoration:none">All 22</a>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+        <a class="tile t-water" href="Read.dc.html"><span>Peace</span></a>
+        <a class="tile t-mtn" href="Read.dc.html"><span>Courage</span></a>
+        <a class="tile t-gold" href="Read.dc.html"><span>Love</span></a>
+        <a class="tile t-night" href="Read.dc.html"><span>Wisdom</span></a>
+      </div>
+    </section>
+
+    <section style="display:flex;flex-direction:column;gap:12px">
+      <h2 style="margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:20px">Moments</h2>
+      <div style="display:flex;gap:8px;overflow:hidden">
+        <button class="chip">Morning</button>
+        <button class="chip">Before work</button>
+        <button class="chip">Study time</button>
+        <button class="chip">Before sleep</button>
+      </div>
+    </section>
+  </main>
+
+  <nav aria-label="Main" style="height:76px;border-top:1px solid #DCD3C4;background:#F7F3EC;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:8px 8px 14px;box-sizing:border-box">
+    <a href="MainLight.dc.html" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;color:#6B645A;font-size:11px;font-weight:500"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>Today</a>
+    <a href="ExploreLight.dc.html" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;color:#8A6A30;font-size:11px;font-weight:600"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M15.5 8.5l-2 5-5 2 2-5z"></path></svg>Explore</a>
+    <a href="Designer.dc.html" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;color:#6B645A;font-size:11px;font-weight:500"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"></rect><path d="M12 8v8M8 12h8"></path></svg>Create</a>
+    <a href="SavedLight.dc.html" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;color:#6B645A;font-size:11px;font-weight:500"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v16l-5-4-5 4z"></path></svg>Saved</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

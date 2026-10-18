@@ -182,11 +182,12 @@ object ImageExportUtil {
         }
 
         // Quote Text Paint with dynamic auto-shrinking: adapts text size so it never overflows or clips
+        // Minimum fontSize is 48f (equivalent to 16sp at 1080px / 3.0 density)
         val initialFontSize = when {
-            quoteText.length > 180 -> 46f
-            quoteText.length > 120 -> 52f
-            quoteText.length > 60  -> 64f
-            else -> 74f
+            quoteText.length > 140 -> 48f
+            quoteText.length > 90  -> 56f
+            quoteText.length > 50  -> 66f
+            else -> 76f
         }
 
         val textPaint = TextPaint().apply {
@@ -228,7 +229,7 @@ object ImageExportUtil {
                 )
             }
 
-            if (staticLayout.height <= maxAvailableTextHeight || currentFontSize <= 26f) {
+            if (staticLayout.height <= maxAvailableTextHeight || currentFontSize <= 48f) {
                 break
             }
             currentFontSize -= 2f

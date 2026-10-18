@@ -234,13 +234,12 @@ fun QuoteCard(
             val fontScale = density.fontScale.coerceIn(1.0f, 1.3f)
             val scaleCompensation = 1.0f / (1.0f + (fontScale - 1.0f) * 0.5f)
             val baseSp = when {
-                quote.text.length > 180 -> if (isHero) 16f else 13.5f
-                quote.text.length > 130 -> if (isHero) 18.5f else 15f
-                quote.text.length > 80  -> if (isHero) 21.5f else 17.5f
-                quote.text.length > 40  -> if (isHero) 25f else 20.5f
-                else                    -> if (isHero) 29f else 23.5f
+                quote.text.length > 140 -> if (isHero) 18f else 16f
+                quote.text.length > 90  -> if (isHero) 21f else 18f
+                quote.text.length > 50  -> if (isHero) 24f else 20.5f
+                else                    -> if (isHero) 28f else 23.5f
             }
-            val fontSize = (baseSp * scaleCompensation).coerceAtLeast(12.5f).sp
+            val fontSize = (baseSp * scaleCompensation).coerceAtLeast(16f).sp
             val lineHeight = (fontSize.value * 1.38f).sp
 
             // Quote Text: Never truncated with "...", never hidden or capped by maxLines

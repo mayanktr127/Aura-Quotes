@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stillwords · Foundations</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Figtree:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#0F0E0C}
+.sw{display:flex;flex-direction:column;gap:6px}
+.sw b{display:block;height:56px;border-radius:12px;border:1px solid #2E2A26}
+.sw span{font-size:12px;color:#F3EDE3}
+.sw em{font-style:normal;font-size:11px;color:#A69F94}
+.lbl{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#C8A46A;font-weight:500}
+</style>
+</helmet>
+<div style="width:880px;height:844px;box-sizing:border-box;padding:48px;background:#0F0E0C;color:#F3EDE3;font-family:'Figtree',system-ui,sans-serif;display:flex;flex-direction:column;gap:36px">
+  <div style="display:flex;justify-content:space-between;align-items:flex-end">
+    <div style="display:flex;flex-direction:column;gap:8px">
+      <span class="lbl">Foundations</span>
+      <h1 style="margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:44px;letter-spacing:-0.5px">Ink &amp; Brass</h1>
+    </div>
+    <p style="margin:0;max-width:330px;font-size:13px;line-height:1.55;color:#A69F94">Warm ink backgrounds, ivory type and one brass accent used sparingly: active tab, category label, the main button.</p>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px">
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <span class="lbl">Dark theme · default</span>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+        <div class="sw"><b style="background:#0F0E0C"></b><span>Ink</span><em>#0F0E0C · background</em></div>
+        <div class="sw"><b style="background:#1A1816"></b><span>Charcoal</span><em>#1A1816 · cards</em></div>
+        <div class="sw"><b style="background:#2E2A26"></b><span>Hairline</span><em>#2E2A26 · borders</em></div>
+        <div class="sw"><b style="background:#F3EDE3"></b><span>Ivory</span><em>#F3EDE3 · text</em></div>
+        <div class="sw"><b style="background:#A69F94"></b><span>Stone</span><em>#A69F94 · secondary</em></div>
+        <div class="sw"><b style="background:#C8A46A"></b><span>Brass</span><em>#C8A46A · accent</em></div>
+      </div>
+    </section>
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <span class="lbl">Light theme</span>
+      <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px">
+        <div class="sw"><b style="background:#F7F3EC"></b><span>Paper</span><em>#F7F3EC · background</em></div>
+        <div class="sw"><b style="background:#EFE9DF"></b><span>Linen</span><em>#EFE9DF · cards</em></div>
+        <div class="sw"><b style="background:#DCD3C4"></b><span>Hairline</span><em>#DCD3C4 · borders</em></div>
+        <div class="sw"><b style="background:#1C1A17"></b><span>Ink text</span><em>#1C1A17 · text</em></div>
+        <div class="sw"><b style="background:#6B645A"></b><span>Taupe</span><em>#6B645A · secondary</em></div>
+        <div class="sw"><b style="background:#8A6A30"></b><span>Deep brass</span><em>#8A6A30 · accent</em></div>
+      </div>
+    </section>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:40px">
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <span class="lbl">Type</span>
+      <div style="display:flex;flex-direction:column;gap:10px;border-top:1px solid #2E2A26;padding-top:14px">
+        <span style="font-family:'Newsreader',Georgia,serif;font-size:30px;line-height:1.2">Quote · Newsreader 28–34</span>
+        <span style="font-family:'Newsreader',Georgia,serif;font-size:20px">Section title · Newsreader 20</span>
+        <span style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:15px;color:#A69F94">— Author · Newsreader italic 15</span>
+        <span style="font-size:15px">Body and buttons · Figtree 14–16</span>
+        <span class="lbl">Label · Figtree 11 caps</span>
+      </div>
+    </section>
+    <section style="display:flex;flex-direction:column;gap:14px">
+      <span class="lbl">Components</span>
+      <div style="display:flex;flex-direction:column;gap:14px;border-top:1px solid #2E2A26;padding-top:14px">
+        <div style="display:flex;gap:10px">
+          <button style="flex:1;height:52px;border-radius:16px;border:none;background:#C8A46A;color:#0F0E0C;font:600 15px 'Figtree',sans-serif">Primary</button>
+          <button style="flex:1;height:52px;border-radius:16px;border:1px solid #2E2A26;background:transparent;color:#F3EDE3;font:500 15px 'Figtree',sans-serif">Secondary</button>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button style="height:40px;padding:0 16px;border-radius:999px;border:1px solid #C8A46A;background:rgba(200,164,106,.12);color:#E8D3A8;font:500 13px 'Figtree',sans-serif">Selected</button>
+          <button style="height:40px;padding:0 16px;border-radius:999px;border:1px solid #2E2A26;background:transparent;color:#F3EDE3;font:500 13px 'Figtree',sans-serif">Chip</button>
+          <div style="display:flex;gap:7px;align-items:center;margin-left:auto" aria-label="Week of stillness: 5 of 7 days">
+            <span style="width:10px;height:10px;border-radius:50%;background:#C8A46A"></span><span style="width:10px;height:10px;border-radius:50%;background:#C8A46A"></span><span style="width:10px;height:10px;border-radius:50%;background:#C8A46A"></span><span style="width:10px;height:10px;border-radius:50%;background:#C8A46A"></span><span style="width:10px;height:10px;border-radius:50%;background:#C8A46A"></span><span style="width:10px;height:10px;border-radius:50%;border:1px solid #4A443D;box-sizing:border-box"></span><span style="width:10px;height:10px;border-radius:50%;border:1px solid #4A443D;box-sizing:border-box"></span>
+          </div>
+        </div>
+        <p style="margin:0;font-size:12px;line-height:1.5;color:#A69F94">Corners: cards 18–28 · buttons 16 · chips full round. Spacing on an 8-point grid. Thin outline icons, 1.6 stroke.</p>
+      </div>
+    </section>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":880,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stillwords · Quote detail</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Figtree:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#0F0E0C}
+a{color:#C8A46A}a:hover{color:#E0C08A}
+.ico{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.water{background:linear-gradient(180deg,#1d2530 0%,#3a4a56 30%,#7d8a8c 47%,#c9c3b2 50%,#56646a 52%,#2b363d 70%,#151b1f 100%)}
+.scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,14,12,.55) 0%,rgba(15,14,12,0) 22%,rgba(15,14,12,.15) 45%,rgba(15,14,12,.7) 72%,rgba(15,14,12,.95) 100%)}
+.act{display:flex;flex-direction:column;align-items:center;gap:6px;width:56px;border:none;background:transparent;color:#F3EDE3;font:500 11px 'Figtree',sans-serif;cursor:pointer;text-decoration:none;padding:0}
+.act i{width:48px;height:48px;border-radius:50%;background:rgba(243,237,227,.1);border:1px solid rgba(243,237,227,.16);display:flex;align-items:center;justify-content:center;font-style:normal}
+.mini{flex-shrink:0;width:120px;height:150px;border-radius:16px;padding:12px;box-sizing:border-box;display:flex;align-items:flex-end;text-decoration:none;color:#F3EDE3;font-family:'Newsreader',Georgia,serif;font-size:14px;line-height:1.3;position:relative;overflow:hidden}
+.mini::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,14,12,0),rgba(15,14,12,.8))}
+.mini span{position:relative}
+</style>
+</helmet>
+<div style="width:390px;height:844px;box-sizing:border-box;background:#0F0E0C;color:#F3EDE3;font-family:'Figtree',system-ui,sans-serif;position:relative;overflow:hidden">
+
+  <div class="water" style="position:absolute;inset:0"></div>
+  <div class="scrim"></div>
+
+  <header style="position:absolute;top:0;left:0;right:0;padding:44px 8px 0;display:flex;justify-content:space-between;align-items:center">
+    <a href="Search.dc.html" aria-label="Back" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#F3EDE3"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+    <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#E8D3A8;font-weight:500">Peace</span>
+    <button aria-label="More options" style="width:44px;height:44px;border:none;background:transparent;color:#F3EDE3;display:flex;align-items:center;justify-content:center;cursor:pointer"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1"></circle><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle></svg></button>
+  </header>
+
+  <div style="position:absolute;left:0;right:0;bottom:0;padding:0 24px 28px;display:flex;flex-direction:column;gap:22px">
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <p style="margin:0;font-family:'Newsreader',Georgia,serif;font-size:32px;line-height:1.24;letter-spacing:-0.2px;text-wrap:balance">A calm mind is not empty. It is simply not in a hurry.</p>
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:15px;color:rgba(243,237,227,.75)">— Stillwords</span>
+        <a href="#" style="font-size:11px;color:rgba(243,237,227,.6);text-decoration:none">Photo · Pexels</a>
+      </div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between">
+      <button class="act" onClick="{{toggleFav}}" aria-pressed="{{favOn}}"><i style="{{favRing}}"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="{{favFill}}"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"></path></svg></i>{{favLabel}}</button>
+      <button class="act"><i><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7a2 2 0 0 1 2-2h4l2 2h6a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2zM12 10v6M9 13h6"></path></svg></i>Collect</button>
+      <button class="act"><i><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"></rect><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"></path></svg></i>Copy</button>
+      <button class="act"><i><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"></path></svg></i>Share</button>
+      <a class="act" href="Designer.dc.html"><i style="background:#C8A46A;border-color:#C8A46A;color:#0F0E0C"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4"></path></svg></i>Restyle</a>
+    </div>
+
+    <section style="display:flex;flex-direction:column;gap:10px;border-top:1px solid rgba(243,237,227,.14);padding-top:16px">
+      <div style="display:flex;justify-content:space-between;align-items:baseline">
+        <h2 style="margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:18px">More on peace</h2>
+        <a href="Read.dc.html" style="font-size:13px;text-decoration:none">See all</a>
+      </div>
+      <div style="display:flex;gap:10px;overflow:hidden;margin-right:-24px">
+        <a class="mini" href="Quote.dc.html" style="background:linear-gradient(180deg,#26303a,#5d6b72 48%,#a9aba0 52%,#3b474e 54%,#1d252a)"><span>Rest is part of the work.</span></a>
+        <a class="mini" href="Quote.dc.html" style="background:radial-gradient(ellipse at 70% 0%,rgba(200,164,106,.35),transparent 55%),linear-gradient(180deg,#1c241e,#2e3b30 50%,#0f1410)"><span>Let the noise pass like weather.</span></a>
+        <a class="mini" href="Quote.dc.html" style="background:linear-gradient(180deg,#2a2622,#4a4038 60%,#1c1916)"><span>Slow is also a direction.</span></a>
+      </div>
+    </section>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  constructor(p){ super(p); this.state = { fav: false }; }
+  renderVals() {
+    const f = this.state.fav;
+    return {
+      favOn: f ? 'true' : 'false',
+      favLabel: f ? 'Saved' : 'Save',
+      toggleFav: () => this.setState({ fav: !f }),
+      favRing: f ? 'border-color:#C8A46A;background:rgba(200,164,106,.18);color:#C8A46A' : '',
+      favFill: f ? 'fill:#C8A46A' : ''
+    };
+  }
+}
+</script>
+</body>
+</html>

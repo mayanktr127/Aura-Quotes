@@ -247,18 +247,18 @@ fun QuoteDesignerScreen(
                             val displayText = if (state.quoteFont.isAllCaps) state.quoteText.uppercase() else state.quoteText
                             val quoteFontSize = when (state.aspectRatio) {
                                 CardAspectRatio.LANDSCAPE_16_9 -> when {
-                                    displayText.length > 140 -> 12.sp
-                                    displayText.length > 90  -> 14.sp
-                                    else                     -> 17.sp
+                                    displayText.length > 140 -> 16.sp
+                                    displayText.length > 90  -> 17.sp
+                                    else                     -> 18.sp
                                 }
                                 CardAspectRatio.STORY_9_16 -> when {
-                                    displayText.length > 140 -> 15.sp
+                                    displayText.length > 140 -> 16.sp
                                     displayText.length > 90  -> 18.sp
                                     else                     -> 22.sp
                                 }
                                 else -> when { // SQUARE_1_1, PORTRAIT_4_5
-                                    displayText.length > 140 -> 14.sp
-                                    displayText.length > 90  -> 17.sp
+                                    displayText.length > 140 -> 16.sp
+                                    displayText.length > 90  -> 18.sp
                                     else                     -> 21.sp
                                 }
                             }

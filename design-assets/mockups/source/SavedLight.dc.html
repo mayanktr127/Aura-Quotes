@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stillwords · Saved (light)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Figtree:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#F7F3EC}
+.ico{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.card{position:relative;border-radius:18px;overflow:hidden;padding:16px;box-sizing:border-box;display:flex;flex-direction:column;justify-content:flex-end;gap:8px;text-decoration:none;color:#F3EDE3}
+.card::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,14,12,.1),rgba(15,14,12,.78))}
+.card>*{position:relative}
+.card p{margin:0;font-family:'Newsreader',Georgia,serif;font-size:16px;line-height:1.3}
+.card small{font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#E8D3A8}
+.bg-water{background:linear-gradient(180deg,#26303a,#5d6b72 48%,#a9aba0 52%,#3b474e 54%,#1d252a)}
+.bg-mtn{background:linear-gradient(180deg,#232634,#7c6158 55%,#d29a6c 64%,#2b2326 65%,#151210)}
+.bg-gold{background:radial-gradient(circle at 50% 60%,#f1cf92 0,#d79a5c 14%,transparent 30%),linear-gradient(180deg,#3b2a24,#9a643f 50%,#5a3e26 62%,#21170f)}
+.bg-night{background:radial-gradient(1.4px 1.4px at 20% 25%,#F3EDE3 99%,transparent),radial-gradient(1px 1px at 70% 18%,#F3EDE3 99%,transparent),radial-gradient(1px 1px at 85% 45%,#F3EDE3 99%,transparent),linear-gradient(180deg,#0b0f1c,#1d2640 75%,#0c0d12)}
+.bg-forest{background:radial-gradient(ellipse at 70% 0%,rgba(200,164,106,.35),transparent 55%),repeating-linear-gradient(90deg,rgba(8,12,9,.55) 0 10px,transparent 10px 34px),linear-gradient(180deg,#1c241e,#2e3b30 50%,#0f1410)}
+.bg-ink{background:#1A1816;border:1px solid #2E2A26}
+.tab{flex:1;height:38px;border-radius:10px;border:none;font:500 13px 'Figtree',sans-serif;cursor:pointer}
+</style>
+</helmet>
+<div style="width:390px;height:844px;box-sizing:border-box;background:#F7F3EC;color:#1C1A17;font-family:'Figtree',system-ui,sans-serif;display:flex;flex-direction:column;overflow:hidden">
+  <main style="flex:1;display:flex;flex-direction:column;gap:18px;padding:52px 20px 0;overflow:hidden">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <h1 style="margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:30px;letter-spacing:-0.3px">Saved</h1>
+      <button aria-label="New collection" style="width:44px;height:44px;border-radius:50%;border:1px solid #DCD3C4;background:transparent;color:#8A6A30;display:flex;align-items:center;justify-content:center"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 6v12M6 12h12"></path></svg></button>
+    </div>
+
+    <div role="tablist" aria-label="Saved sections" style="display:flex;gap:6px;padding:4px;background:#EFE9DF;border-radius:14px;border:1px solid #DCD3C4">
+      <button class="tab" role="tab" aria-selected="true" style="background:#DCD3C4;color:#1C1A17">Quotes · 12</button>
+      <button class="tab" role="tab" aria-selected="false" style="background:transparent;color:#6B645A">Collections · 4</button>
+      <button class="tab" role="tab" aria-selected="false" style="background:transparent;color:#6B645A">History</button>
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a class="card bg-water" href="Read.dc.html" style="height:220px"><small>Peace</small><p>The quiet mind hears what the busy one misses.</p></a>
+        <a class="card bg-ink" href="Read.dc.html" style="height:150px"><small>Growth</small><p>Small, steady, every day.</p></a>
+        <a class="card bg-forest" href="Read.dc.html" style="height:170px"><small>Healing</small><p>Be gentle. You are still arriving.</p></a>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <a class="card bg-gold" href="Read.dc.html" style="height:160px"><small>Love</small><p>Love is mostly small acts, repeated.</p></a>
+        <a class="card bg-mtn" href="Read.dc.html" style="height:230px"><small>Courage</small><p>Some days courage is simply getting up and trying again.</p></a>
+        <a class="card bg-night" href="Read.dc.html" style="height:150px"><small>Wisdom</small><p>Know what is yours to carry.</p></a>
+      </div>
+    </div>
+  </main>
+
+  <nav aria-label="Main" style="height:76px;border-top:1px solid #DCD3C4;background:#F7F3EC;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:8px 8px 14px;box-sizing:border-box;flex-shrink:0">
+    <a href="MainLight.dc.html" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;color:#6B645A;font-size:11px;font-weight:500"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg>Today</a>
+    <a href="ExploreLight.dc.html" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;color:#6B645A;font-size:11px;font-weight:500"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M15.5 8.5l-2 5-5 2 2-5z"></path></svg>Explore</a>
+    <a href="Designer.dc.html" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;color:#6B645A;font-size:11px;font-weight:500"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4"></rect><path d="M12 8v8M8 12h8"></path></svg>Create</a>
+    <a href="SavedLight.dc.html" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;text-decoration:none;color:#8A6A30;font-size:11px;font-weight:600"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4h10v16l-5-4-5 4z"></path></svg>Saved</a>
+  </nav>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

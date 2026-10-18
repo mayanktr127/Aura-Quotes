@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stillwords · Native ad in feed</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Figtree:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#0F0E0C}
+a{color:#C8A46A}a:hover{color:#E0C08A}
+.ico{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.media{background:repeating-linear-gradient(135deg,#1F1C19 0 14px,#24211D 14px 28px)}
+</style>
+</helmet>
+<div style="width:390px;height:844px;box-sizing:border-box;background:#0F0E0C;color:#F3EDE3;font-family:'Figtree',system-ui,sans-serif;display:flex;flex-direction:column;padding:52px 20px 34px;overflow:hidden">
+
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <a href="Main.dc.html" aria-label="Close" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#F3EDE3;margin-left:-10px"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+    <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#A69F94;font-weight:500">Sponsored</span>
+    <span style="width:34px"></span>
+  </div>
+
+  <div style="flex:1;display:flex;flex-direction:column;justify-content:center;padding:12px 0">
+    <article aria-label="Sponsored" style="border-radius:28px;border:1px solid #2E2A26;background:#1A1816;overflow:hidden;display:flex;flex-direction:column">
+      <div style="display:flex;align-items:center;gap:12px;padding:16px 16px 14px">
+        <span aria-hidden="true" style="width:40px;height:40px;border-radius:10px;background:#2E2A26;display:flex;align-items:center;justify-content:center;font-size:10px;color:#6E675E">icon</span>
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px">
+          <span style="font-size:14px;font-weight:600">[Advertiser name]</span>
+          <span style="font-size:12px;color:#A69F94">[Store rating · Price]</span>
+        </div>
+        <span style="height:22px;padding:0 8px;border-radius:6px;background:#C8A46A;color:#0F0E0C;font:600 11px 'Figtree',sans-serif;display:flex;align-items:center">Ad</span>
+        <span aria-label="AdChoices" style="width:18px;height:18px;border-radius:4px;border:1px solid #4A443D;display:flex;align-items:center;justify-content:center;font-size:9px;color:#A69F94">i</span>
+      </div>
+      <div class="media" style="height:300px;display:flex;align-items:center;justify-content:center;color:#6E675E;font-size:13px">[Media view · image or video, 16:9 to 1:1]</div>
+      <div style="padding:16px;display:flex;flex-direction:column;gap:6px">
+        <span style="font-size:17px;font-weight:600;line-height:1.3">[Headline, up to 25 characters]</span>
+        <span style="font-size:13px;line-height:1.5;color:#A69F94">[Body text, up to 90 characters, shown on two lines at most.]</span>
+      </div>
+      <div style="padding:0 16px 16px">
+        <a href="#" style="height:50px;border-radius:14px;border:1px solid #C8A46A;color:#E8D3A8;display:flex;align-items:center;justify-content:center;text-decoration:none;font:600 15px 'Figtree',sans-serif">[Call to action]</a>
+      </div>
+    </article>
+  </div>
+
+  <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:rgba(243,237,227,.55);font-size:12px">
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><path d="M12 19V5M6 11l6-6 6 6"></path></svg>
+    Swipe up to keep reading
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

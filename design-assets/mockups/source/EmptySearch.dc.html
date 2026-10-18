@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stillwords · Search (no results)</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Figtree:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#0F0E0C}
+a{color:#C8A46A}a:hover{color:#E0C08A}
+.ico{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.chip{height:40px;padding:0 16px;border-radius:999px;border:1px solid #2E2A26;background:transparent;color:#F3EDE3;font:500 13px 'Figtree',sans-serif;display:flex;align-items:center;text-decoration:none}
+</style>
+</helmet>
+<div style="width:390px;height:844px;box-sizing:border-box;background:#0F0E0C;color:#F3EDE3;font-family:'Figtree',system-ui,sans-serif;display:flex;flex-direction:column;overflow:hidden">
+
+  <header style="padding:44px 12px 0 8px;display:flex;align-items:center;gap:4px">
+    <a href="Main.dc.html" aria-label="Back" style="width:44px;height:44px;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#F3EDE3"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"></path></svg></a>
+    <label for="q2" style="flex:1;display:flex;align-items:center;gap:10px;height:48px;padding:0 8px 0 14px;border-radius:14px;background:#1A1816;border:1px solid #C8A46A;color:#A69F94">
+      <span style="position:absolute;left:-9999px">Search quotes</span>
+      <svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px"><circle cx="11" cy="11" r="6"></circle><path d="M20 20l-4.5-4.5"></path></svg>
+      <input id="q2" value="serendipity" style="flex:1;min-width:0;border:none;background:transparent;color:#F3EDE3;font:400 15px 'Figtree',sans-serif;outline:none">
+      <button aria-label="Clear search" style="width:36px;height:36px;border:none;background:transparent;color:#A69F94;display:flex;align-items:center;justify-content:center;cursor:pointer"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px"><path d="M6 6l12 12M18 6L6 18"></path></svg></button>
+    </label>
+  </header>
+
+  <main style="flex:1;display:flex;flex-direction:column;gap:28px;padding:56px 24px 0;overflow:hidden">
+    <div style="display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center">
+      <div aria-hidden="true" style="width:96px;height:96px;border-radius:50%;border:1px dashed #4A443D;display:flex;align-items:center;justify-content:center;color:#C8A46A">
+        <svg class="ico" viewBox="0 0 24 24" style="width:34px;height:34px"><circle cx="11" cy="11" r="6"></circle><path d="M20 20l-4.5-4.5M9 11h4"></path></svg>
+      </div>
+      <h1 style="margin:0;font-family:'Newsreader',Georgia,serif;font-weight:400;font-size:24px;line-height:1.25">No quotes for “serendipity”</h1>
+      <p style="margin:0;font-size:14px;line-height:1.55;color:#A69F94;max-width:280px">Try a shorter word, a feeling, or one of the topics below.</p>
+    </div>
+
+    <section style="display:flex;flex-direction:column;gap:12px">
+      <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#C8A46A;font-weight:500">Try instead</span>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <a class="chip" href="Search.dc.html">Happiness</a>
+        <a class="chip" href="Search.dc.html">Gratitude</a>
+        <a class="chip" href="Search.dc.html">Life</a>
+        <a class="chip" href="Search.dc.html">Creativity</a>
+        <a class="chip" href="Search.dc.html">Wisdom</a>
+      </div>
+    </section>
+
+    <a href="Explore.dc.html" style="height:52px;border-radius:16px;border:1px solid #2E2A26;color:#F3EDE3;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;font:500 15px 'Figtree',sans-serif"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true" style="width:18px;height:18px"><circle cx="12" cy="12" r="9"></circle><path d="M15.5 8.5l-2 5-5 2 2-5z"></path></svg>Browse all topics</a>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

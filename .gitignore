@@ -17,4 +17,6 @@ build/
 keystore.properties
 Thumbs.db
 design-assets/backgrounds/
-
+scripts/wikiquote_cache/
+__pycache__/
+*.pyc

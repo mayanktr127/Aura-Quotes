@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Stillwords · Read</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;1,6..72,400&family=Figtree:wght@400;500;600&display=swap">
+<style>
+body{margin:0;background:#0F0E0C}
+.sc-water{background:linear-gradient(180deg,#1f262e 0%,#3c4850 30%,#7d8a8a 47%,#b9b7a8 50%,#56646b 50.6%,#323d44 70%,#1a2126 100%)}
+.treeline{position:absolute;left:0;right:0;top:44%;height:6.6%;background:#161c1f;clip-path:polygon(0 70%,6% 40%,10% 62%,16% 20%,22% 55%,30% 35%,38% 60%,46% 25%,54% 58%,62% 30%,70% 52%,78% 18%,86% 50%,93% 32%,100% 56%,100% 100%,0 100%)}
+.mist{position:absolute;left:-10%;right:-10%;top:46%;height:12%;background:radial-gradient(ellipse at center,rgba(220,214,200,.28),transparent 70%)}
+.scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,14,12,.55) 0%,rgba(15,14,12,.1) 22%,rgba(15,14,12,.25) 55%,rgba(15,14,12,.85) 100%)}
+.ico{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.act{width:52px;height:52px;border-radius:50%;border:1px solid rgba(243,237,227,.22);background:rgba(15,14,12,.35);color:#F3EDE3;display:flex;align-items:center;justify-content:center;padding:0;cursor:pointer}
+</style>
+</helmet>
+<div style="width:390px;height:844px;position:relative;overflow:hidden;color:#F3EDE3;font-family:'Figtree',system-ui,sans-serif" class="sc-water">
+  <div class="treeline"></div><div class="mist"></div><div class="scrim"></div>
+
+  <div style="position:absolute;inset:0;display:flex;flex-direction:column;padding:52px 20px 34px">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <a href="Main.dc.html" aria-label="Close" style="width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:#F3EDE3;margin-left:-10px"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg></a>
+      <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#E8D3A8;font-weight:500">Peace · 12 of 30</span>
+      <span style="width:34px"></span>
+    </div>
+
+    <div style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:18px;padding:0 8px">
+      <svg width="34" height="26" viewBox="0 0 34 26" aria-hidden="true"><path d="M2 24V14C2 7 6 3 13 2v5c-4 1-6 3-6 7h6v10zM20 24V14c0-7 4-11 11-12v5c-4 1-6 3-6 7h6v10z" fill="#C8A46A"></path></svg>
+      <p style="margin:0;font-family:'Newsreader',Georgia,serif;font-size:34px;line-height:1.22;letter-spacing:-0.3px;text-wrap:balance">The quiet mind hears what the busy one misses.</p>
+      <span style="font-family:'Newsreader',Georgia,serif;font-style:italic;font-size:16px;color:rgba(243,237,227,.75)">— Stillwords</span>
+    </div>
+
+    <div style="display:flex;flex-direction:column;align-items:center;gap:18px">
+      <div style="display:flex;gap:16px">
+        <button class="act" aria-label="Save to favourites" style="border-color:#C8A46A;color:#C8A46A"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z" fill="#C8A46A"></path></svg></button>
+        <button class="act" aria-label="Share"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"></path></svg></button>
+        <button class="act" aria-label="Download image"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"></path></svg></button>
+        <a href="Designer.dc.html" class="act" aria-label="Edit design"><svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4"></path></svg></a>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px;color:rgba(243,237,227,.55);font-size:12px">
+        <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true" style="fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"><path d="M12 19V5M6 11l6-6 6 6"></path></svg>
+        Swipe up for the next quote
+      </div>
+      <span style="font-size:10px;color:rgba(243,237,227,.45);align-self:flex-start">Photo · Pexels</span>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>
