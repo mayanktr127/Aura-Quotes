@@ -20,7 +20,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     namespace = "com.myplanetservices.auraquotes"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.myplanetservices.auraquotes"

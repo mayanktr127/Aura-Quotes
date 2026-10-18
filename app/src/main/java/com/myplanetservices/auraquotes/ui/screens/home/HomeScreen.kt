@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -51,7 +52,8 @@ fun HomeScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    val todayDateFormatted = SimpleDateFormat("EEEE, d MMMM", Locale.getDefault()).format(Date())
+    val platformLocale = LocalLocale.current.platformLocale
+    val todayDateFormatted = SimpleDateFormat("EEEE, d MMMM", platformLocale).format(Date())
 
     LazyColumn(
         modifier = modifier

@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -41,6 +42,7 @@ fun SettingsScreen(
     val prefs by viewModel.preferences.collectAsStateWithLifecycle()
     val availableCategories by viewModel.availableCategories.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val platformLocale = LocalLocale.current.platformLocale
 
     var showTimeDialog by remember { mutableStateOf(false) }
     var selectedHour by remember { mutableStateOf(prefs.reminderHour) }
@@ -222,7 +224,7 @@ fun SettingsScreen(
                                         style = MaterialTheme.typography.bodyMedium,
                                         color = MaterialTheme.colorScheme.onSurface
                                     )
-                                    val formattedTime = String.format(java.util.Locale.getDefault(), "%02d:%02d", prefs.reminderHour, prefs.reminderMinute)
+                                    val formattedTime = String.format(platformLocale, "%02d:%02d", prefs.reminderHour, prefs.reminderMinute)
                                     Surface(
                                         shape = RoundedCornerShape(10.dp),
                                         color = MaterialTheme.colorScheme.background
@@ -429,7 +431,7 @@ fun SettingsScreen(
                                         Text("-", style = MaterialTheme.typography.titleLarge)
                                     }
                                     Text(
-                                        String.format(java.util.Locale.getDefault(), "%02d", selectedHour),
+                                        String.format(platformLocale, "%02d", selectedHour),
                                         style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                                     )
                                     IconButton(onClick = { selectedHour = (selectedHour + 1) % 24 }) {
@@ -448,7 +450,7 @@ fun SettingsScreen(
                                         Text("-", style = MaterialTheme.typography.titleLarge)
                                     }
                                     Text(
-                                        String.format(java.util.Locale.getDefault(), "%02d", selectedMinute),
+                                        String.format(platformLocale, "%02d", selectedMinute),
                                         style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
                                     )
                                     IconButton(onClick = { selectedMinute = (selectedMinute + 15) % 60 }) {

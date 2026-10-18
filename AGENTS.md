@@ -16,7 +16,7 @@
 8. End every phase with a WALKTHROUGH: files changed (with one-line reason each), how to test it manually on a phone, known limitations, out-of-scope issues found.
 
 ## Technical baseline (must always hold)
-- compileSdk 36, targetSdk 36, minSdk 26. Google Play requires API 36 for new apps and updates.
+- compileSdk = latest stable Android platform (may be higher than targetSdk); targetSdk 36 (Google Play requirement); minSdk 26. Google Play requires API 36 for new apps and updates.
 - Edge-to-edge is mandatory on API 35+: every screen must handle WindowInsets (status bar, navigation bar, display cutout). Nothing may sit under system bars.
 - Predictive back: use OnBackPressedDispatcher / Compose BackHandler only. No onBackPressed() overrides, no KEYCODE_BACK handling.
 - Saving images: MediaStore API only. No WRITE_EXTERNAL_STORAGE, no READ_EXTERNAL_STORAGE, no MANAGE_EXTERNAL_STORAGE.

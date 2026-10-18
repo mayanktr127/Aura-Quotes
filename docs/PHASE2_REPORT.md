@@ -25,7 +25,10 @@ This report documents the completion of **Phase 2** for **Aura Quotes** in accor
 * *Note:* The `applicationId` cannot be changed after the initial Google Play Console release upload.
 
 ### 2. SDK Targets & Edge-to-Edge Baseline
-* Updated build target parameters to `compileSdk = 36`, `targetSdk = 36`, and `minSdk = 26` (Android 8.0+).
+* Updated baseline configuration per `AGENTS.md`: `compileSdk = 37` (Android 17, final stable platform), `targetSdk = 36` (Google Play requirement), and `minSdk = 26` (Android 8.0+).
+* **Android 17 / API 37 Stability Evidence:**
+  * Official Google Android Developers release notes confirm Android 17 reached Platform Stability with Beta 3/4 and launched as the final stable release on **June 16, 2026**.
+  * Installed SDK platform `platforms/android-37` verified via `source.properties`: `Platform.Version=17`, `AndroidVersion.ApiLevel=37.0`, `IsBaseSdk=true`, `PreviewSdkInt=0`, `CodeName=` (blank, non-preview).
 * Configured full Edge-to-Edge support handling window insets on every screen (`statusBarsPadding()`, `navigationBarsPadding()`, `NavigationBarDefaults.windowInsets`).
 * Standardized back navigation on Compose `BackHandler` and `NavController.popBackStack()`, ensuring full predictive-back compatibility without `onBackPressed()` or `KEYCODE_BACK` overrides.
 
@@ -39,7 +42,7 @@ This report documents the completion of **Phase 2** for **Aura Quotes** in accor
 * Replaced deprecated `Divider` with Material 3 `HorizontalDivider` in `SettingsScreen.kt`.
 * Replaced deprecated `Icons.Default.TrendingUp` with `Icons.AutoMirrored.Filled.TrendingUp` in `ExploreScreen.kt`.
 * Added explicit `@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)` annotations to `SearchViewModel.kt`.
-* Localized all `String.format` invocations with explicit `Locale.getDefault()`.
+* Adopted Compose BOM 2026 lint standards: replaced non-observable `java.util.Locale.getDefault()` calls within composables with `androidx.compose.ui.platform.LocalLocale.current.platformLocale` in `HomeScreen.kt` and `SettingsScreen.kt`.
 
 ### 5. Gradle Wrapper Validation
 * Restored `validateDistributionUrl=true` in `gradle/wrapper/gradle-wrapper.properties`. Confirmed wrapper checksum verification passes.
@@ -105,16 +108,16 @@ Fetched live Maven metadata XML documents directly from Google Maven (`dl.google
 
 | Dependency | Live Metadata XML URL | Latest Stable in XML | Selected Stable Version | Compatibility / Technical Rationale |
 | :--- | :--- | :--- | :--- | :--- |
-| **Android Gradle Plugin** | [AGP metadata](https://dl.google.com/android/maven2/com/android/tools/build/gradle/maven-metadata.xml) | `9.1.1` | `9.1.1` | Matches Gradle 9.3.1 wrapper. |
+| **Android Gradle Plugin** | [AGP metadata](https://dl.google.com/android/maven2/com/android/tools/build/gradle/maven-metadata.xml) | `9.1.1` | `9.1.1` | Matches Gradle 9.3.1 wrapper and fully supports compileSdk 37. |
 | **Kotlin** | [Kotlin metadata](https://repo1.maven.org/maven2/org/jetbrains/kotlin/kotlin-gradle-plugin/maven-metadata.xml) | `2.2.10` | `2.2.10` | JetBrains stable release. |
-| **Compose BOM** | [Compose BOM metadata](https://dl.google.com/android/maven2/androidx/compose/compose-bom/maven-metadata.xml) | `2026.09.00` | `2025.02.00` | BOMs newer than 2025.02.00 declare `compileSdk 37` in AAR metadata, which conflicts with project mandate `compileSdk 36`. `2025.02.00` is the highest stable compatible with API 36. |
-| **Core KTX** | [Core KTX metadata](https://dl.google.com/android/maven2/androidx/core/core-ktx/maven-metadata.xml) | `1.19.1` | `1.18.0` | `1.19.0` and `1.19.1` declare `compileSdk 37` in their AAR metadata. `1.18.0` (Phase 1 audit value) is the highest stable compatible with API 36. |
-| **Activity Compose** | [Activity Compose metadata](https://dl.google.com/android/maven2/androidx/activity/activity-compose/maven-metadata.xml) | `1.13.0` | `1.10.1` | `1.11.0`+ declare `compileSdk 37`. `1.10.1` is the highest stable compatible with API 36. |
-| **Lifecycle KTX / Compose** | [Lifecycle metadata](https://dl.google.com/android/maven2/androidx/lifecycle/lifecycle-runtime-ktx/maven-metadata.xml) | `2.11.0` | `2.8.7` | `2.9.0`+ declare `compileSdk 37`. `2.8.7` is the highest stable compatible with API 36. |
-| **Navigation Compose** | [Navigation metadata](https://dl.google.com/android/maven2/androidx/navigation/navigation-compose/maven-metadata.xml) | `2.10.2` | `2.8.9` | `2.9.0`+ declare `compileSdk 37`. `2.8.9` (Phase 1 audit value) is the highest stable compatible with API 36. |
-| **Room Runtime / KTX / Compiler** | [Room metadata](https://dl.google.com/android/maven2/androidx/room/room-runtime/maven-metadata.xml) | `2.8.5` | `2.8.5` | Upgraded from Phase 1 (`2.7.0`). Fully stable and compatible with API 36. |
+| **Compose BOM** | [Compose BOM metadata](https://dl.google.com/android/maven2/androidx/compose/compose-bom/maven-metadata.xml) | `2026.09.00` | `2026.09.00` | Latest stable Google release compiled with compileSdk 37. |
+| **Core KTX** | [Core KTX metadata](https://dl.google.com/android/maven2/androidx/core/core-ktx/maven-metadata.xml) | `1.19.1` | `1.19.1` | Latest stable Google release compiled with compileSdk 37. |
+| **Activity Compose** | [Activity Compose metadata](https://dl.google.com/android/maven2/androidx/activity/activity-compose/maven-metadata.xml) | `1.13.0` | `1.13.0` | Latest stable Google release compiled with compileSdk 37. |
+| **Lifecycle KTX / Compose** | [Lifecycle metadata](https://dl.google.com/android/maven2/androidx/lifecycle/lifecycle-runtime-ktx/maven-metadata.xml) | `2.11.0` | `2.11.0` | Latest stable Google release compiled with compileSdk 37. |
+| **Navigation Compose** | [Navigation metadata](https://dl.google.com/android/maven2/androidx/navigation/navigation-compose/maven-metadata.xml) | `2.10.2` | `2.10.2` | Latest stable Google release compiled with compileSdk 37. |
+| **Room Runtime / KTX / Compiler** | [Room metadata](https://dl.google.com/android/maven2/androidx/room/room-runtime/maven-metadata.xml) | `2.8.5` | `2.8.5` | Upgraded from Phase 1 (`2.7.0`). Fully stable and compatible with API 36/37. |
 | **Google KSP** | [KSP metadata](https://repo1.maven.org/maven2/com/google/devtools/ksp/com.google.devtools.ksp.gradle.plugin/maven-metadata.xml) | `2.3.12` | `2.3.12` | Upgraded from Phase 1 (`2.3.5`). Fully stable matching Kotlin 2.2.10. |
-| **DataStore Preferences** | [DataStore metadata](https://dl.google.com/android/maven2/androidx/datastore/datastore-preferences/maven-metadata.xml) | `1.2.1` | `1.2.1` | Upgraded from Phase 1 (`1.1.7`). Fully stable and compatible with API 36. |
+| **DataStore Preferences** | [DataStore metadata](https://dl.google.com/android/maven2/androidx/datastore/datastore-preferences/maven-metadata.xml) | `1.2.1` | `1.2.1` | Upgraded from Phase 1 (`1.1.7`). Fully stable and compatible with API 36/37. |
 | **WorkManager Runtime / KTX** | [WorkManager metadata](https://dl.google.com/android/maven2/androidx/work/work-runtime-ktx/maven-metadata.xml) | `2.10.0` | `2.10.0` | Latest stable Google release. |
 | **Play App Update** | [Play Update metadata](https://dl.google.com/android/maven2/com/google/android/play/app-update-ktx/maven-metadata.xml) | `2.1.0` | `2.1.0` | Latest stable Google Play In-App Updates library. |
 | **Coil Compose** | [Coil metadata](https://repo1.maven.org/maven2/io/coil-kt/coil-compose/maven-metadata.xml) | `2.7.0` | `2.7.0` | Latest stable 2.x Coil release for Compose. |
@@ -130,9 +133,8 @@ Fetched live Maven metadata XML documents directly from Google Maven (`dl.google
 ## 4. Release Size Clarification & R8 Hardening
 
 * **Release APK Size Clarification:**
-  * The actual, disk-measured release APK size is **1.96 MB** (`2,058,863 bytes`).
-  * The figure of `9.88 MB` was an unverified chat estimate prior to building.
-  * In `app/build.gradle.kts` (lines 63–64):
+  * The actual, disk-measured release APK size with latest dependencies and API 37 is **2.17 MB** (`2,270,354 bytes`).
+  * In `app/build.gradle.kts`:
     ```kotlin
     isMinifyEnabled = true
     isShrinkResources = true
@@ -141,13 +143,44 @@ Fetched live Maven metadata XML documents directly from Google Maven (`dl.google
 * **APK Size Comparison:**
   * Original Phase 1 Debug APK: **23.3 MB**
   * Phase 2 Debug APK (un-minified): **19.65 MB**
-  * Phase 2 Release APK (R8 minified + shrunk): **1.96 MB** (91.6% reduction)
+  * Phase 2 Release APK (R8 minified + shrunk): **2.17 MB** (90.7% reduction)
 
 ---
 
 ## 5. Verification Check Log
 
-* `./gradlew clean assembleDebug`: **BUILD SUCCESSFUL** (3m 23s, 0 errors)
-* `./gradlew testDebugUnitTest`: **BUILD SUCCESSFUL** (1m 50s, 0 test failures)
-* `./gradlew lintDebug`: **BUILD SUCCESSFUL** (2m 33s, 0 errors)
-* `./gradlew assembleRelease`: **BUILD SUCCESSFUL** (8m 2s, 48 tasks, R8 minification verified, signing key immediately purged)
+* `./gradlew clean assembleDebug`: **BUILD SUCCESSFUL** (6m 6s, 0 errors)
+* `./gradlew testDebugUnitTest`: **BUILD SUCCESSFUL** (1m 17s, 0 test failures)
+* `./gradlew lintDebug`: **BUILD SUCCESSFUL** (3m 5s, 0 errors)
+* `./gradlew assembleRelease`: **BUILD SUCCESSFUL** (6m 49s, 48 tasks, R8 minification verified, temporary signing key immediately purged)
+
+---
+
+## 6. Quote Categories in Code (for Phase 3 Preparation)
+
+The application code (`SeedQuotes.kt`) contains quotes across **22 unique categories**:
+
+1. `Confidence`
+2. `Courage`
+3. `Creativity`
+4. `Discipline`
+5. `Fitness`
+6. `Friendship`
+7. `Gratitude`
+8. `Growth`
+9. `Happiness`
+10. `Healing`
+11. `Leadership`
+12. `Life`
+13. `Love`
+14. `Mindfulness`
+15. `Motivation`
+16. `Peace`
+17. `Relationships`
+18. `Self-Love`
+19. `Study`
+20. `Success`
+21. `Wisdom`
+22. `Work`
+
+*(Curated collections defined in code: "Morning Clarity", "Deep Focus", "Evening Calm", "Courage & Self-Trust", "Gratitude Daily".)*
