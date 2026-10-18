@@ -1,21 +1,44 @@
-# Add project specific ProGuard rules here.
-# You can control the set of applied configuration files using the
-# proguardFiles setting in build.gradle.
-#
-# For more details, see
-#   http://developer.android.com/guide/developing/tools/proguard.html
+# ProGuard and R8 rules for Aura Quotes
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
+# Keep line numbers and file names for debuggable crash reports
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile
 
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
+# Room rules
+-keep class * extends androidx.room.RoomDatabase
+-keepclassmembers class * extends androidx.room.RoomDatabase {
+    <init>();
+}
+-dontwarn androidx.room.paging.**
+-keep class com.myplanetservices.auraquotes.data.local.** { *; }
 
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Domain and Data Models
+-keep class com.myplanetservices.auraquotes.data.model.** { *; }
+
+# Coil rules
+-keep class coil.** { *; }
+-dontwarn coil.**
+-keep class coil.compose.** { *; }
+
+# Kotlinx Coroutines
+-keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
+-keepnames class kotlinx.coroutines.CoroutineExceptionHandler {}
+-dontwarn kotlinx.coroutines.**
+
+# WorkManager
+-keep class * extends androidx.work.Worker {
+    <init>(...);
+}
+-keep class * extends androidx.work.ListenableWorker {
+    <init>(...);
+}
+-keep class * extends androidx.work.CoroutineWorker {
+    <init>(...);
+}
+-keep class com.myplanetservices.auraquotes.notification.** { *; }
+
+# Google Play In-App Updates
+-keep class com.google.android.play.core.appupdate.** { *; }
+-keep class com.google.android.play.core.install.** { *; }
+-keep class com.google.android.play.core.common.** { *; }
+-dontwarn com.google.android.play.core.**
