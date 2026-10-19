@@ -44,6 +44,8 @@ import com.myplanetservices.stillwords.ui.screens.favorites.FavoritesViewModel
 import com.myplanetservices.stillwords.ui.screens.home.HomeScreen
 import com.myplanetservices.stillwords.ui.screens.home.HomeViewModel
 import com.myplanetservices.stillwords.ui.screens.onboarding.OnboardingScreen
+import com.myplanetservices.stillwords.ui.screens.read.ReadScreen
+import com.myplanetservices.stillwords.ui.screens.read.ReadViewModel
 import com.myplanetservices.stillwords.ui.screens.search.SearchScreen
 import com.myplanetservices.stillwords.ui.screens.search.SearchViewModel
 import com.myplanetservices.stillwords.ui.screens.settings.SettingsScreen
@@ -274,6 +276,9 @@ private fun AppNavigationHost(
             )
             HomeScreen(
                 viewModel = homeViewModel,
+                onNavigateToRead = { initialQuoteId, categories ->
+                    navController.navigate(Screen.Read.createRoute(initialQuoteId, categories))
+                },
                 onNavigateToDetail = { quoteId ->
                     navController.navigate(Screen.QuoteDetail.createRoute(quoteId))
                 },
@@ -291,6 +296,37 @@ private fun AppNavigationHost(
                 },
                 onNavigateToSaved = {
                     navController.navigate(Screen.Favorites.route)
+                }
+            )
+        }
+
+        // Read feed — docs/DESIGN_SPEC.md Sec. 6 (Screen 5)
+        composable(
+            route = Screen.Read.route,
+            arguments = listOf(
+                navArgument("initialQuoteId") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                },
+                navArgument("categories") {
+                    type = NavType.StringType
+                    nullable = true
+                    defaultValue = null
+                }
+            )
+        ) { backStackEntry ->
+            val initialQuoteId = backStackEntry.arguments?.getString("initialQuoteId")
+            val categoriesParam = backStackEntry.arguments?.getString("categories")
+            val categoriesList = categoriesParam?.split(",")?.map { it.trim() }?.filter { it.isNotEmpty() }
+            val readViewModel: ReadViewModel = androidx.lifecycle.viewmodel.compose.viewModel(
+                factory = ReadViewModel.Factory(initialQuoteId, categoriesList, quoteRepository, preferencesRepository)
+            )
+            ReadScreen(
+                viewModel = readViewModel,
+                onNavigateBack = { navController.popBackStack() },
+                onNavigateToDesigner = { quoteId ->
+                    navController.navigate(Screen.Create.createRoute(quoteId))
                 }
             )
         }
@@ -415,6 +451,9 @@ private fun AppNavigationHost(
                 },
                 onNavigateToOtherQuote = { qId ->
                     navController.navigate(Screen.QuoteDetail.createRoute(qId))
+                },
+                onNavigateToSeeAll = { category ->
+                    navController.navigate(Screen.Read.createRoute(categories = listOf(category)))
                 }
             )
         }

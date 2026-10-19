@@ -446,7 +446,7 @@ fun PhotoQuoteCard(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(min = 400.dp, max = 500.dp)
+            .height(440.dp)
             .clip(HeroCardShape)
             .background(MaterialTheme.colorScheme.surface)
             .border(1.dp, MaterialTheme.colorScheme.outline, HeroCardShape)
@@ -483,7 +483,7 @@ fun PhotoQuoteCard(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(22.dp),
+                .padding(horizontal = 24.dp, vertical = 20.dp),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             // Header Row: Category & Credit
@@ -507,13 +507,14 @@ fun PhotoQuoteCard(
             // Quote Text (Auto-shrinks from 27sp down to 16sp floor) & Author
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 AutoShrinkQuoteText(
                     text = quoteText,
                     initialFontSize = 27.sp,
                     minFontSize = 16.sp,
-                    color = PhotoTextIvory
+                    color = PhotoTextIvory,
+                    lineHeightMultiplier = 1.28f
                 )
 
                 Text(
@@ -526,8 +527,9 @@ fun PhotoQuoteCard(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        .padding(top = 4.dp)
+                        .offset(x = (-10).dp),
+                    horizontalArrangement = Arrangement.spacedBy(2.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(
@@ -583,32 +585,50 @@ fun PhotoQuoteCard(
     }
 }
 
-// Auto-shrink text composable for quote display
+// Auto-shrink text composable for quote display — docs/DESIGN_SPEC.md Sec. 1 (Rule 7 & 20)
+// No quote is ever truncated (no maxLines + ellipsis). Auto-shrinks down to 16sp floor.
 @Composable
 fun AutoShrinkQuoteText(
     text: String,
     initialFontSize: TextUnit,
-    minFontSize: TextUnit,
-    color: Color,
-    modifier: Modifier = Modifier
+    minFontSize: TextUnit = 16.sp,
+    color: Color = MaterialTheme.colorScheme.onBackground,
+    modifier: Modifier = Modifier,
+    textAlign: TextAlign = TextAlign.Start,
+    lineHeightMultiplier: Float = 1.25f
 ) {
-    var fontSize by remember(text) { mutableStateOf(initialFontSize) }
-    var readyToDraw by remember(text) { mutableStateOf(false) }
+    val density = LocalDensity.current
+    val fontScale = density.fontScale.coerceIn(1.0f, 1.5f)
+    val scaleCompensation = 1.0f / (1.0f + (fontScale - 1.0f) * 0.5f)
+
+    val lengthFactor = when {
+        text.length > 140 -> 0.72f
+        text.length > 100 -> 0.80f
+        text.length > 70  -> 0.88f
+        text.length > 45  -> 0.94f
+        else -> 1.0f
+    }
+
+    val computedStartSp = (initialFontSize.value * lengthFactor * scaleCompensation)
+        .coerceAtLeast(minFontSize.value)
+
+    var currentFontSize by remember(text, initialFontSize, fontScale) {
+        mutableStateOf(computedStartSp.sp)
+    }
 
     Text(
         text = text,
-        fontSize = fontSize,
+        fontSize = currentFontSize,
         fontFamily = NewsreaderFontFamily,
         fontWeight = FontWeight.Normal,
-        lineHeight = (fontSize.value * 1.28f).sp,
+        lineHeight = (currentFontSize.value * lineHeightMultiplier).sp,
         color = color,
-        maxLines = 8,
-        overflow = TextOverflow.Ellipsis,
+        textAlign = textAlign,
+        softWrap = true,
+        overflow = TextOverflow.Clip,
         onTextLayout = { textLayoutResult ->
-            if (textLayoutResult.hasVisualOverflow && fontSize.value > minFontSize.value) {
-                fontSize = (fontSize.value - 1f).coerceAtLeast(minFontSize.value).sp
-            } else {
-                readyToDraw = true
+            if (textLayoutResult.hasVisualOverflow && currentFontSize.value > minFontSize.value) {
+                currentFontSize = (currentFontSize.value - 1f).coerceAtLeast(minFontSize.value).sp
             }
         },
         modifier = modifier
@@ -797,7 +817,8 @@ fun WeekDots(
     daysCompleted: Int,
     modifier: Modifier = Modifier,
     title: String = "$daysCompleted quiet days",
-    subtitle: String = "Your week of stillness"
+    subtitle: String = "Your week of stillness",
+    dayStatuses: List<Boolean>? = null
 ) {
     val dayLabels = listOf("M", "T", "W", "T", "F", "S", "S")
 
@@ -829,7 +850,7 @@ fun WeekDots(
             verticalAlignment = Alignment.Bottom
         ) {
             dayLabels.forEachIndexed { index, label ->
-                val isDone = index < daysCompleted
+                val isDone = dayStatuses?.getOrNull(index) ?: (index < daysCompleted)
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(6.dp)

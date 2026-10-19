@@ -19,7 +19,9 @@ data class UserPreferences(
     val reminderHour: Int = 8,
     val reminderMinute: Int = 30,
     val defaultQuoteStyle: String = "NOIR_STILLWORDS",
-    val defaultAspectRatio: String = "PORTRAIT_4_5"
+    val defaultAspectRatio: String = "PORTRAIT_4_5",
+    val openedDates: Set<String> = emptySet(),
+    val readSwipeHintCount: Int = 0
 )
 
 class UserPreferencesRepository(private val context: Context) {
@@ -33,6 +35,8 @@ class UserPreferencesRepository(private val context: Context) {
         val REMINDER_MINUTE = intPreferencesKey("reminder_minute")
         val DEFAULT_QUOTE_STYLE = stringPreferencesKey("default_quote_style")
         val DEFAULT_ASPECT_RATIO = stringPreferencesKey("default_aspect_ratio")
+        val OPENED_DATES = stringSetPreferencesKey("opened_dates")
+        val READ_SWIPE_HINT_COUNT = intPreferencesKey("read_swipe_hint_count")
     }
 
     val userPreferencesFlow: Flow<UserPreferences> = context.dataStore.data
@@ -53,7 +57,9 @@ class UserPreferencesRepository(private val context: Context) {
                 reminderHour = preferences[PreferencesKeys.REMINDER_HOUR] ?: 8,
                 reminderMinute = preferences[PreferencesKeys.REMINDER_MINUTE] ?: 30,
                 defaultQuoteStyle = preferences[PreferencesKeys.DEFAULT_QUOTE_STYLE] ?: "NOIR_STILLWORDS",
-                defaultAspectRatio = preferences[PreferencesKeys.DEFAULT_ASPECT_RATIO] ?: "PORTRAIT_4_5"
+                defaultAspectRatio = preferences[PreferencesKeys.DEFAULT_ASPECT_RATIO] ?: "PORTRAIT_4_5",
+                openedDates = preferences[PreferencesKeys.OPENED_DATES] ?: emptySet(),
+                readSwipeHintCount = preferences[PreferencesKeys.READ_SWIPE_HINT_COUNT] ?: 0
             )
         }
 
@@ -92,6 +98,20 @@ class UserPreferencesRepository(private val context: Context) {
     suspend fun setDefaultAspectRatio(ratio: String) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.DEFAULT_ASPECT_RATIO] = ratio
+        }
+    }
+
+    suspend fun recordAppOpened(dateStr: String) {
+        context.dataStore.edit { preferences ->
+            val current = preferences[PreferencesKeys.OPENED_DATES] ?: emptySet()
+            preferences[PreferencesKeys.OPENED_DATES] = current + dateStr
+        }
+    }
+
+    suspend fun incrementReadSwipeHintCount() {
+        context.dataStore.edit { preferences ->
+            val current = preferences[PreferencesKeys.READ_SWIPE_HINT_COUNT] ?: 0
+            preferences[PreferencesKeys.READ_SWIPE_HINT_COUNT] = current + 1
         }
     }
 

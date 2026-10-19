@@ -31,6 +31,7 @@ import com.myplanetservices.stillwords.data.model.PhotoFilter
 import com.myplanetservices.stillwords.data.model.QuoteFont
 import com.myplanetservices.stillwords.data.preferences.UserPreferencesRepository
 import com.myplanetservices.stillwords.data.repository.BackgroundRepository
+import com.myplanetservices.stillwords.ui.theme.*
 import com.myplanetservices.stillwords.util.ImageExportUtil
 import kotlinx.coroutines.launch
 
@@ -92,8 +93,18 @@ fun ShareFormatBottomSheet(
 
     ModalBottomSheet(
         onDismissRequest = onDismissRequest,
+        shape = BottomSheetShape,
         containerColor = MaterialTheme.colorScheme.surface,
-        dragHandle = { BottomSheetDefaults.DragHandle() }
+        dragHandle = {
+            Box(
+                modifier = Modifier
+                    .padding(vertical = 12.dp)
+                    .width(40.dp)
+                    .height(4.dp)
+                    .clip(RoundedCornerShape(2.dp))
+                    .background(StillwordsTheme.colors.muted)
+            )
+        }
     ) {
         Column(
             modifier = Modifier
@@ -107,13 +118,13 @@ fun ShareFormatBottomSheet(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
                     text = "Export Quote Card",
-                    style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+                    style = SectionTitleStyle,
                     color = MaterialTheme.colorScheme.onSurface
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = "“${quoteText.take(70)}${if (quoteText.length > 70) "…" else ""}”",
-                    style = MaterialTheme.typography.bodySmall.copy(fontStyle = FontStyle.Italic),
+                    style = CaptionStyle.copy(fontStyle = FontStyle.Italic),
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
@@ -127,9 +138,9 @@ fun ShareFormatBottomSheet(
             ) {
                 formatOptions.forEach { (ratio, label, sublabel) ->
                     val isSelected = ratio == selectedFormat
-                    val shape = RoundedCornerShape(16.dp)
-                    val borderColor = if (isSelected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.outline.copy(alpha = 0.25f)
-                    val bgColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                    val shape = SmallCardShape
+                    val borderColor = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
+                    val bgColor = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface
 
                     Box(
                         modifier = Modifier
@@ -143,7 +154,7 @@ fun ShareFormatBottomSheet(
                                     preferencesRepository.setDefaultAspectRatio(ratio.name)
                                 }
                             }
-                            .padding(vertical = 12.dp, horizontal = 6.dp),
+                            .padding(vertical = 14.dp, horizontal = 6.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Column(
@@ -154,7 +165,7 @@ fun ShareFormatBottomSheet(
                                 Box(
                                     modifier = Modifier
                                         .size(18.dp)
-                                        .background(MaterialTheme.colorScheme.tertiary, CircleShape),
+                                        .background(MaterialTheme.colorScheme.primary, CircleShape),
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Icon(
@@ -170,14 +181,14 @@ fun ShareFormatBottomSheet(
 
                             Text(
                                 text = label,
-                                style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+                                style = ChipStyle.copy(fontWeight = FontWeight.SemiBold),
                                 color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface,
                                 textAlign = TextAlign.Center
                             )
 
                             Text(
                                 text = sublabel,
-                                style = MaterialTheme.typography.labelSmall.copy(fontSize = 10.sp),
+                                style = CaptionStyle.copy(fontSize = 11.sp),
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 textAlign = TextAlign.Center
                             )
@@ -189,10 +200,13 @@ fun ShareFormatBottomSheet(
             // Action Buttons
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 // Share Card Button
-                Button(
+                PrimaryButton(
+                    text = if (isExporting) "Preparing..." else "Share Card",
+                    icon = Icons.Default.Share,
+                    enabled = !isExporting,
                     onClick = {
                         if (!isExporting) {
                             isExporting = true
@@ -226,39 +240,14 @@ fun ShareFormatBottomSheet(
                                 }
                             }
                         }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp),
-                    shape = RoundedCornerShape(14.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.primary,
-                        contentColor = MaterialTheme.colorScheme.onPrimary
-                    ),
-                    enabled = !isExporting
-                ) {
-                    if (isExporting) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(20.dp),
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            strokeWidth = 2.dp
-                        )
-                    } else {
-                        Icon(
-                            imageVector = Icons.Default.Share,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
-                        Text(
-                            text = "Share Card",
-                            style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Bold)
-                        )
                     }
-                }
+                )
 
                 // Save to Photos Button
-                OutlinedButton(
+                SecondaryButton(
+                    text = "Save to Photos",
+                    icon = Icons.Outlined.Download,
+                    enabled = !isExporting,
                     onClick = {
                         if (!isExporting) {
                             isExporting = true
@@ -292,30 +281,8 @@ fun ShareFormatBottomSheet(
                                 }
                             }
                         }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(48.dp),
-                    shape = RoundedCornerShape(14.dp),
-                    border = androidx.compose.foundation.BorderStroke(
-                        1.dp,
-                        MaterialTheme.colorScheme.outline.copy(alpha = 0.4f)
-                    ),
-                    enabled = !isExporting
-                ) {
-                    Icon(
-                        imageVector = Icons.Outlined.Download,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurface,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = "Save to Photos",
-                        style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.SemiBold),
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
+                    }
+                )
             }
         }
     }

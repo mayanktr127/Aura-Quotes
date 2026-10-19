@@ -15,6 +15,7 @@ data class Quote(
     val isUserCreated: Boolean = false,
     val isFavorite: Boolean = false,
     val reflection: String? = null,
+    val translator: String? = null,
     val defaultStyle: CardStyle = CardStyle.NOIR_STILLWORDS,
     val createdAt: Long = System.currentTimeMillis()
 )

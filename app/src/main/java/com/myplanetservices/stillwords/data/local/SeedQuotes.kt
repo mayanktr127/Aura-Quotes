@@ -5,6 +5,29 @@ import org.json.JSONArray
 
 object SeedQuotes {
 
+    private var translatorMapCache: Map<String, String>? = null
+
+    fun getTranslatorMap(context: Context): Map<String, String> {
+        translatorMapCache?.let { return it }
+        return try {
+            val jsonString = context.assets.open("quotes.json").bufferedReader().use { it.readText() }
+            val jsonArray = JSONArray(jsonString)
+            val map = HashMap<String, String>()
+            for (i in 0 until jsonArray.length()) {
+                val obj = jsonArray.getJSONObject(i)
+                val id = obj.getString("id")
+                val tr = obj.optString("translator", "")
+                if (tr.isNotBlank()) {
+                    map[id] = tr
+                }
+            }
+            translatorMapCache = map
+            map
+        } catch (e: Exception) {
+            emptyMap()
+        }
+    }
+
     /**
      * Loads the initial curated quotes catalog from app/src/main/assets/quotes.json.
      * All quotes have been audited to comply with AGENTS.md rules.

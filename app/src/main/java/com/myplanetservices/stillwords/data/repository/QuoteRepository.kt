@@ -65,6 +65,7 @@ class QuoteRepository(
             isUserCreated = false,
             isFavorite = isFav,
             reflection = reflectionText,
+            translator = SeedQuotes.getTranslatorMap(context)[entity.id],
             defaultStyle = style,
             createdAt = entity.createdAt
         )

@@ -1,46 +1,37 @@
 package com.myplanetservices.stillwords.ui.screens.home
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.AutoAwesome
-import androidx.compose.material.icons.filled.Bookmark
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material.icons.filled.WbSunny
+import androidx.compose.material.icons.outlined.Search
+import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.myplanetservices.stillwords.data.model.Quote
-import com.myplanetservices.stillwords.ui.components.MoodChipRow
-import com.myplanetservices.stillwords.ui.components.QuoteCard
-import com.myplanetservices.stillwords.ui.components.StyleSelectorCarousel
+import com.myplanetservices.stillwords.data.repository.BackgroundRepository
+import com.myplanetservices.stillwords.ui.components.PhotoQuoteCard
+import com.myplanetservices.stillwords.ui.components.ShareFormatBottomSheet
+import com.myplanetservices.stillwords.ui.components.StillwordsChip
+import com.myplanetservices.stillwords.ui.components.WeekDots
+import com.myplanetservices.stillwords.ui.theme.*
 import java.text.SimpleDateFormat
 import java.util.*
 
 @Composable
 fun HomeScreen(
     viewModel: HomeViewModel,
+    onNavigateToRead: (initialQuoteId: String?, categories: List<String>?) -> Unit,
     onNavigateToDetail: (String) -> Unit,
     onNavigateToDesigner: (String?) -> Unit,
     onNavigateToSearch: () -> Unit,
@@ -51,395 +42,173 @@ fun HomeScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val backgroundRepo = remember(context) { BackgroundRepository(context) }
 
-    val platformLocale = LocalLocale.current.platformLocale
-    val todayDateFormatted = SimpleDateFormat("EEEE, d MMMM", platformLocale).format(Date())
+    var shareQuote by remember { mutableStateOf<Quote?>(null) }
+
+    if (shareQuote != null) {
+        val q = shareQuote!!
+        ShareFormatBottomSheet(
+            quoteText = q.text,
+            author = q.author,
+            category = q.category,
+            quoteId = q.id,
+            photoAssetPath = backgroundRepo.getBackgroundAssetPath(q.id, q.category),
+            onDismissRequest = { shareQuote = null }
+        )
+    }
+
+    val cal = remember { Calendar.getInstance() }
+    val dayOfYear = remember { cal.get(Calendar.DAY_OF_YEAR) }
+    val formattedDate = remember {
+        SimpleDateFormat("EEEE, d MMMM", Locale.getDefault()).format(Date())
+    }
+    val datelineText = remember(dayOfYear, formattedDate) {
+        "No. $dayOfYear · $formattedDate"
+    }
 
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
+            .testTag("home_screen")
     ) {
+        // Top Header — docs/DESIGN_SPEC.md Sec. 6 (Screen 4) & Main.dc.html
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp, vertical = 16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.Top
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Text(
+                    text = datelineText,
+                    style = LabelOverlineStyle,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Text(
+                    text = state.greeting,
+                    style = ScreenTitleStyle,
+                    color = MaterialTheme.colorScheme.onBackground
+                )
+            }
+
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    onClick = onNavigateToSearch,
+                    modifier = Modifier
+                        .size(44.dp)
+                        .testTag("home_search_button")
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Search,
+                        contentDescription = "Search",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+
+                IconButton(
+                    onClick = onNavigateToSettings,
+                    modifier = Modifier
+                        .size(44.dp)
+                        .testTag("home_settings_button")
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.Tune,
+                        contentDescription = "Settings",
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+            }
+        }
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .testTag("home_screen"),
-            contentPadding = PaddingValues(bottom = 96.dp)
+                .padding(horizontal = 20.dp),
+            contentPadding = PaddingValues(bottom = 24.dp),
+            verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
-            // Top App Bar / Greeting
-            item {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp, vertical = 16.dp)
-                ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.WbSunny,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.tertiary,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Text(
-                                text = state.greeting,
-                                style = MaterialTheme.typography.titleMedium.copy(
-                                    fontWeight = FontWeight.SemiBold,
-                                    letterSpacing = 0.2.sp
-                                ),
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
-                        }
-                        Text(
-                            text = state.subGreeting,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        IconButton(
-                            onClick = onNavigateToSearch,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
-                                .testTag("home_search_button")
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = "Search",
-                                tint = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
-
-                        IconButton(
-                            onClick = onNavigateToSettings,
-                            modifier = Modifier
-                                .size(40.dp)
-                                .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
-                                .testTag("home_settings_button")
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Settings,
-                                contentDescription = "Settings",
-                                tint = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.size(20.dp)
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        // Section: Quote of the Day Hero
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "QUOTE OF THE DAY",
-                        style = MaterialTheme.typography.labelSmall.copy(
-                            letterSpacing = 2.sp,
-                            fontWeight = FontWeight.Bold
-                        ),
-                        color = MaterialTheme.colorScheme.tertiary
-                    )
-                    Text(
-                        text = todayDateFormatted,
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(12.dp))
-
+            // 1. PhotoQuoteCard with Quote of the Day
+            item(key = "hero_quote_card") {
                 state.quoteOfTheDay?.let { qotd ->
-                    QuoteCard(
-                        quote = qotd,
-                        cardStyle = state.heroStyle,
-                        isHero = true,
+                    val photoPath = remember(qotd.id, qotd.category) {
+                        backgroundRepo.getBackgroundAssetPath(qotd.id, qotd.category)
+                    }
+
+                    PhotoQuoteCard(
+                        quoteText = qotd.text,
+                        author = qotd.author,
+                        category = qotd.category,
+                        photoPath = photoPath,
+                        isFavorite = qotd.isFavorite,
                         onFavoriteToggle = { viewModel.toggleFavorite(qotd.id) },
-                        onOpenDesigner = { onNavigateToDesigner(qotd.id) },
-                        onClick = {
-                            onNavigateToDetail(qotd.id)
-                        }
+                        onShare = { shareQuote = qotd },
+                        onDownload = { shareQuote = qotd },
+                        onEdit = { onNavigateToDesigner(qotd.id) },
+                        onClick = { onNavigateToRead(qotd.id, null) },
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
+            }
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                // Style Selector Carousel (Inspired by Image 1)
-                StyleSelectorCarousel(
-                    selectedStyle = state.heroStyle,
-                    onStyleSelected = { viewModel.onHeroStyleSelected(it) }
+            // 2. Week Card with WeekDots ("{n} quiet days")
+            item(key = "week_stillness_card") {
+                WeekDots(
+                    daysCompleted = state.quietDaysThisWeek,
+                    title = "${state.quietDaysThisWeek} quiet days",
+                    subtitle = "Your week of stillness",
+                    dayStatuses = state.weekDayStatuses,
+                    modifier = Modifier.fillMaxWidth()
                 )
             }
-        }
 
-        // Section: "How are you feeling?" Mood Filter
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 28.dp, bottom = 12.dp)
-            ) {
-                Text(
-                    text = "How are you feeling?",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontFamily = FontFamily.Serif,
-                        fontWeight = FontWeight.SemiBold
-                    ),
-                    color = MaterialTheme.colorScheme.onBackground,
-                    modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp)
-                )
-
-                MoodChipRow(
-                    moods = state.moods,
-                    selectedMood = state.selectedMood,
-                    onMoodSelected = { viewModel.onMoodSelected(it) },
-                    modifier = Modifier.padding(top = 6.dp)
-                )
-            }
-        }
-
-        // Section: Mood Quotes Carousel
-        if (state.moodQuotes.isNotEmpty()) {
-            item {
-                LazyRow(
-                    contentPadding = PaddingValues(horizontal = 20.dp),
-                    horizontalArrangement = Arrangement.spacedBy(14.dp),
-                    modifier = Modifier.padding(vertical = 4.dp)
+            // 3. "For this moment" Mood Chips
+            item(key = "for_this_moment_section") {
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    itemsIndexed(state.moodQuotes, key = { index, quote -> "mood_${quote.id}_$index" }) { _, quote ->
-                        QuoteCard(
-                            quote = quote,
-                            cardStyle = quote.defaultStyle,
-                            isHero = false,
-                            modifier = Modifier.width(300.dp),
-                            onFavoriteToggle = { viewModel.toggleFavorite(quote.id) },
-                            onOpenDesigner = { onNavigateToDesigner(quote.id) },
-                            onClick = { onNavigateToDetail(quote.id) }
+                    Text(
+                        text = "For this moment",
+                        style = SectionTitleStyle,
+                        color = MaterialTheme.colorScheme.onBackground
+                    )
+
+                    val moodMappings = remember {
+                        listOf(
+                            "Calm" to listOf("Peace", "Mindfulness", "Healing", "Gratitude"),
+                            "Focused" to listOf("Discipline", "Study", "Work", "Wisdom"),
+                            "Hopeful" to listOf("Growth", "Life", "Happiness", "Creativity"),
+                            "Need a lift" to listOf("Motivation", "Courage", "Self-Love", "Confidence")
                         )
                     }
-                }
-            }
-        }
 
-        // Section: "What do you need right now?" Quick Needs
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 28.dp, bottom = 12.dp, start = 20.dp, end = 20.dp)
-            ) {
-                Text(
-                    text = "What do you need right now?",
-                    style = MaterialTheme.typography.titleMedium.copy(
-                        fontFamily = FontFamily.Serif,
-                        fontWeight = FontWeight.SemiBold
-                    ),
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    items(state.categories, key = { "cat_$it" }) { category ->
-                        val shape = RoundedCornerShape(16.dp)
-                        Box(
-                            modifier = Modifier
-                                .clip(shape)
-                                .background(MaterialTheme.colorScheme.surfaceVariant)
-                                .clickable { onNavigateToCategory(category) }
-                                .padding(horizontal = 14.dp, vertical = 9.dp)
-                        ) {
-                            Text(
-                                text = category,
-                                style = MaterialTheme.typography.labelMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        // Section: "For You" Curated Recommendations
-        if (state.forYouQuotes.isNotEmpty()) {
-            item {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp)
-                ) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 20.dp, vertical = 8.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                            .horizontalScroll(rememberScrollState()),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(6.dp)
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.AutoAwesome,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.tertiary,
-                                modifier = Modifier.size(16.dp)
-                            )
-                            Text(
-                                text = "For You",
-                                style = MaterialTheme.typography.titleMedium.copy(
-                                    fontFamily = FontFamily.Serif,
-                                    fontWeight = FontWeight.SemiBold
-                                ),
-                                color = MaterialTheme.colorScheme.onBackground
+                        moodMappings.forEach { (moodName, categories) ->
+                            StillwordsChip(
+                                text = moodName,
+                                selected = false,
+                                onClick = {
+                                    onNavigateToRead(null, categories)
+                                }
                             )
                         }
                     }
-
-                    LazyRow(
-                        contentPadding = PaddingValues(horizontal = 20.dp),
-                        horizontalArrangement = Arrangement.spacedBy(14.dp)
-                    ) {
-                        itemsIndexed(state.forYouQuotes, key = { index, quote -> "for_you_${quote.id}_$index" }) { _, quote ->
-                            QuoteCard(
-                                quote = quote,
-                                cardStyle = quote.defaultStyle,
-                                isHero = false,
-                                modifier = Modifier.width(280.dp),
-                                onFavoriteToggle = { viewModel.toggleFavorite(quote.id) },
-                                onOpenDesigner = { onNavigateToDesigner(quote.id) },
-                                onClick = { onNavigateToDetail(quote.id) }
-                            )
-                        }
-                    }
-                }
-            }
-        }
-
-        // Section: Saved Quotes Quick Access
-        item {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 14.dp)
-                    .clip(RoundedCornerShape(22.dp))
-                    .clickable { onNavigateToSaved() }
-                    .testTag("today_saved_quotes_card"),
-                shape = RoundedCornerShape(22.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f)
-                )
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(18.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(14.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(44.dp)
-                                .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f), CircleShape),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Bookmark,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(22.dp)
-                            )
-                        }
-                        Column {
-                            Text(
-                                text = "Your Saved Quotes",
-                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            Text(
-                                text = "Revisit your personal collection and reflections",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                        }
-                    }
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = "View Saved",
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                        modifier = Modifier.size(20.dp)
-                    )
-                }
-            }
-        }
-
-        // Section: "Popular Today"
-        if (state.popularQuotes.isNotEmpty()) {
-            item {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 28.dp, start = 20.dp, end = 20.dp)
-                ) {
-                    Text(
-                        text = "Popular Today",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontFamily = FontFamily.Serif,
-                            fontWeight = FontWeight.SemiBold
-                        ),
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                }
-            }
-
-            itemsIndexed(state.popularQuotes, key = { index, quote -> "popular_${quote.id}_$index" }) { _, quote ->
-                Box(modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp)) {
-                    QuoteCard(
-                        quote = quote,
-                        cardStyle = quote.defaultStyle,
-                        isHero = false,
-                        modifier = Modifier.fillMaxWidth(),
-                        onFavoriteToggle = { viewModel.toggleFavorite(quote.id) },
-                        onOpenDesigner = { onNavigateToDesigner(quote.id) },
-                        onClick = { onNavigateToDetail(quote.id) }
-                    )
                 }
             }
         }
     }
 }
-}
-
-
-

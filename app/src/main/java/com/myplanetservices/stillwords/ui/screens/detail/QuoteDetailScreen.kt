@@ -4,36 +4,51 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.*
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.myplanetservices.stillwords.ui.components.QuoteCard
+import coil.compose.AsyncImage
+import coil.request.CachePolicy
+import coil.request.ImageRequest
+import coil.size.Precision
+import coil.size.Scale
+import com.myplanetservices.stillwords.data.model.Quote
+import com.myplanetservices.stillwords.data.repository.BackgroundRepository
+import com.myplanetservices.stillwords.ui.components.AutoShrinkQuoteText
+import com.myplanetservices.stillwords.ui.components.PrimaryButton
 import com.myplanetservices.stillwords.ui.components.ShareFormatBottomSheet
-import com.myplanetservices.stillwords.ui.components.StyleSelectorCarousel
+import com.myplanetservices.stillwords.ui.theme.*
+import com.myplanetservices.stillwords.util.QuoteFormatUtil
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -42,375 +57,443 @@ fun QuoteDetailScreen(
     onNavigateBack: () -> Unit,
     onNavigateToDesigner: (String) -> Unit,
     onNavigateToOtherQuote: (String) -> Unit,
+    onNavigateToSeeAll: ((category: String) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val backgroundRepo = remember(context) { BackgroundRepository(context) }
     val quote = state.quote
 
+    var showShareSheet by remember { mutableStateOf(false) }
+    var showMoreMenu by remember { mutableStateOf(false) }
     var newCollectionName by remember { mutableStateOf("") }
     var isCreatingCollection by remember { mutableStateOf(false) }
-    var showTopBarShareSheet by remember { mutableStateOf(false) }
+
+    BackHandler {
+        onNavigateBack()
+    }
 
     if (quote == null) {
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
         ) {
-            CircularProgressIndicator(color = MaterialTheme.colorScheme.tertiary)
+            CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
         }
         return
     }
 
-    if (showTopBarShareSheet) {
+    val photoPath = remember(quote.id, quote.category) {
+        backgroundRepo.getBackgroundAssetPath(quote.id, quote.category)
+    }
+    var hasImageError by remember(photoPath) { mutableStateOf(false) }
+
+    if (showShareSheet) {
         ShareFormatBottomSheet(
             quoteText = quote.text,
             author = quote.author,
             category = quote.category,
             quoteId = quote.id,
             cardStyle = state.cardStyle,
-            onDismissRequest = { showTopBarShareSheet = false }
+            photoAssetPath = photoPath,
+            onDismissRequest = { showShareSheet = false }
         )
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = quote.category,
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = onNavigateBack,
-                        modifier = Modifier.testTag("detail_back_button")
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                },
-                actions = {
-                    IconButton(
-                        onClick = { viewModel.toggleFavorite() },
-                        modifier = Modifier.testTag("detail_favorite_button")
-                    ) {
-                        Icon(
-                            imageVector = if (quote.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                            contentDescription = "Favorite",
-                            tint = if (quote.isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                    IconButton(
-                        onClick = { showTopBarShareSheet = true },
-                        modifier = Modifier.testTag("detail_share_button")
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Share,
-                            contentDescription = "Share",
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
-            )
-        },
+    Box(
         modifier = modifier
-    ) { innerPadding ->
-        LazyColumn(
+            .fillMaxSize()
+            .background(Ink)
+            .testTag("quote_detail_screen")
+    ) {
+        // Layer 1: Full-bleed Photo Background
+        if (photoPath != null && !hasImageError) {
+            AsyncImage(
+                model = ImageRequest.Builder(context)
+                    .data(backgroundRepo.getCoilUri(photoPath))
+                    .memoryCacheKey(photoPath)
+                    .diskCacheKey(photoPath)
+                    .memoryCachePolicy(CachePolicy.ENABLED)
+                    .diskCachePolicy(CachePolicy.ENABLED)
+                    .precision(Precision.INEXACT)
+                    .scale(Scale.FILL)
+                    .crossfade(false)
+                    .build(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+                onError = { hasImageError = true }
+            )
+        }
+
+        // Layer 2: Full-screen Scrim Gradient
+        Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(innerPadding),
-            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+                .background(FullScreenPhotoScrim)
+        )
+
+        // Layer 3: Scrollable Content with Top & Bottom padding
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .navigationBarsPadding()
         ) {
-            // Hero Quote Card
-            item {
-                QuoteCard(
-                    quote = quote,
-                    cardStyle = state.cardStyle,
-                    isHero = true,
-                    onFavoriteToggle = { viewModel.toggleFavorite() },
-                    onOpenDesigner = { onNavigateToDesigner(quote.id) }
-                )
-            }
-
-            // Style selector
-            item {
-                StyleSelectorCarousel(
-                    selectedStyle = state.cardStyle,
-                    onStyleSelected = { viewModel.onStyleChanged(it) }
-                )
-            }
-
-            // Quick Action Buttons
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+            // Header: Back · Category · More
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    onClick = onNavigateBack,
+                    modifier = Modifier.testTag("detail_back_button")
                 ) {
-                    // Add to Collection
-                    Button(
-                        onClick = { viewModel.setCollectionSheetOpen(true) },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant,
-                            contentColor = MaterialTheme.colorScheme.onSurfaceVariant
-                        ),
-                        shape = RoundedCornerShape(16.dp),
-                        modifier = Modifier
-                            .weight(1f)
-                            .testTag("add_to_collection_button")
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Ivory,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+
+                Text(
+                    text = quote.category.uppercase(),
+                    style = LabelOverlineStyle,
+                    color = PhotoCategoryAccent
+                )
+
+                Box {
+                    IconButton(
+                        onClick = { showMoreMenu = true },
+                        modifier = Modifier.testTag("detail_more_button")
                     ) {
                         Icon(
-                            imageVector = Icons.Outlined.BookmarkAdd,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp)
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = "More options",
+                            tint = Ivory,
+                            modifier = Modifier.size(22.dp)
                         )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text("Collections", style = MaterialTheme.typography.labelMedium)
                     }
 
-                    // Open in Designer
-                    Button(
-                        onClick = { onNavigateToDesigner(quote.id) },
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.primary,
-                            contentColor = MaterialTheme.colorScheme.onPrimary
-                        ),
-                        shape = RoundedCornerShape(16.dp),
-                        modifier = Modifier
-                            .weight(1f)
-                            .testTag("detail_designer_button")
+                    DropdownMenu(
+                        expanded = showMoreMenu,
+                        onDismissRequest = { showMoreMenu = false }
                     ) {
-                        Icon(
-                            imageVector = Icons.Outlined.Palette,
-                            contentDescription = null,
-                            modifier = Modifier.size(18.dp)
+                        DropdownMenuItem(
+                            text = { Text("Share Card") },
+                            onClick = {
+                                showMoreMenu = false
+                                showShareSheet = true
+                            },
+                            leadingIcon = {
+                                Icon(Icons.Outlined.Share, contentDescription = null)
+                            }
                         )
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text("Design Card", style = MaterialTheme.typography.labelMedium)
+                        DropdownMenuItem(
+                            text = { Text("Copy Quote Text") },
+                            onClick = {
+                                showMoreMenu = false
+                                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                val clip = ClipData.newPlainText("Stillwords Quote", "“${quote.text}” — ${quote.author}")
+                                clipboard.setPrimaryClip(clip)
+                                Toast.makeText(context, "Quote copied to clipboard", Toast.LENGTH_SHORT).show()
+                            },
+                            leadingIcon = {
+                                Icon(Icons.Outlined.ContentCopy, contentDescription = null)
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text("Add to Collection") },
+                            onClick = {
+                                showMoreMenu = false
+                                viewModel.setCollectionSheetOpen(true)
+                            },
+                            leadingIcon = {
+                                Icon(Icons.Outlined.BookmarkAdd, contentDescription = null)
+                            }
+                        )
                     }
                 }
             }
 
-            // Tags row
-            if (quote.tags.isNotEmpty()) {
-                item {
-                    LazyRow(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 24.dp),
+                contentPadding = PaddingValues(top = 28.dp, bottom = 32.dp),
+                verticalArrangement = Arrangement.spacedBy(24.dp)
+            ) {
+                // 1. Quote Text & Author & Classic Source Caption
+                item(key = "quote_and_author_block") {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(14.dp)
                     ) {
-                        itemsIndexed(quote.tags, key = { index, tag -> "tag_${tag}_$index" }) { _, tag ->
-                            Surface(
-                                shape = RoundedCornerShape(12.dp),
-                                color = MaterialTheme.colorScheme.surfaceVariant,
-                                modifier = Modifier.padding(vertical = 2.dp)
-                            ) {
-                                Text(
-                                    text = "#$tag",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.padding(horizontal = 10.dp, vertical = 5.dp)
-                                )
-                            }
-                        }
-                    }
-                }
-            }
+                        AutoShrinkQuoteText(
+                            text = quote.text,
+                            initialFontSize = 32.sp,
+                            minFontSize = 16.sp,
+                            color = Ivory,
+                            lineHeightMultiplier = 1.24f,
+                            modifier = Modifier.fillMaxWidth()
+                        )
 
-            // "Why this quote?" Contextual insight
-            if (quote.explanation.isNotBlank()) {
-                item {
-                    Card(
-                        shape = RoundedCornerShape(20.dp),
-                        colors = CardDefaults.cardColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceVariant
-                        ),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Column(modifier = Modifier.padding(20.dp)) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Lightbulb,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.tertiary,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                                Text(
-                                    text = "Why this quote?",
-                                    style = MaterialTheme.typography.titleSmall.copy(
-                                        fontFamily = FontFamily.Serif,
-                                        fontWeight = FontWeight.Bold
-                                    ),
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = quote.explanation,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                lineHeight = 22.sp
-                            )
-                            if (quote.source.isNotBlank()) {
-                                Spacer(modifier = Modifier.height(10.dp))
-                                Text(
-                                    text = "Source: ${quote.source}",
-                                    style = MaterialTheme.typography.labelSmall,
-                                    color = MaterialTheme.colorScheme.tertiary
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-
-            // "Take a moment" Private Reflection / Journaling
-            item {
-                Card(
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant
-                    ),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Column(modifier = Modifier.padding(20.dp)) {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.SpaceBetween,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Outlined.Create,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.tertiary,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                                Text(
-                                    text = "Take a moment",
-                                    style = MaterialTheme.typography.titleSmall.copy(
-                                        fontFamily = FontFamily.Serif,
-                                        fontWeight = FontWeight.Bold
-                                    ),
-                                    color = MaterialTheme.colorScheme.onSurface
-                                )
-                            }
-
-                            if (!state.isReflectionEditing && state.reflectionText.isNotBlank()) {
-                                TextButton(onClick = { viewModel.setReflectionEditing(true) }) {
-                                    Text("Edit", color = MaterialTheme.colorScheme.tertiary)
-                                }
-                            }
-                        }
-
-                        Text(
-                            text = "What does this quote mean to you today?",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-
-                        Spacer(modifier = Modifier.height(12.dp))
-
-                        if (state.isReflectionEditing || state.reflectionText.isBlank()) {
-                            OutlinedTextField(
-                                value = state.reflectionText,
-                                onValueChange = { viewModel.onReflectionTextChanged(it) },
-                                placeholder = {
-                                    Text(
-                                        "Write your private reflection here...",
-                                        style = MaterialTheme.typography.bodySmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
-                                    )
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .testTag("reflection_input"),
-                                shape = RoundedCornerShape(14.dp),
-                                minLines = 3,
-                                maxLines = 6
+                            Text(
+                                text = "— ${quote.author}",
+                                fontFamily = NewsreaderFontFamily,
+                                fontStyle = FontStyle.Italic,
+                                fontSize = 15.sp,
+                                color = PhotoAuthorIvory
                             )
 
-                            Spacer(modifier = Modifier.height(10.dp))
+                            Text(
+                                text = "Photo · Pexels",
+                                style = CaptionStyle.copy(fontSize = 11.sp),
+                                color = Color(0x99F3EDE3)
+                            )
+                        }
 
+                        // For classic quotes, show the source under author as a small caption
+                        val classicSource = remember(quote) {
+                            QuoteFormatUtil.formatClassicQuoteSource(quote)
+                        }
+                        if (classicSource != null) {
+                            Text(
+                                text = classicSource,
+                                style = CaptionStyle.copy(fontSize = 12.sp),
+                                color = Color(0xB3F3EDE3)
+                            )
+                        }
+                    }
+                }
+
+                // 2. 5 Round 48 dp Action Buttons: Save / Collect / Copy / Share / Restyle
+                item(key = "action_buttons_row") {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        // 1. Save
+                        DetailActionButton(
+                            icon = if (quote.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+                            label = if (quote.isFavorite) "Saved" else "Save",
+                            isSelected = quote.isFavorite,
+                            accentColor = Brass,
+                            onClick = { viewModel.toggleFavorite() }
+                        )
+
+                        // 2. Collect
+                        DetailActionButton(
+                            icon = Icons.Outlined.BookmarkAdd,
+                            label = "Collect",
+                            onClick = { viewModel.setCollectionSheetOpen(true) }
+                        )
+
+                        // 3. Copy
+                        DetailActionButton(
+                            icon = Icons.Outlined.ContentCopy,
+                            label = "Copy",
+                            onClick = {
+                                val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                                val clip = ClipData.newPlainText("Stillwords Quote", "“${quote.text}” — ${quote.author}")
+                                clipboard.setPrimaryClip(clip)
+                                Toast.makeText(context, "Quote copied", Toast.LENGTH_SHORT).show()
+                            }
+                        )
+
+                        // 4. Share
+                        DetailActionButton(
+                            icon = Icons.Outlined.Share,
+                            label = "Share",
+                            onClick = { showShareSheet = true }
+                        )
+
+                        // 5. Restyle (Brass-filled)
+                        DetailActionButton(
+                            icon = Icons.Outlined.Edit,
+                            label = "Restyle",
+                            isRestyle = true,
+                            onClick = { onNavigateToDesigner(quote.id) }
+                        )
+                    }
+                }
+
+                // 3. Reflection Note ("Take a moment" / write your private reflection)
+                item(key = "reflection_card") {
+                    Card(
+                        shape = GroupShape,
+                        colors = CardDefaults.cardColors(
+                            containerColor = MaterialTheme.colorScheme.surface
+                        ),
+                        border = androidx.compose.foundation.BorderStroke(
+                            1.dp,
+                            MaterialTheme.colorScheme.outline
+                        ),
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(18.dp),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.End
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Button(
-                                    onClick = {
-                                        viewModel.saveReflection()
-                                        Toast.makeText(context, "Reflection saved", Toast.LENGTH_SHORT).show()
-                                    },
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colorScheme.primary,
-                                        contentColor = MaterialTheme.colorScheme.onPrimary
-                                    ),
-                                    shape = RoundedCornerShape(12.dp),
-                                    modifier = Modifier.testTag("save_reflection_button")
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
-                                    Text("Save Reflection")
+                                    Icon(
+                                        imageVector = Icons.Outlined.Create,
+                                        contentDescription = null,
+                                        tint = MaterialTheme.colorScheme.primary,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Text(
+                                        text = "Take a moment",
+                                        style = SectionTitleStyle,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                }
+
+                                if (!state.isReflectionEditing && state.reflectionText.isNotBlank()) {
+                                    TextButton(onClick = { viewModel.setReflectionEditing(true) }) {
+                                        Text(
+                                            text = "Edit",
+                                            style = ButtonSecondaryStyle,
+                                            color = MaterialTheme.colorScheme.primary
+                                        )
+                                    }
                                 }
                             }
-                        } else {
-                            Surface(
-                                shape = RoundedCornerShape(12.dp),
-                                color = MaterialTheme.colorScheme.background,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Text(
-                                    text = state.reflectionText,
-                                    style = MaterialTheme.typography.bodyMedium.copy(
-                                        fontFamily = FontFamily.Serif
+
+                            Text(
+                                text = "What does this quote mean to you today?",
+                                style = CaptionStyle,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+
+                            if (state.isReflectionEditing || state.reflectionText.isBlank()) {
+                                OutlinedTextField(
+                                    value = state.reflectionText,
+                                    onValueChange = { viewModel.onReflectionTextChanged(it) },
+                                    placeholder = {
+                                        Text(
+                                            "Write your private reflection here...",
+                                            style = BodyStyle,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f)
+                                        )
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .testTag("reflection_input"),
+                                    shape = RoundedCornerShape(14.dp),
+                                    colors = OutlinedTextFieldDefaults.colors(
+                                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                        unfocusedBorderColor = MaterialTheme.colorScheme.outline
                                     ),
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    modifier = Modifier.padding(14.dp)
+                                    minLines = 3,
+                                    maxLines = 6
                                 )
+
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.End
+                                ) {
+                                    PrimaryButton(
+                                        text = "Save Reflection",
+                                        height = 44.dp,
+                                        modifier = Modifier.widthIn(max = 180.dp),
+                                        onClick = {
+                                            viewModel.saveReflection()
+                                            Toast.makeText(context, "Reflection saved", Toast.LENGTH_SHORT).show()
+                                        }
+                                    )
+                                }
+                            } else {
+                                Surface(
+                                    shape = RoundedCornerShape(12.dp),
+                                    color = MaterialTheme.colorScheme.background,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(
+                                        text = state.reflectionText,
+                                        style = BodyStyle,
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        modifier = Modifier.padding(14.dp)
+                                    )
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            // Related Quotes
-            if (state.relatedQuotes.isNotEmpty()) {
-                item {
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = "Related Quotes",
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontFamily = FontFamily.Serif,
-                                fontWeight = FontWeight.SemiBold
-                            ),
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                        Spacer(modifier = Modifier.height(12.dp))
+                // 4. "More on {topic}" Horizontal Mini Cards Row
+                if (state.relatedQuotes.isNotEmpty()) {
+                    item(key = "more_on_topic_section") {
+                        Column(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "More on ${quote.category.lowercase()}",
+                                    style = SectionTitleStyle,
+                                    color = Ivory
+                                )
+
+                                if (onNavigateToSeeAll != null) {
+                                    Text(
+                                        text = "See all",
+                                        style = ButtonSecondaryStyle,
+                                        color = Brass,
+                                        modifier = Modifier
+                                            .clickable { onNavigateToSeeAll(quote.category) }
+                                            .padding(4.dp)
+                                    )
+                                }
+                            }
+
+                            LazyRow(
+                                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                itemsIndexed(
+                                    state.relatedQuotes,
+                                    key = { index, relQuote -> "rel_${relQuote.id}_$index" }
+                                ) { _, relQuote ->
+                                    val relPhoto = remember(relQuote.id, relQuote.category) {
+                                        backgroundRepo.getBackgroundAssetPath(relQuote.id, relQuote.category)
+                                    }
+                                    DetailMiniCard(
+                                        quoteText = relQuote.text,
+                                        photoPath = relPhoto,
+                                        onClick = { onNavigateToOtherQuote(relQuote.id) }
+                                    )
+                                }
+                            }
+                        }
                     }
-                }
-
-                itemsIndexed(state.relatedQuotes, key = { index, relQuote -> "rel_${relQuote.id}_$index" }) { _, relQuote ->
-                    QuoteCard(
-                        quote = relQuote,
-                        cardStyle = relQuote.defaultStyle,
-                        isHero = false,
-                        modifier = Modifier.fillMaxWidth(),
-                        onFavoriteToggle = { /* handled in repo */ },
-                        onOpenDesigner = { onNavigateToDesigner(relQuote.id) },
-                        onClick = { onNavigateToOtherQuote(relQuote.id) }
-                    )
                 }
             }
         }
@@ -421,118 +504,246 @@ fun QuoteDetailScreen(
                 onDismissRequest = {
                     viewModel.setCollectionSheetOpen(false)
                     isCreatingCollection = false
+                    newCollectionName = ""
                 },
-                sheetState = rememberModalBottomSheetState()
+                shape = BottomSheetShape,
+                containerColor = MaterialTheme.colorScheme.surface,
+                dragHandle = {
+                    Box(
+                        modifier = Modifier
+                            .padding(vertical = 12.dp)
+                            .width(40.dp)
+                            .height(4.dp)
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(StillwordsTheme.colors.muted)
+                    )
+                }
             ) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 24.dp, vertical = 16.dp)
+                        .padding(horizontal = 24.dp)
+                        .padding(bottom = 32.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
                         text = "Add to Collection",
-                        style = MaterialTheme.typography.titleMedium.copy(
-                            fontFamily = FontFamily.Serif,
-                            fontWeight = FontWeight.Bold
-                        ),
+                        style = SectionTitleStyle,
                         color = MaterialTheme.colorScheme.onSurface
                     )
-                    Spacer(modifier = Modifier.height(12.dp))
 
-                    if (state.collections.isEmpty()) {
-                        Text(
-                            text = "No collections created yet. Start one below!",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                        Spacer(modifier = Modifier.height(10.dp))
-                    } else {
-                        state.collections.forEach { collection ->
-                            val isAdded = state.activeCollectionIds.contains(collection.id)
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clip(RoundedCornerShape(12.dp))
-                                    .clickable { viewModel.toggleCollectionMembership(collection.id) }
-                                    .padding(vertical = 10.dp, horizontal = 6.dp),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = Icons.Default.Bookmark,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.tertiary
-                                    )
-                                    Column {
-                                        Text(
-                                            text = collection.name,
-                                            style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-                                            color = MaterialTheme.colorScheme.onSurface
-                                        )
-                                        Text(
-                                            text = "${collection.quoteCount} quotes",
-                                            style = MaterialTheme.typography.bodySmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                    }
+                    state.collections.forEach { collection ->
+                        val isContained = state.activeCollectionIds.contains(collection.id)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clip(RoundedCornerShape(12.dp))
+                                .clickable {
+                                    viewModel.toggleCollectionMembership(collection.id)
                                 }
-
-                                Checkbox(
-                                    checked = isAdded,
-                                    onCheckedChange = { viewModel.toggleCollectionMembership(collection.id) }
+                                .padding(vertical = 10.dp, horizontal = 4.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = collection.name,
+                                style = BodyStyle,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                            Checkbox(
+                                checked = isContained,
+                                onCheckedChange = { _ ->
+                                    viewModel.toggleCollectionMembership(collection.id)
+                                },
+                                colors = CheckboxDefaults.colors(
+                                    checkedColor = MaterialTheme.colorScheme.primary,
+                                    uncheckedColor = MaterialTheme.colorScheme.outline
                                 )
-                            }
+                            )
                         }
                     }
 
-                    Spacer(modifier = Modifier.height(14.dp))
-
-                    // Create new collection inline
-                    if (isCreatingCollection) {
+                    if (!isCreatingCollection) {
+                        OutlinedButton(
+                            onClick = { isCreatingCollection = true },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = ButtonShape,
+                            border = androidx.compose.foundation.BorderStroke(
+                                1.dp,
+                                MaterialTheme.colorScheme.outline
+                            )
+                        ) {
+                            Icon(
+                                imageVector = Icons.Outlined.Add,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onSurface,
+                                modifier = Modifier.size(18.dp)
+                            )
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(
+                                "New Collection",
+                                style = ButtonSecondaryStyle,
+                                color = MaterialTheme.colorScheme.onSurface
+                            )
+                        }
+                    } else {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
                         ) {
                             OutlinedTextField(
                                 value = newCollectionName,
                                 onValueChange = { newCollectionName = it },
-                                placeholder = { Text("Collection name") },
-                                singleLine = true,
-                                modifier = Modifier.weight(1f)
+                                placeholder = { Text("Collection name", style = BodyStyle) },
+                                modifier = Modifier.weight(1f),
+                                shape = RoundedCornerShape(12.dp),
+                                singleLine = true
                             )
-                            Button(
+                            PrimaryButton(
+                                text = "Create",
+                                height = 50.dp,
+                                modifier = Modifier.width(100.dp),
+                                enabled = newCollectionName.isNotBlank(),
                                 onClick = {
                                     if (newCollectionName.isNotBlank()) {
-                                        viewModel.createAndAddToCollection(newCollectionName)
+                                        viewModel.createAndAddToCollection(newCollectionName.trim())
                                         newCollectionName = ""
                                         isCreatingCollection = false
-                                        Toast.makeText(context, "Added to new collection", Toast.LENGTH_SHORT).show()
                                     }
                                 }
-                            ) {
-                                Text("Create")
-                            }
-                        }
-                    } else {
-                        OutlinedButton(
-                            onClick = { isCreatingCollection = true },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
-                            Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(18.dp))
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text("Create New Collection")
+                            )
                         }
                     }
-                    Spacer(modifier = Modifier.height(30.dp))
                 }
             }
         }
     }
 }
 
+@Composable
+private fun DetailActionButton(
+    icon: ImageVector,
+    label: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    isSelected: Boolean = false,
+    isRestyle: Boolean = false,
+    accentColor: Color = Brass
+) {
+    val circleBg = when {
+        isRestyle -> accentColor
+        isSelected -> BrassAlpha12
+        else -> Color(0x1AF3EDE3)
+    }
+    val circleBorder = when {
+        isRestyle -> accentColor
+        isSelected -> accentColor
+        else -> Color(0x29F3EDE3)
+    }
+    val iconTint = when {
+        isRestyle -> Ink
+        isSelected -> accentColor
+        else -> Ivory
+    }
+    val labelColor = when {
+        isSelected -> accentColor
+        else -> Ivory
+    }
+
+    Column(
+        modifier = modifier
+            .width(56.dp)
+            .clickable(onClick = onClick),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(6.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .size(48.dp)
+                .clip(CircleShape)
+                .background(circleBg)
+                .border(1.dp, circleBorder, CircleShape),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = label,
+                tint = iconTint,
+                modifier = Modifier.size(22.dp)
+            )
+        }
+
+        Text(
+            text = label,
+            fontSize = 11.sp,
+            fontFamily = FigtreeFontFamily,
+            fontWeight = FontWeight.Medium,
+            color = labelColor,
+            textAlign = TextAlign.Center,
+            maxLines = 1
+        )
+    }
+}
+
+@Composable
+private fun DetailMiniCard(
+    quoteText: String,
+    photoPath: String?,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val backgroundRepo = remember(context) { BackgroundRepository(context) }
+    var hasError by remember(photoPath) { mutableStateOf(false) }
+
+    Box(
+        modifier = modifier
+            .width(120.dp)
+            .height(150.dp)
+            .clip(SmallCardShape)
+            .background(Charcoal)
+            .border(1.dp, HairlineDark, SmallCardShape)
+            .clickable(onClick = onClick)
+    ) {
+        if (photoPath != null && !hasError) {
+            AsyncImage(
+                model = ImageRequest.Builder(context)
+                    .data(backgroundRepo.getCoilUri(photoPath))
+                    .memoryCacheKey(photoPath)
+                    .precision(Precision.INEXACT)
+                    .scale(Scale.FILL)
+                    .crossfade(false)
+                    .build(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+                onError = { hasError = true }
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    Brush.verticalGradient(
+                        0.0f to Color.Transparent,
+                        1.0f to Color(0xCC0F0E0C)
+                    )
+                )
+        )
+
+        Text(
+            text = quoteText,
+            fontFamily = NewsreaderFontFamily,
+            fontSize = 13.sp,
+            lineHeight = 17.sp,
+            color = Ivory,
+            maxLines = 4,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(10.dp)
+        )
+    }
+}

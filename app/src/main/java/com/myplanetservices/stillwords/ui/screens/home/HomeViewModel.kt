@@ -1,4 +1,4 @@
-﻿package com.myplanetservices.stillwords.ui.screens.home
+package com.myplanetservices.stillwords.ui.screens.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -11,6 +11,10 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
 data class HomeUiState(
     val quoteOfTheDay: Quote? = null,
     val heroStyle: CardStyle = CardStyle.NOIR_STILLWORDS,
@@ -22,6 +26,8 @@ data class HomeUiState(
     val subGreeting: String = "Find something meaningful today.",
     val moods: List<String> = listOf("All", "Calm", "Focused", "Hopeful", "Need encouragement", "Motivated", "Growth", "Confidence", "Gratitude"),
     val categories: List<String> = listOf("Motivation", "Confidence", "Gratitude", "Mindfulness", "Relationships", "Resilience", "Creativity", "Growth", "Wisdom"),
+    val quietDaysThisWeek: Int = 1,
+    val weekDayStatuses: List<Boolean> = List(7) { false },
     val isLoading: Boolean = false
 )
 
@@ -33,14 +39,20 @@ class HomeViewModel(
     private val _heroStyle = MutableStateFlow(CardStyle.NOIR_STILLWORDS)
     private val _selectedMood = MutableStateFlow("All")
 
+    init {
+        val todayStr = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
+        viewModelScope.launch {
+            preferencesRepository.recordAppOpened(todayStr)
+        }
+    }
+
     private val greeting: String
         get() {
             val hour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY)
             return when {
                 hour in 5..11 -> "Good morning"
                 hour in 12..16 -> "Good afternoon"
-                hour in 17..21 -> "Good evening"
-                else -> "Quiet night"
+                else -> "Good evening"
             }
         }
 
@@ -58,6 +70,20 @@ class HomeViewModel(
         }
         val forYou = repository.getForYouQuotes(prefs.selectedCategories).firstOrNull() ?: emptyList()
 
+        val cal = Calendar.getInstance()
+        cal.firstDayOfWeek = Calendar.MONDAY
+        val dayOfWeek = cal.get(Calendar.DAY_OF_WEEK)
+        val daysFromMonday = (dayOfWeek - Calendar.MONDAY + 7) % 7
+        cal.add(Calendar.DAY_OF_MONTH, -daysFromMonday)
+
+        val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.US)
+        val weekStatuses = (0..6).map {
+            val dateStr = sdf.format(cal.time)
+            cal.add(Calendar.DAY_OF_MONTH, 1)
+            dateStr in prefs.openedDates
+        }
+        val quietDays = weekStatuses.count { it }.coerceAtLeast(1)
+
         HomeUiState(
             quoteOfTheDay = qotd,
             heroStyle = heroStyle,
@@ -66,7 +92,9 @@ class HomeViewModel(
             forYouQuotes = forYou.take(8),
             popularQuotes = popular.take(8),
             greeting = greeting,
-            subGreeting = "Find something meaningful today."
+            subGreeting = "Find something meaningful today.",
+            quietDaysThisWeek = quietDays,
+            weekDayStatuses = weekStatuses
         )
     }.stateIn(
         scope = viewModelScope,
