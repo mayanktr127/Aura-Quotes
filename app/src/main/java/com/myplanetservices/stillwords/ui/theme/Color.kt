@@ -32,6 +32,7 @@ val EmptyDotBorderLight = Color(0xFFC9BFAE)// Unfilled week dots border
 // Shared Accent Alpha
 val BrassAlpha12 = Color(0x1FC8A46A)       // Selected chip fill dark (Brass at 12% alpha)
 val DeepBrassAlpha12 = Color(0x1F8A6A30)   // Selected chip fill light (Deep brass at 12% alpha)
+val BrassAlpha22 = Color(0x38C8A46A)       // Search highlight mark (Brass at 22% alpha - Search.dc.html line 23)
 
 // On-Photo Colours (Same in both themes)
 val PhotoTextIvory = Color(0xFFF3EDE3)

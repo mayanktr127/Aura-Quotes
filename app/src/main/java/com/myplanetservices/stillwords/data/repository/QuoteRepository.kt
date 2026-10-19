@@ -350,6 +350,22 @@ class QuoteRepository(
         historyEntries.mapNotNull { quoteMap[it.quoteId] }
     }
 
+    val historyItemsFlow: Flow<List<HistoryItem>> = combine(
+        quoteDao.getHistory(),
+        allQuotesFlow
+    ) { historyEntries, quotes ->
+        val quoteMap = quotes.associateBy { it.id }
+        historyEntries.mapNotNull { entry ->
+            quoteMap[entry.quoteId]?.let { quote ->
+                HistoryItem(
+                    id = entry.id,
+                    viewedAt = entry.viewedAt,
+                    quote = quote
+                )
+            }
+        }
+    }
+
     suspend fun recordHistory(quoteId: String) {
         quoteDao.insertHistory(HistoryEntity(quoteId = quoteId))
     }

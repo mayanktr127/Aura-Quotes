@@ -1,4 +1,4 @@
-﻿package com.myplanetservices.stillwords.ui.screens.collection
+package com.myplanetservices.stillwords.ui.screens.collection
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -52,6 +52,23 @@ class CollectionDetailViewModel(
         viewModelScope.launch {
             repository.deleteCollection(collectionId)
             onDeleted()
+        }
+    }
+
+    fun renameCollection(newName: String) {
+        if (newName.isBlank()) return
+        val current = uiState.value.collection ?: return
+        viewModelScope.launch {
+            repository.updateCollection(
+                com.myplanetservices.stillwords.data.local.CollectionEntity(
+                    id = current.id,
+                    name = newName.trim(),
+                    description = current.description,
+                    iconName = current.iconName,
+                    colorHex = current.colorHex,
+                    createdAt = current.createdAt
+                )
+            )
         }
     }
 

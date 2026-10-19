@@ -1,4 +1,4 @@
-﻿package com.myplanetservices.stillwords.ui.screens.explore
+package com.myplanetservices.stillwords.ui.screens.explore
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -14,17 +14,28 @@ data class ExploreUiState(
     val selectedFilterValue: String? = null,
     val filteredQuotes: List<Quote> = emptyList(),
     val categories: List<String> = emptyList(),
+    val featuredTopics: List<String> = listOf("Peace", "Courage", "Love", "Wisdom"),
     val moods: List<String> = listOf(
         "Motivated", "Calm", "Happy", "Healing", "Confident",
         "Thoughtful", "Determined", "Hopeful", "Peace", "Tired"
     ),
     val moments: List<String> = listOf(
-        "Morning", "Before Work", "Study Time", "Workout",
-        "Difficult Day", "Need Confidence", "Need Focus", "Before Sleep", "Starting Over"
+        "Morning", "Before work", "Study time", "Before sleep"
     ),
     val authors: List<AuthorInfo> = emptyList(),
-    val trendingQuotes: List<Quote> = emptyList()
-)
+    val trendingQuotes: List<Quote> = emptyList(),
+    val userQuotes: List<Quote> = emptyList(),
+    val allQuotes: List<Quote> = emptyList()
+) {
+    companion object {
+        val MOMENT_MAPPING = mapOf(
+            "Morning" to listOf("Peace", "Gratitude", "Mindfulness", "Motivation"),
+            "Before work" to listOf("Discipline", "Work", "Confidence", "Success"),
+            "Study time" to listOf("Study", "Wisdom", "Creativity", "Growth"),
+            "Before sleep" to listOf("Peace", "Healing", "Life", "Mindfulness")
+        )
+    }
+}
 
 enum class FilterType {
     CATEGORY, MOOD, MOMENT, AUTHOR
@@ -56,6 +67,7 @@ class ExploreViewModel(
         }
 
         val allCategories = allQuotes.map { it.category }.distinct().sorted()
+        val userQuotes = allQuotes.filter { it.isUserCreated }
 
         ExploreUiState(
             selectedFilterType = filterType,
@@ -63,7 +75,9 @@ class ExploreViewModel(
             filteredQuotes = filtered,
             categories = allCategories,
             authors = authors,
-            trendingQuotes = allQuotes.filter { it.isFeatured }
+            trendingQuotes = allQuotes.filter { it.isFeatured },
+            userQuotes = userQuotes,
+            allQuotes = allQuotes
         )
     }.stateIn(
         scope = viewModelScope,

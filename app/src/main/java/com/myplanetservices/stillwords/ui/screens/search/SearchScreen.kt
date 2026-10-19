@@ -1,40 +1,56 @@
 package com.myplanetservices.stillwords.ui.screens.search
 
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.outlined.SearchOff
+import androidx.compose.material.icons.outlined.Close
+import androidx.compose.material.icons.outlined.Explore
+import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.PathEffect
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.myplanetservices.stillwords.ui.components.QuoteCard
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.size.Precision
+import coil.size.Scale
+import com.myplanetservices.stillwords.data.model.BackgroundTheme
+import com.myplanetservices.stillwords.data.repository.BackgroundRepository
+import com.myplanetservices.stillwords.ui.components.SecondaryButton
+import com.myplanetservices.stillwords.ui.components.StillwordsChip
+import com.myplanetservices.stillwords.ui.theme.*
 
 @Composable
 fun SearchScreen(
@@ -42,10 +58,13 @@ fun SearchScreen(
     onNavigateBack: () -> Unit,
     onNavigateToDetail: (String) -> Unit,
     onNavigateToDesigner: (String?) -> Unit,
+    onNavigateToRead: (String?, List<String>?) -> Unit = { _, _ -> },
+    onNavigateToExplore: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val backgroundRepo = remember(context) { BackgroundRepository(context) }
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -53,207 +72,446 @@ fun SearchScreen(
         focusRequester.requestFocus()
     }
 
-    Scaffold(
-        topBar = {
-            Column(
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .statusBarsPadding()
+    ) {
+        // ====================================================================
+        // 1. TOP HEADER & SEARCH INPUT (Search.dc.html lines 28-36)
+        // ====================================================================
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 8.dp, end = 16.dp, top = 8.dp, bottom = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            IconButton(
+                onClick = onNavigateBack,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.background)
-                    .statusBarsPadding()
-                    .padding(horizontal = 16.dp, vertical = 10.dp)
+                    .size(44.dp)
+                    .testTag("search_back_button")
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                Icon(
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    contentDescription = "Back",
+                    tint = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.size(22.dp)
+                )
+            }
+
+            // Search Bar Input Container
+            Row(
+                modifier = Modifier
+                    .weight(1f)
+                    .height(48.dp)
+                    .clip(InputShape)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .border(1.dp, MaterialTheme.colorScheme.primary, InputShape)
+                    .padding(start = 14.dp, end = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Outlined.Search,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.size(18.dp)
+                )
+
+                Box(
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.CenterStart
                 ) {
-                    IconButton(
-                        onClick = onNavigateBack,
-                        modifier = Modifier
-                            .size(40.dp)
-                            .background(MaterialTheme.colorScheme.surfaceVariant, CircleShape)
-                            .testTag("search_back_button")
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onSurface,
-                            modifier = Modifier.size(20.dp)
+                    if (state.query.isEmpty()) {
+                        Text(
+                            text = "Search words, topics or authors",
+                            style = BodyStyle.copy(fontSize = 15.sp),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
 
-                    TextField(
+                    BasicTextField(
                         value = state.query,
                         onValueChange = { viewModel.onQueryChanged(it) },
-                        placeholder = {
-                            Text(
-                                "Search quotes, authors, topics...",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
-                            )
-                        },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = Icons.Default.Search,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.tertiary,
-                                modifier = Modifier.size(20.dp)
-                            )
-                        },
-                        trailingIcon = {
-                            if (state.query.isNotEmpty()) {
-                                IconButton(onClick = { viewModel.clearQuery() }) {
-                                    Icon(
-                                        imageVector = Icons.Default.Clear,
-                                        contentDescription = "Clear",
-                                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier.size(18.dp)
-                                    )
-                                }
-                            }
-                        },
-                        singleLine = true,
-                        shape = RoundedCornerShape(24.dp),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                            unfocusedContainerColor = MaterialTheme.colorScheme.surfaceVariant,
-                            focusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent,
-                            unfocusedIndicatorColor = androidx.compose.ui.graphics.Color.Transparent
-                        ),
-                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
-                        keyboardActions = KeyboardActions(onSearch = { keyboardController?.hide() }),
                         modifier = Modifier
                             .fillMaxWidth()
                             .focusRequester(focusRequester)
-                            .testTag("search_input_field")
+                            .testTag("search_input_field"),
+                        textStyle = BodyStyle.copy(
+                            fontSize = 15.sp,
+                            color = MaterialTheme.colorScheme.onBackground
+                        ),
+                        singleLine = true,
+                        cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
+                        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Search),
+                        keyboardActions = KeyboardActions(onSearch = { keyboardController?.hide() })
                     )
                 }
 
-                // Suggestions pills
-                Spacer(modifier = Modifier.height(12.dp))
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                if (state.query.isNotEmpty()) {
+                    IconButton(
+                        onClick = { viewModel.clearQuery() },
+                        modifier = Modifier.size(36.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Outlined.Close,
+                            contentDescription = "Clear search",
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
+                }
+            }
+        }
+
+        // ====================================================================
+        // 2. FILTER CHIPS (All, Quotes, Topics, Authors - Search.dc.html 39-43)
+        // ====================================================================
+        LazyRow(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 20.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            items(
+                items = SearchFilter.entries,
+                key = { "filter_${it.name}" },
+                contentType = { "filter_chip" }
+            ) { filter ->
+                val selected = state.selectedFilter == filter
+                Box(
+                    modifier = Modifier
+                        .height(36.dp)
+                        .clip(ChipShape)
+                        .background(if (selected) BrassAlpha12 else Color.Transparent)
+                        .border(
+                            1.dp,
+                            if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+                            ChipShape
+                        )
+                        .clickable { viewModel.onFilterSelected(filter) }
+                        .padding(horizontal = 14.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    items(state.suggestions) { suggestion ->
-                        val shape = RoundedCornerShape(16.dp)
-                        Box(
-                            modifier = Modifier
-                                .clip(shape)
-                                .background(MaterialTheme.colorScheme.surfaceVariant)
-                                .clickable { viewModel.onSuggestionSelected(suggestion) }
-                                .padding(horizontal = 14.dp, vertical = 6.dp)
-                        ) {
-                            Text(
-                                text = suggestion,
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
+                    Text(
+                        text = filter.label,
+                        style = ChipStyle,
+                        color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
+                    )
+                }
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // ====================================================================
+        // 3. SEARCH RESULTS OR EMPTY STATES
+        // ====================================================================
+        if (state.query.isBlank()) {
+            // Initial Empty Query State: suggestions
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .testTag("search_suggestions_list"),
+                contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                item(key = "try_searching_label") {
+                    Text(
+                        text = "TRY SEARCHING",
+                        style = LabelOverlineStyle,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+
+                item(key = "suggestions_row") {
+                    val initialSuggestions = listOf(
+                        "Peace", "Courage", "Mindfulness", "Wisdom",
+                        "Marcus Aurelius", "Seneca", "Rumi", "Gratitude", "Discipline"
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            items(
+                                items = initialSuggestions,
+                                key = { "init_sugg_$it" },
+                                contentType = { "suggestion_chip" }
+                            ) { suggestion ->
+                                StillwordsChip(
+                                    text = suggestion,
+                                    selected = false,
+                                    onClick = { viewModel.onSuggestionSelected(suggestion) }
+                                )
+                            }
                         }
                     }
                 }
             }
-        },
-        modifier = modifier
-    ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(innerPadding)
-        ) {
-            when {
-                state.query.isBlank() -> {
-                    // Empty search state with suggestions prompt
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(32.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Search,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.5f),
-                            modifier = Modifier.size(48.dp)
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "Find What Speaks to You",
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontFamily = FontFamily.Serif
-                            ),
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Text(
-                            text = "Search by author, subject, mindset, or keywords.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
+        } else if (state.results.isEmpty() && state.matchingTopics.isEmpty()) {
+            // ================================================================
+            // NO RESULTS STATE (EmptySearch.dc.html lines 31-52)
+            // ================================================================
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 24.dp)
+                    .testTag("search_no_results"),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(28.dp)
+            ) {
+                Spacer(modifier = Modifier.height(28.dp))
 
-                state.results.isEmpty() -> {
-                    // No results state
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(32.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Outlined.SearchOff,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.5f),
-                            modifier = Modifier.size(54.dp)
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "No quotes found",
-                            style = MaterialTheme.typography.titleMedium.copy(
-                                fontFamily = FontFamily.Serif
-                            ),
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Text(
-                            text = "Try another topic or explore our curated categories.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                }
+                // Dashed Circle Icon Container
+                val emptyBorderColor = StillwordsTheme.colors.emptyDotBorder
+                val brassColor = MaterialTheme.colorScheme.primary
 
-                else -> {
-                    // Results list
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        item {
-                            Text(
-                                text = "${state.results.size} quotes found",
-                                style = MaterialTheme.typography.labelSmall.copy(letterSpacing = 1.sp),
-                                color = MaterialTheme.colorScheme.tertiary
+                Box(
+                    modifier = Modifier.size(96.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Canvas(modifier = Modifier.fillMaxSize()) {
+                        drawCircle(
+                            color = emptyBorderColor,
+                            style = Stroke(
+                                width = 1.dp.toPx(),
+                                pathEffect = PathEffect.dashPathEffect(floatArrayOf(12f, 8f), 0f)
                             )
+                        )
+                    }
+                    Icon(
+                        imageVector = Icons.Outlined.Search,
+                        contentDescription = null,
+                        tint = brassColor,
+                        modifier = Modifier.size(34.dp)
+                    )
+                }
+
+                // Title & Subtitle
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Text(
+                        text = "No quotes for “${state.query.trim()}”",
+                        style = ScreenTitlePushedStyle.copy(fontSize = 24.sp),
+                        color = MaterialTheme.colorScheme.onBackground,
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        text = "Try a shorter word, a feeling, or one of the topics below.",
+                        style = BodyStyle,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.widthIn(max = 280.dp)
+                    )
+                }
+
+                // "TRY INSTEAD" Chips
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Text(
+                        text = "TRY INSTEAD",
+                        style = LabelOverlineStyle,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            items(
+                                items = state.suggestions,
+                                key = { "sugg_$it" },
+                                contentType = { "suggestion_chip" }
+                            ) { category ->
+                                StillwordsChip(
+                                    text = category,
+                                    selected = false,
+                                    onClick = { viewModel.onSuggestionSelected(category) }
+                                )
+                            }
                         }
+                    }
+                }
 
-                        itemsIndexed(state.results, key = { index, quote -> "search_${quote.id}_$index" }) { _, quote ->
-                            QuoteCard(
-                                quote = quote,
-                                cardStyle = quote.defaultStyle,
-                                isHero = false,
-                                modifier = Modifier.fillMaxWidth(),
-                                onFavoriteToggle = { viewModel.toggleFavorite(quote.id) },
-                                onOpenDesigner = { onNavigateToDesigner(quote.id) },
-                                onClick = {
-                                    viewModel.recordHistory(quote.id)
-                                    onNavigateToDetail(quote.id)
+                // "Browse all topics" SecondaryButton
+                SecondaryButton(
+                    text = "Browse all topics",
+                    icon = Icons.Outlined.Explore,
+                    onClick = onNavigateToExplore,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        } else {
+            // ================================================================
+            // RESULTS LIST (Search.dc.html lines 45-57)
+            // ================================================================
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .testTag("search_results_list"),
+                contentPadding = PaddingValues(start = 20.dp, end = 20.dp, bottom = 96.dp),
+                verticalArrangement = Arrangement.spacedBy(0.dp)
+            ) {
+                // Summary count overline (e.g. "24 QUOTES · 2 TOPICS")
+                item(key = "results_count_summary") {
+                    val countLabel = buildString {
+                        if (state.totalQuotesCount > 0) {
+                            append("${state.totalQuotesCount} ${if (state.totalQuotesCount == 1) "QUOTE" else "QUOTES"}")
+                        }
+                        if (state.totalTopicsCount > 0) {
+                            if (isNotEmpty()) append(" · ")
+                            append("${state.totalTopicsCount} ${if (state.totalTopicsCount == 1) "TOPIC" else "TOPICS"}")
+                        }
+                    }
+                    Text(
+                        text = countLabel.uppercase(),
+                        style = LabelOverlineStyle,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.padding(bottom = 12.dp)
+                    )
+                }
+
+                // Matching Topics row (Search.dc.html lines 47-50)
+                if (state.matchingTopics.isNotEmpty()) {
+                    item(key = "matching_topics_row") {
+                        LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 16.dp)
+                        ) {
+                            items(state.matchingTopics, key = { "match_topic_$it" }) { topic ->
+                                val bgTheme = remember(topic) { BackgroundTheme.fromCategory(topic) }
+                                val photoPath = remember(bgTheme) { bgTheme?.let { backgroundRepo.getThumbnailAssetPath(it) } }
+
+                                Row(
+                                    modifier = Modifier
+                                        .height(56.dp)
+                                        .clip(RoundedCornerShape(14.dp))
+                                        .background(MaterialTheme.colorScheme.surface)
+                                        .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(14.dp))
+                                        .clickable { onNavigateToRead(null, listOf(topic)) }
+                                        .padding(horizontal = 12.dp),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.spacedBy(10.dp)
+                                ) {
+                                    if (photoPath != null) {
+                                        AsyncImage(
+                                            model = ImageRequest.Builder(context)
+                                                .data(backgroundRepo.getCoilUri(photoPath))
+                                                .memoryCacheKey(photoPath)
+                                                .precision(Precision.INEXACT)
+                                                .scale(Scale.FILL)
+                                                .crossfade(false)
+                                                .build(),
+                                            contentDescription = null,
+                                            contentScale = ContentScale.Crop,
+                                            modifier = Modifier
+                                                .size(32.dp)
+                                                .clip(RoundedCornerShape(8.dp))
+                                        )
+                                    } else {
+                                        Box(
+                                            modifier = Modifier
+                                                .size(32.dp)
+                                                .clip(RoundedCornerShape(8.dp))
+                                                .background(MaterialTheme.colorScheme.primaryContainer)
+                                        )
+                                    }
+
+                                    Text(
+                                        text = topic,
+                                        style = BodyStyle.copy(fontWeight = androidx.compose.ui.text.font.FontWeight.Medium),
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
                                 }
-                            )
+                            }
+                        }
+                    }
+                }
+
+                // Result Rows with hairline dividers & highlighted query (Search.dc.html lines 52-57)
+                items(
+                    items = state.results,
+                    key = { "search_res_${it.id}" },
+                    contentType = { "search_result_row" }
+                ) { quote ->
+                    val bgTheme = remember(quote.category) { BackgroundTheme.fromCategory(quote.category) }
+                    val photoPath = remember(bgTheme) { bgTheme?.let { backgroundRepo.getThumbnailAssetPath(it) } }
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                viewModel.recordHistory(quote.id)
+                                onNavigateToDetail(quote.id)
+                            }
+                    ) {
+                        HorizontalDivider(
+                            thickness = 1.dp,
+                            color = MaterialTheme.colorScheme.outline
+                        )
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 16.dp),
+                            horizontalArrangement = Arrangement.spacedBy(14.dp),
+                            verticalAlignment = Alignment.Top
+                        ) {
+                            // 56x72 Photo Thumbnail
+                            if (photoPath != null) {
+                                AsyncImage(
+                                    model = ImageRequest.Builder(context)
+                                        .data(backgroundRepo.getCoilUri(photoPath))
+                                        .memoryCacheKey(photoPath)
+                                        .precision(Precision.INEXACT)
+                                        .scale(Scale.FILL)
+                                        .crossfade(false)
+                                        .build(),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier
+                                        .size(width = 56.dp, height = 72.dp)
+                                        .clip(RoundedCornerShape(12.dp))
+                                )
+                            } else {
+                                Box(
+                                    modifier = Modifier
+                                        .size(width = 56.dp, height = 72.dp)
+                                        .clip(RoundedCornerShape(12.dp))
+                                        .background(MaterialTheme.colorScheme.surface)
+                                        .border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp))
+                                )
+                            }
+
+                            // Quote Text with highlight + Subtitle
+                            Column(
+                                modifier = Modifier.weight(1f),
+                                verticalArrangement = Arrangement.spacedBy(6.dp)
+                            ) {
+                                HighlightedText(
+                                    text = quote.text,
+                                    query = state.query,
+                                    style = QuoteSmallStyle.copy(fontSize = 17.sp, lineHeight = 23.sp),
+                                    highlightColor = BrassAlpha22
+                                )
+
+                                Text(
+                                    text = "${quote.category} · ${quote.author}",
+                                    style = CaptionStyle,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
                         }
                     }
                 }
@@ -262,3 +520,48 @@ fun SearchScreen(
     }
 }
 
+/**
+ * Renders text with the search query highlighted with [highlightColor] background
+ * matching <mark> in Search.dc.html.
+ */
+@Composable
+fun HighlightedText(
+    text: String,
+    query: String,
+    style: TextStyle,
+    modifier: Modifier = Modifier,
+    highlightColor: Color = BrassAlpha22,
+    textColor: Color = MaterialTheme.colorScheme.onBackground
+) {
+    val trimmed = query.trim()
+    val annotatedString = remember(text, trimmed, highlightColor, textColor) {
+        buildAnnotatedString {
+            if (trimmed.isEmpty()) {
+                append(text)
+                return@buildAnnotatedString
+            }
+            var startIndex = 0
+            while (startIndex < text.length) {
+                val matchIndex = text.indexOf(trimmed, startIndex, ignoreCase = true)
+                if (matchIndex == -1) {
+                    append(text.substring(startIndex))
+                    break
+                }
+                if (matchIndex > startIndex) {
+                    append(text.substring(startIndex, matchIndex))
+                }
+                val endIndex = matchIndex + trimmed.length
+                withStyle(SpanStyle(background = highlightColor)) {
+                    append(text.substring(matchIndex, endIndex))
+                }
+                startIndex = endIndex
+            }
+        }
+    }
+    Text(
+        text = annotatedString,
+        style = style,
+        color = textColor,
+        modifier = modifier
+    )
+}

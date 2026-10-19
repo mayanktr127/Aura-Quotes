@@ -1,4 +1,4 @@
-﻿package com.myplanetservices.stillwords.ui.screens.favorites
+package com.myplanetservices.stillwords.ui.screens.favorites
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -14,6 +14,7 @@ data class FavoritesUiState(
     val savedQuotes: List<Quote> = emptyList(),
     val collections: List<QuoteCollection> = emptyList(),
     val historyQuotes: List<Quote> = emptyList(),
+    val historyItems: List<com.myplanetservices.stillwords.data.model.HistoryItem> = emptyList(),
     val isCreateCollectionDialogOpen: Boolean = false,
     val isClearHistoryDialogOpen: Boolean = false,
     val selectedCollection: QuoteCollection? = null,
@@ -28,10 +29,11 @@ private data class FavoritesDialogState(
 )
 
 class FavoritesViewModel(
-    private val repository: QuoteRepository
+    private val repository: QuoteRepository,
+    initialTab: Int = 0
 ) : ViewModel() {
 
-    private val _selectedTab = MutableStateFlow(0)
+    private val _selectedTab = MutableStateFlow(initialTab.coerceIn(0, 2))
     private val _isCreateDialogOpen = MutableStateFlow(false)
     private val _isClearHistoryDialogOpen = MutableStateFlow(false)
     private val _selectedCollectionId = MutableStateFlow<Long?>(null)
@@ -49,8 +51,8 @@ class FavoritesViewModel(
         _dialogState,
         repository.favoriteQuotesFlow,
         repository.collectionsFlow,
-        repository.historyQuotesFlow
-    ) { dialogs: FavoritesDialogState, saved: List<Quote>, collections: List<QuoteCollection>, history: List<Quote> ->
+        repository.historyItemsFlow
+    ) { dialogs: FavoritesDialogState, saved: List<Quote>, collections: List<QuoteCollection>, historyItems: List<com.myplanetservices.stillwords.data.model.HistoryItem> ->
         val selectedCol = collections.firstOrNull { it.id == dialogs.selectedCollectionId }
         val colQuotes = if (dialogs.selectedCollectionId != null) {
             repository.getQuotesForCollection(dialogs.selectedCollectionId).firstOrNull() ?: emptyList()
@@ -60,7 +62,8 @@ class FavoritesViewModel(
             selectedTab = dialogs.selectedTab,
             savedQuotes = saved,
             collections = collections,
-            historyQuotes = history,
+            historyQuotes = historyItems.map { it.quote },
+            historyItems = historyItems,
             isCreateCollectionDialogOpen = dialogs.isCreateDialogOpen,
             isClearHistoryDialogOpen = dialogs.isClearHistoryDialogOpen,
             selectedCollection = selectedCol,
@@ -69,7 +72,7 @@ class FavoritesViewModel(
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = FavoritesUiState()
+        initialValue = FavoritesUiState(selectedTab = initialTab.coerceIn(0, 2))
     )
 
     fun selectTab(tabIndex: Int) {
@@ -129,10 +132,13 @@ class FavoritesViewModel(
         }
     }
 
-    class Factory(private val repository: QuoteRepository) : ViewModelProvider.Factory {
+    class Factory(
+        private val repository: QuoteRepository,
+        private val initialTab: Int = 0
+    ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return FavoritesViewModel(repository) as T
+            return FavoritesViewModel(repository, initialTab) as T
         }
     }
 }

@@ -16,7 +16,9 @@ sealed class Screen(val route: String) {
             return if (quoteId != null) "create?quoteId=$quoteId" else "create"
         }
     }
-    object Favorites : Screen("favorites")
+    object Favorites : Screen("favorites?tab={tab}") {
+        fun createRoute(tab: Int = 0): String = "favorites?tab=$tab"
+    }
     object Search : Screen("search")
     object QuoteDetail : Screen("quote_detail/{quoteId}") {
         fun createRoute(quoteId: String): String = "quote_detail/$quoteId"

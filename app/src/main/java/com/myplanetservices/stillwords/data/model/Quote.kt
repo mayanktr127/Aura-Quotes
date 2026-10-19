@@ -38,3 +38,10 @@ data class AuthorInfo(
     val quoteCount: Int = 0
 )
 
+data class HistoryItem(
+    val id: Long,
+    val viewedAt: Long,
+    val quote: Quote
+)
+
+

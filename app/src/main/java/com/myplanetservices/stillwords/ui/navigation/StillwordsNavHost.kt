@@ -63,7 +63,7 @@ val bottomNavItems = listOf(
     BottomNavItem("Today", Screen.Home.route, Icons.Filled.WbSunny, Icons.Outlined.WbSunny),
     BottomNavItem("Explore", Screen.Explore.route, Icons.Filled.Explore, Icons.Outlined.Explore),
     BottomNavItem("Create", Screen.Create.createRoute(), Icons.Filled.AddBox, Icons.Outlined.AddBox),
-    BottomNavItem("Saved", Screen.Favorites.route, Icons.Filled.Bookmark, Icons.Outlined.BookmarkBorder)
+    BottomNavItem("Saved", Screen.Favorites.createRoute(0), Icons.Filled.Bookmark, Icons.Outlined.BookmarkBorder)
 )
 
 @Composable
@@ -80,14 +80,24 @@ fun StillwordsApp(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    // Check if bottom bar should be visible (exactly the 4 main tabs)
+    // Check if bottom bar should be visible (the 4 main tabs and collection detail as per DESIGN_SPEC.md Screen 12)
     val showBottomBar = currentRoute in listOf(
         Screen.Home.route,
         Screen.Explore.route,
         Screen.Create.route,
         "create",
         Screen.Favorites.route
-    )
+    ) || currentRoute?.startsWith("collection_detail") == true || currentRoute?.startsWith("favorites") == true
+
+    fun isTabSelected(title: String, route: String?): Boolean {
+        return when (title) {
+            "Today" -> route == Screen.Home.route
+            "Explore" -> route == Screen.Explore.route
+            "Create" -> route?.startsWith("create") == true
+            "Saved" -> route?.startsWith("favorites") == true || route?.startsWith("collection_detail") == true
+            else -> false
+        }
+    }
 
     val startDestination = remember {
         if (userPreferences.onboardingCompleted) {
@@ -110,7 +120,7 @@ fun StillwordsApp(
                 ) {
                     Spacer(modifier = Modifier.height(20.dp))
                     bottomNavItems.forEach { item ->
-                        val selected = currentRoute?.startsWith(item.route.split("?").first()) == true
+                        val selected = isTabSelected(item.title, currentRoute)
                         NavigationRailItem(
                             selected = selected,
                             onClick = {
@@ -173,7 +183,7 @@ fun StillwordsApp(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 bottomNavItems.forEach { item ->
-                                    val selected = currentRoute?.startsWith(item.route.split("?").first()) == true
+                                    val selected = isTabSelected(item.title, currentRoute)
                                     val tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                                     val textStyle = TabLabelStyle.copy(
                                         fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
@@ -251,11 +261,7 @@ private fun AppNavigationHost(
     val appContext = LocalContext.current.applicationContext
     NavHost(
         navController = navController,
-        startDestination = startDestination,
-        enterTransition = { fadeIn(animationSpec = tween(180)) },
-        exitTransition = { fadeOut(animationSpec = tween(180)) },
-        popEnterTransition = { fadeIn(animationSpec = tween(180)) },
-        popExitTransition = { fadeOut(animationSpec = tween(180)) }
+        startDestination = startDestination
     ) {
         // Onboarding
         composable(Screen.Onboarding.route) {
@@ -346,6 +352,12 @@ private fun AppNavigationHost(
                 },
                 onNavigateToSearch = {
                     navController.navigate(Screen.Search.route)
+                },
+                onNavigateToRead = { initialQuoteId, categories ->
+                    navController.navigate(Screen.Read.createRoute(initialQuoteId, categories))
+                },
+                onNavigateToFavorites = { tab ->
+                    navController.navigate(Screen.Favorites.createRoute(tab))
                 }
             )
         }
@@ -374,9 +386,18 @@ private fun AppNavigationHost(
         }
 
         // Favorites
-        composable(Screen.Favorites.route) {
+        composable(
+            route = Screen.Favorites.route,
+            arguments = listOf(
+                navArgument("tab") {
+                    type = NavType.IntType
+                    defaultValue = 0
+                }
+            )
+        ) { backStackEntry ->
+            val initialTab = backStackEntry.arguments?.getInt("tab") ?: 0
             val favoritesViewModel: FavoritesViewModel = androidx.lifecycle.viewmodel.compose.viewModel(
-                factory = FavoritesViewModel.Factory(quoteRepository)
+                factory = FavoritesViewModel.Factory(quoteRepository, initialTab)
             )
             FavoritesScreen(
                 viewModel = favoritesViewModel,
@@ -388,6 +409,9 @@ private fun AppNavigationHost(
                 },
                 onNavigateToCollection = { collectionId ->
                     navController.navigate(Screen.CollectionDetail.createRoute(collectionId))
+                },
+                onNavigateToRead = { initialQuoteId, categories ->
+                    navController.navigate(Screen.Read.createRoute(initialQuoteId, categories))
                 }
             )
         }
@@ -411,6 +435,12 @@ private fun AppNavigationHost(
                 },
                 onNavigateToDesigner = { quoteId ->
                     navController.navigate(Screen.Create.createRoute(quoteId))
+                },
+                onNavigateToRead = { initialQuoteId, categories ->
+                    navController.navigate(Screen.Read.createRoute(initialQuoteId, categories))
+                },
+                onNavigateToSearch = {
+                    navController.navigate(Screen.Search.route)
                 }
             )
         }
@@ -428,6 +458,12 @@ private fun AppNavigationHost(
                 },
                 onNavigateToDesigner = { quoteId ->
                     navController.navigate(Screen.Create.createRoute(quoteId))
+                },
+                onNavigateToRead = { initialQuoteId, categories ->
+                    navController.navigate(Screen.Read.createRoute(initialQuoteId, categories))
+                },
+                onNavigateToExplore = {
+                    navController.navigate(Screen.Explore.route)
                 }
             )
         }

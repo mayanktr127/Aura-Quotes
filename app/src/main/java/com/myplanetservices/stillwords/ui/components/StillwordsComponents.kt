@@ -654,11 +654,11 @@ fun QuoteTile(
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .defaultMinSize(minHeight = 140.dp)
             .clip(TileCardShape)
             .background(MaterialTheme.colorScheme.surface)
             .border(1.dp, MaterialTheme.colorScheme.outline, TileCardShape)
             .clickable(onClick = onClick)
-            .padding(16.dp)
     ) {
         if (isPhoto) {
             AsyncImage(
@@ -685,7 +685,10 @@ fun QuoteTile(
         }
 
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomStart)
+                .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             Text(
