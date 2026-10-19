@@ -12,7 +12,7 @@ import java.io.IOException
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "user_preferences")
 
 data class UserPreferences(
-    val themeMode: String = "SYSTEM", // "SYSTEM", "LIGHT", "DARK"
+    val themeMode: String = "DARK", // "SYSTEM", "LIGHT", "DARK"
     val onboardingCompleted: Boolean = false,
     val selectedCategories: Set<String> = setOf("Motivation", "Mindfulness", "Wisdom", "Growth"),
     val dailyReminderEnabled: Boolean = false,
@@ -45,7 +45,7 @@ class UserPreferencesRepository(private val context: Context) {
         }
         .map { preferences ->
             UserPreferences(
-                themeMode = preferences[PreferencesKeys.THEME_MODE] ?: "SYSTEM",
+                themeMode = preferences[PreferencesKeys.THEME_MODE] ?: "DARK",
                 onboardingCompleted = preferences[PreferencesKeys.ONBOARDING_COMPLETED] ?: false,
                 selectedCategories = preferences[PreferencesKeys.SELECTED_CATEGORIES]
                     ?: setOf("Motivation", "Mindfulness", "Wisdom", "Growth"),

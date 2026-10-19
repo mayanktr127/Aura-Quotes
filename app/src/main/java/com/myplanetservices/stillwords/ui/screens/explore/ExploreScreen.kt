@@ -51,21 +51,25 @@ fun ExploreScreen(
         }
     }
 
-    LazyColumn(
+    Column(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .testTag("explore_screen"),
-        contentPadding = PaddingValues(bottom = 96.dp)
+            .statusBarsPadding()
     ) {
-        // Top Header & Search Bar
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .padding(horizontal = 20.dp, vertical = 16.dp)
-            ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .testTag("explore_screen"),
+            contentPadding = PaddingValues(bottom = 96.dp)
+        ) {
+            // Top Header & Search Bar
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 16.dp)
+                ) {
                 if (state.selectedFilterType == null) {
                     Text(
                         text = "Explore & Discover",
@@ -428,4 +432,7 @@ fun ExploreScreen(
         }
     }
 }
+}
+
+
 

@@ -209,7 +209,7 @@ fun PhotoCreditCard(
                     .size(width = 60.dp, height = 75.dp)
                     .clip(thumbShape)
                     .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f), thumbShape)
-                    .background(Color(0xFF1B1815))
+                    .background(MaterialTheme.colorScheme.surface)
             ) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)

@@ -44,6 +44,7 @@ import com.myplanetservices.stillwords.data.model.PhotoFilter
 import com.myplanetservices.stillwords.data.model.QuoteFont
 import com.myplanetservices.stillwords.data.repository.BackgroundRepository
 import com.myplanetservices.stillwords.ui.components.StyleSelectorCarousel
+import com.myplanetservices.stillwords.ui.theme.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -164,7 +165,7 @@ fun QuoteDesignerScreen(
                 val isPhoto = state.selectedPhotoPath != null
 
                 val bgMod = if (isPhoto) {
-                    Modifier.background(Color(0xFF141210), cardShape)
+                    Modifier.background(MaterialTheme.colorScheme.surface, cardShape)
                 } else if (cardStyle.gradient != null) {
                     Modifier.background(cardStyle.gradient, cardShape)
                 } else {
@@ -172,15 +173,15 @@ fun QuoteDesignerScreen(
                 }
 
                 val borderMod = if (isPhoto) {
-                    Modifier.border(1.2.dp, Color(0x33E5A93C), cardShape)
+                    Modifier.border(1.dp, MaterialTheme.colorScheme.outline, cardShape)
                 } else if (cardStyle.borderColor != Color.Transparent) {
                     Modifier.border(1.2.dp, cardStyle.borderColor, cardShape)
                 } else Modifier
 
-                // Active palette resolution: photo mode uses warm white and gold
-                val activeTextColor = if (isPhoto) Color(0xFFFBF7EE) else cardStyle.textColor
-                val activeAuthorColor = if (isPhoto) Color(0xFFD4C8B0) else cardStyle.authorColor
-                val activeCategoryColor = if (isPhoto) Color(0xFFE5A93C) else cardStyle.authorColor
+                // Active palette resolution: photo mode uses on-photo colors
+                val activeTextColor = if (isPhoto) PhotoTextIvory else cardStyle.textColor
+                val activeAuthorColor = if (isPhoto) PhotoAuthorIvory else cardStyle.authorColor
+                val activeCategoryColor = if (isPhoto) PhotoCategoryAccent else cardStyle.authorColor
 
                 // Aspect ratio sizing
                 val canvasModifier = when (state.aspectRatio) {
@@ -192,7 +193,7 @@ fun QuoteDesignerScreen(
 
                 Box(
                     modifier = canvasModifier
-                        .shadow(12.dp, cardShape, spotColor = Color(0x40000000))
+                        .shadow(4.dp, cardShape)
                         .then(bgMod)
                         .then(borderMod)
                         .clip(cardShape)
@@ -241,7 +242,7 @@ fun QuoteDesignerScreen(
                         modifier = Modifier
                             .matchParentSize()
                             .padding(10.dp)
-                            .border(1.dp, Color(0x33E5A93C), RoundedCornerShape(16.dp))
+                            .border(1.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.2f), RoundedCornerShape(16.dp))
                     )
 
                     Column(
@@ -519,7 +520,7 @@ fun QuoteDesignerScreen(
                                 Box(
                                     modifier = Modifier
                                         .fillMaxSize()
-                                        .background(Color(0x40000000))
+                                        .background(TileCardScrim)
                                 )
 
                                 Column(
@@ -621,14 +622,7 @@ fun QuoteDesignerScreen(
                                     Box(
                                         modifier = Modifier
                                             .fillMaxSize()
-                                            .background(
-                                                Brush.verticalGradient(
-                                                    colors = listOf(
-                                                        Color.Transparent,
-                                                        Color(0x99000000)
-                                                    )
-                                                )
-                                            )
+                                            .background(TileCardScrim)
                                     )
 
                                     Column(

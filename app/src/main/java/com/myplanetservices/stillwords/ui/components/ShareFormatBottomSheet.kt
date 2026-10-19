@@ -160,7 +160,7 @@ fun ShareFormatBottomSheet(
                                     Icon(
                                         imageVector = Icons.Default.Check,
                                         contentDescription = "Selected",
-                                        tint = Color.Black,
+                                        tint = MaterialTheme.colorScheme.onPrimary,
                                         modifier = Modifier.size(12.dp)
                                     )
                                 }
@@ -232,15 +232,15 @@ fun ShareFormatBottomSheet(
                         .height(48.dp),
                     shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.tertiary,
-                        contentColor = Color.Black
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
                     ),
                     enabled = !isExporting
                 ) {
                     if (isExporting) {
                         CircularProgressIndicator(
                             modifier = Modifier.size(20.dp),
-                            color = Color.Black,
+                            color = MaterialTheme.colorScheme.onPrimary,
                             strokeWidth = 2.dp
                         )
                     } else {

@@ -1,4 +1,4 @@
-﻿package com.myplanetservices.stillwords.ui.screens.onboarding
+package com.myplanetservices.stillwords.ui.screens.onboarding
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -53,14 +53,7 @@ fun OnboardingScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFF1E1A17),
-                        Color(0xFF12100E)
-                    )
-                )
-            )
+            .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
             .navigationBarsPadding()
             .padding(24.dp)
@@ -87,8 +80,8 @@ fun OnboardingScreen(
                             .width(if (index == currentStep) 32.dp else 12.dp)
                             .clip(CircleShape)
                             .background(
-                                if (index == currentStep) Color(0xFFE5A93C)
-                                else Color(0x40FFFFFF)
+                                if (index == currentStep) MaterialTheme.colorScheme.primary
+                                else MaterialTheme.colorScheme.outlineVariant
                             )
                     )
                 }
@@ -112,14 +105,14 @@ fun OnboardingScreen(
                             Box(
                                 modifier = Modifier
                                     .size(80.dp)
-                                    .background(Color(0x20E5A93C), CircleShape)
-                                    .border(1.dp, Color(0x60E5A93C), CircleShape),
+                                    .background(MaterialTheme.colorScheme.primaryContainer, CircleShape)
+                                    .border(1.dp, MaterialTheme.colorScheme.outline, CircleShape),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.AutoAwesome,
                                     contentDescription = null,
-                                    tint = Color(0xFFE5A93C),
+                                    tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(36.dp)
                                 )
                             }
@@ -129,7 +122,7 @@ fun OnboardingScreen(
                             Text(
                                 text = "Words that stay with you.",
                                 style = MaterialTheme.typography.displayMedium,
-                                color = Color(0xFFFBF7EE),
+                                color = MaterialTheme.colorScheme.onBackground,
                                 textAlign = TextAlign.Center
                             )
 
@@ -138,7 +131,7 @@ fun OnboardingScreen(
                             Text(
                                 text = "Discover thoughts and timeless wisdom for every mood and moment of your day.",
                                 style = MaterialTheme.typography.bodyLarge,
-                                color = Color(0xFFA8A29E),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 textAlign = TextAlign.Center,
                                 lineHeight = 24.sp,
                                 modifier = Modifier.padding(horizontal = 16.dp)
@@ -155,7 +148,7 @@ fun OnboardingScreen(
                             Text(
                                 text = "What inspires you?",
                                 style = MaterialTheme.typography.headlineLarge,
-                                color = Color(0xFFFBF7EE),
+                                color = MaterialTheme.colorScheme.onBackground,
                                 textAlign = TextAlign.Center
                             )
 
@@ -164,7 +157,7 @@ fun OnboardingScreen(
                             Text(
                                 text = "Select topics to personalize your daily inspiration feed.",
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = Color(0xFFA8A29E),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 textAlign = TextAlign.Center
                             )
 
@@ -187,12 +180,12 @@ fun OnboardingScreen(
                                                 .weight(1f)
                                                 .clip(shape)
                                                 .background(
-                                                    if (isSelected) Color(0xFFE5A93C)
-                                                    else Color(0xFF24201C)
+                                                    if (isSelected) MaterialTheme.colorScheme.primaryContainer
+                                                    else MaterialTheme.colorScheme.surface
                                                 )
                                                 .border(
                                                     1.dp,
-                                                    if (isSelected) Color(0xFFE5A93C) else Color(0x30FFFFFF),
+                                                    if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                                                     shape
                                                 )
                                                 .clickable {
@@ -213,14 +206,14 @@ fun OnboardingScreen(
                                                     Icon(
                                                         imageVector = Icons.Default.Check,
                                                         contentDescription = null,
-                                                        tint = Color.Black,
+                                                        tint = MaterialTheme.colorScheme.onPrimaryContainer,
                                                         modifier = Modifier.size(16.dp)
                                                     )
                                                 }
                                                 Text(
                                                     text = category,
                                                     style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
-                                                    color = if (isSelected) Color.Black else Color(0xFFE7E1D8)
+                                                    color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
                                                 )
                                             }
                                         }
@@ -239,13 +232,13 @@ fun OnboardingScreen(
                             Box(
                                 modifier = Modifier
                                     .size(72.dp)
-                                    .background(Color(0x20E5A93C), CircleShape),
+                                    .background(MaterialTheme.colorScheme.primaryContainer, CircleShape),
                                 contentAlignment = Alignment.Center
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.WbSunny,
                                     contentDescription = null,
-                                    tint = Color(0xFFE5A93C),
+                                    tint = MaterialTheme.colorScheme.primary,
                                     modifier = Modifier.size(32.dp)
                                 )
                             }
@@ -255,7 +248,7 @@ fun OnboardingScreen(
                             Text(
                                 text = "When should we inspire you?",
                                 style = MaterialTheme.typography.headlineLarge,
-                                color = Color(0xFFFBF7EE),
+                                color = MaterialTheme.colorScheme.onBackground,
                                 textAlign = TextAlign.Center
                             )
 
@@ -264,7 +257,7 @@ fun OnboardingScreen(
                             Text(
                                 text = "Choose a quiet moment for your daily reflection.",
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = Color(0xFFA8A29E),
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 textAlign = TextAlign.Center
                             )
 
@@ -283,10 +276,10 @@ fun OnboardingScreen(
                                         .fillMaxWidth()
                                         .padding(vertical = 6.dp)
                                         .clip(shape)
-                                        .background(if (isSelected) Color(0xFF2E2721) else Color(0xFF1E1A17))
+                                        .background(if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surface)
                                     .border(
                                         width = if (isSelected) 1.5.dp else 1.dp,
-                                        color = if (isSelected) Color(0xFFE5A93C) else Color(0x20FFFFFF),
+                                        color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
                                         shape = shape
                                     )
                                     .clickable {
@@ -304,12 +297,12 @@ fun OnboardingScreen(
                                             Text(
                                                 text = title,
                                                 style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.SemiBold),
-                                                color = Color(0xFFFBF7EE)
+                                                color = if (isSelected) MaterialTheme.colorScheme.onPrimaryContainer else MaterialTheme.colorScheme.onSurface
                                             )
                                             Text(
                                                 text = timeLabel,
                                                 style = MaterialTheme.typography.labelSmall,
-                                                color = Color(0xFFE5A93C)
+                                                color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                         }
 
@@ -317,7 +310,7 @@ fun OnboardingScreen(
                                             Icon(
                                                 imageVector = Icons.Default.Check,
                                                 contentDescription = null,
-                                                tint = Color(0xFFE5A93C),
+                                                tint = MaterialTheme.colorScheme.primary,
                                                 modifier = Modifier.size(20.dp)
                                             )
                                         }
@@ -339,7 +332,7 @@ fun OnboardingScreen(
             ) {
                 if (currentStep > 0) {
                     TextButton(onClick = { currentStep-- }) {
-                        Text("Back", color = Color(0xFFA8A29E))
+                        Text("Back", color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 } else {
                     TextButton(onClick = {
@@ -348,7 +341,7 @@ fun OnboardingScreen(
                             onComplete()
                         }
                     }) {
-                        Text("Skip", color = Color(0xFFA8A29E))
+                        Text("Skip", color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
 
@@ -366,8 +359,8 @@ fun OnboardingScreen(
                         }
                     },
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = Color(0xFFE5A93C),
-                        contentColor = Color.Black
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary
                     ),
                     shape = RoundedCornerShape(16.dp),
                     modifier = Modifier

@@ -251,7 +251,7 @@ fun FavoritesScreen(
                                     Icon(
                                         imageVector = Icons.Outlined.Delete,
                                         contentDescription = "Delete Collection",
-                                        tint = Color(0xFFEF4444)
+                                        tint = MaterialTheme.colorScheme.error
                                     )
                                 }
                             }
@@ -514,7 +514,7 @@ fun FavoritesScreen(
                 confirmButton = {
                     Button(
                         onClick = { viewModel.clearHistory() },
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFFEF4444))
+                        colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
                     ) {
                         Text("Clear All")
                     }

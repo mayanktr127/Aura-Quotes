@@ -4,16 +4,22 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material.icons.outlined.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
@@ -42,6 +48,7 @@ import com.myplanetservices.stillwords.ui.screens.search.SearchScreen
 import com.myplanetservices.stillwords.ui.screens.search.SearchViewModel
 import com.myplanetservices.stillwords.ui.screens.settings.SettingsScreen
 import com.myplanetservices.stillwords.ui.screens.settings.SettingsViewModel
+import com.myplanetservices.stillwords.ui.theme.TabLabelStyle
 
 data class BottomNavItem(
     val title: String,
@@ -52,10 +59,9 @@ data class BottomNavItem(
 
 val bottomNavItems = listOf(
     BottomNavItem("Today", Screen.Home.route, Icons.Filled.WbSunny, Icons.Outlined.WbSunny),
-    BottomNavItem("Explore", Screen.Explore.route, Icons.Filled.GridView, Icons.Outlined.GridView),
-    BottomNavItem("Create", Screen.Create.createRoute(), Icons.Filled.AddCircle, Icons.Outlined.AddCircleOutline),
-    BottomNavItem("Saved", Screen.Favorites.route, Icons.Filled.Bookmark, Icons.Outlined.BookmarkBorder),
-    BottomNavItem("Settings", Screen.Settings.route, Icons.Filled.Settings, Icons.Outlined.Settings)
+    BottomNavItem("Explore", Screen.Explore.route, Icons.Filled.Explore, Icons.Outlined.Explore),
+    BottomNavItem("Create", Screen.Create.createRoute(), Icons.Filled.AddBox, Icons.Outlined.AddBox),
+    BottomNavItem("Saved", Screen.Favorites.route, Icons.Filled.Bookmark, Icons.Outlined.BookmarkBorder)
 )
 
 @Composable
@@ -72,14 +78,13 @@ fun StillwordsApp(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    // Check if bottom bar should be visible
+    // Check if bottom bar should be visible (exactly the 4 main tabs)
     val showBottomBar = currentRoute in listOf(
         Screen.Home.route,
         Screen.Explore.route,
         Screen.Create.route,
         "create",
-        Screen.Favorites.route,
-        Screen.Settings.route
+        Screen.Favorites.route
     )
 
     val startDestination = remember {
@@ -97,7 +102,7 @@ fun StillwordsApp(
             // Adaptive Navigation Rail for Tablets / Wide screens
             Row(modifier = Modifier.fillMaxSize()) {
                 NavigationRail(
-                    containerColor = MaterialTheme.colorScheme.surface,
+                    containerColor = MaterialTheme.colorScheme.background,
                     contentColor = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.width(80.dp)
                 ) {
@@ -121,7 +126,14 @@ fun StillwordsApp(
                                     contentDescription = item.title
                                 )
                             },
-                            label = { Text(item.title) }
+                            label = { Text(item.title, style = TabLabelStyle) },
+                            colors = NavigationRailItemDefaults.colors(
+                                selectedIconColor = MaterialTheme.colorScheme.primary,
+                                selectedTextColor = MaterialTheme.colorScheme.primary,
+                                unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                                indicatorColor = Color.Transparent
+                            )
                         )
                     }
                 }
@@ -137,44 +149,69 @@ fun StillwordsApp(
                 }
             }
         } else {
-            // Compact Phone Layout with Bottom Navigation Bar
+            // Compact Phone Layout with Styled 4-Tab Bottom Navigation Bar
             Scaffold(
                 snackbarHost = { SnackbarHost(hostState = snackbarHostState) },
                 bottomBar = {
                     if (showBottomBar) {
-                        NavigationBar(
-                            containerColor = MaterialTheme.colorScheme.surface,
-                            contentColor = MaterialTheme.colorScheme.onSurface,
-                            tonalElevation = 8.dp,
-                            windowInsets = NavigationBarDefaults.windowInsets,
-                            modifier = Modifier.testTag("bottom_nav_bar")
+                        Surface(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .testTag("bottom_nav_bar"),
+                            color = MaterialTheme.colorScheme.background,
+                            border = androidx.compose.foundation.BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
                         ) {
-                            bottomNavItems.forEach { item ->
-                                val selected = currentRoute?.startsWith(item.route.split("?").first()) == true
-                                NavigationBarItem(
-                                    selected = selected,
-                                    onClick = {
-                                        navController.navigate(item.route) {
-                                            popUpTo(navController.graph.findStartDestination().id) {
-                                                saveState = true
-                                            }
-                                            launchSingleTop = true
-                                            restoreState = true
-                                        }
-                                    },
-                                    icon = {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .navigationBarsPadding()
+                                    .height(76.dp)
+                                    .padding(horizontal = 8.dp, vertical = 8.dp),
+                                horizontalArrangement = Arrangement.SpaceAround,
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                bottomNavItems.forEach { item ->
+                                    val selected = currentRoute?.startsWith(item.route.split("?").first()) == true
+                                    val tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                                    val textStyle = TabLabelStyle.copy(
+                                        fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Medium,
+                                        color = tint
+                                    )
+
+                                    Column(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .fillMaxHeight()
+                                            .clip(RoundedCornerShape(12.dp))
+                                            .clickable(
+                                                interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
+                                                indication = null
+                                            ) {
+                                                navController.navigate(item.route) {
+                                                    popUpTo(navController.graph.findStartDestination().id) {
+                                                        saveState = true
+                                                    }
+                                                    launchSingleTop = true
+                                                    restoreState = true
+                                                }
+                                            },
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.Center
+                                    ) {
                                         Icon(
                                             imageVector = if (selected) item.selectedIcon else item.unselectedIcon,
-                                            contentDescription = item.title
+                                            contentDescription = item.title,
+                                            tint = tint,
+                                            modifier = Modifier.size(24.dp)
                                         )
-                                    },
-                                    label = { Text(item.title) },
-                                    colors = NavigationBarItemDefaults.colors(
-                                        selectedIconColor = MaterialTheme.colorScheme.tertiary,
-                                        selectedTextColor = MaterialTheme.colorScheme.tertiary,
-                                        indicatorColor = MaterialTheme.colorScheme.surfaceVariant
-                                    )
-                                )
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Text(
+                                            text = item.title,
+                                            style = textStyle,
+                                            maxLines = 1
+                                        )
+                                    }
+                                }
                             }
                         }
                     }

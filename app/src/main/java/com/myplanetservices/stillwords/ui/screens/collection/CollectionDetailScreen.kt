@@ -49,7 +49,7 @@ fun CollectionDetailScreen(
                         viewModel.deleteCollection(onDeleted = onNavigateBack)
                     }
                 ) {
-                    Text("Delete", color = Color(0xFFEF4444))
+                    Text("Delete", color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
@@ -94,7 +94,7 @@ fun CollectionDetailScreen(
                             Icon(
                                 imageVector = Icons.Outlined.Delete,
                                 contentDescription = "Delete Collection",
-                                tint = Color(0xFFEF4444)
+                                tint = MaterialTheme.colorScheme.error
                             )
                         }
                     }

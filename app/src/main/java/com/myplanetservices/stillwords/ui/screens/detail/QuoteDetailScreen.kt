@@ -103,7 +103,7 @@ fun QuoteDetailScreen(
                         Icon(
                             imageVector = if (quote.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                             contentDescription = "Favorite",
-                            tint = if (quote.isFavorite) Color(0xFFEF4444) else MaterialTheme.colorScheme.onBackground
+                            tint = if (quote.isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onBackground
                         )
                     }
                     IconButton(

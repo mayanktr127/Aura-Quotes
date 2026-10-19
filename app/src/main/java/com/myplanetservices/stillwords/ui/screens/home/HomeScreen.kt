@@ -55,21 +55,25 @@ fun HomeScreen(
     val platformLocale = LocalLocale.current.platformLocale
     val todayDateFormatted = SimpleDateFormat("EEEE, d MMMM", platformLocale).format(Date())
 
-    LazyColumn(
+    Column(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .testTag("home_screen"),
-        contentPadding = PaddingValues(bottom = 96.dp)
+            .statusBarsPadding()
     ) {
-        // Top App Bar / Greeting
-        item {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding()
-                    .padding(horizontal = 20.dp, vertical = 16.dp)
-            ) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxSize()
+                .testTag("home_screen"),
+            contentPadding = PaddingValues(bottom = 96.dp)
+        ) {
+            // Top App Bar / Greeting
+            item {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 16.dp)
+                ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -435,4 +439,7 @@ fun HomeScreen(
         }
     }
 }
+}
+
+
 

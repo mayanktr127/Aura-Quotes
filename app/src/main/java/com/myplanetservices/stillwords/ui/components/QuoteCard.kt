@@ -43,6 +43,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.myplanetservices.stillwords.ui.theme.*
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import coil.size.Precision
@@ -99,13 +100,13 @@ fun QuoteCard(
 
     val shape = RoundedCornerShape(28.dp)
 
-    // Palette resolution: photo mode uses high-contrast warm white & gold (WCAG AA > 4.5:1), fallback uses cardStyle
-    val textColor = if (isPhotoActive) Color(0xFFFBF7EE) else cardStyle.textColor
-    val authorColor = if (isPhotoActive) Color(0xFFD4C8B0) else cardStyle.authorColor
-    val accentColor = if (isPhotoActive) Color(0xFFE5A93C) else cardStyle.accentColor
+    // Palette resolution: photo mode uses on-photo colors, fallback uses cardStyle
+    val textColor = if (isPhotoActive) PhotoTextIvory else cardStyle.textColor
+    val authorColor = if (isPhotoActive) PhotoAuthorIvory else cardStyle.authorColor
+    val accentColor = if (isPhotoActive) PhotoCategoryAccent else cardStyle.accentColor
 
     val backgroundModifier = if (isPhotoActive) {
-        Modifier.background(Color(0xFF141210), shape = shape)
+        Modifier.background(MaterialTheme.colorScheme.surface, shape = shape)
     } else if (cardStyle.gradient != null) {
         Modifier.background(cardStyle.gradient, shape = shape)
     } else {
@@ -113,7 +114,7 @@ fun QuoteCard(
     }
 
     val borderModifier = if (isPhotoActive) {
-        Modifier.border(1.2.dp, Color(0x33E5A93C), shape = shape)
+        Modifier.border(1.dp, MaterialTheme.colorScheme.outline, shape = shape)
     } else if (cardStyle.borderColor != Color.Transparent) {
         Modifier.border(1.2.dp, cardStyle.borderColor, shape = shape)
     } else {
@@ -186,7 +187,7 @@ fun QuoteCard(
             ) {
                 // Category Chip / Flame
                 val badgeBg = if (isPhotoActive) Color(0x55000000) else cardStyle.authorColor.copy(alpha = 0.15f)
-                val badgeBorder = if (isPhotoActive) Modifier.border(1.dp, Color(0x33E5A93C), RoundedCornerShape(12.dp)) else Modifier
+                val badgeBorder = if (isPhotoActive) Modifier.border(1.dp, MaterialTheme.colorScheme.outline, RoundedCornerShape(12.dp)) else Modifier
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -228,7 +229,7 @@ fun QuoteCard(
                     Icon(
                         imageVector = if (quote.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                         contentDescription = if (quote.isFavorite) "Remove from favorites" else "Add to favorites",
-                        tint = if (quote.isFavorite) Color(0xFFEF4444) else textColor.copy(alpha = 0.85f),
+                        tint = if (quote.isFavorite) MaterialTheme.colorScheme.primary else textColor.copy(alpha = 0.85f),
                         modifier = Modifier
                             .size(18.dp)
                             .scale(heartScale)
