@@ -32,13 +32,16 @@ data class QuoteDesignerUiState(
     val isExporting: Boolean = false,
     val exportSuccessMessage: String? = null,
     val isCustomQuote: Boolean = false,
-    val isSaveQuoteSuccess: Boolean = false
+    val isSaveQuoteSuccess: Boolean = false,
+    val isPremiumUnlocked: Boolean = false,
+    val premiumExpiresAt: Long = 0L
 )
 
 class QuoteDesignerViewModel(
     private val initialQuoteId: String?,
     private val repository: QuoteRepository,
-    private val backgroundRepository: BackgroundRepository
+    private val backgroundRepository: BackgroundRepository,
+    private val preferencesRepository: com.myplanetservices.stillwords.data.preferences.UserPreferencesRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(QuoteDesignerUiState())
@@ -47,6 +50,16 @@ class QuoteDesignerViewModel(
     init {
         val themes = backgroundRepository.getAllThemeThumbnails()
         _uiState.value = _uiState.value.copy(availableThemes = themes)
+
+        // Observe premium unlock status from preferences
+        viewModelScope.launch {
+            preferencesRepository.userPreferencesFlow.collect { prefs ->
+                _uiState.value = _uiState.value.copy(
+                    isPremiumUnlocked = prefs.isPremiumUnlocked,
+                    premiumExpiresAt = prefs.premiumUnlockedUntil
+                )
+            }
+        }
 
         if (initialQuoteId != null) {
             viewModelScope.launch {
@@ -185,14 +198,22 @@ class QuoteDesignerViewModel(
         }
     }
 
+    fun unlockPremiumFor24Hours() {
+        viewModelScope.launch {
+            preferencesRepository.unlockPremiumFor24Hours()
+        }
+    }
+
     class Factory(
         private val context: Context,
         private val initialQuoteId: String?,
-        private val repository: QuoteRepository
+        private val repository: QuoteRepository,
+        private val preferencesRepository: com.myplanetservices.stillwords.data.preferences.UserPreferencesRepository? = null
     ) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return QuoteDesignerViewModel(initialQuoteId, repository, BackgroundRepository(context)) as T
+            val prefs = preferencesRepository ?: com.myplanetservices.stillwords.data.preferences.UserPreferencesRepository(context)
+            return QuoteDesignerViewModel(initialQuoteId, repository, BackgroundRepository(context), prefs) as T
         }
     }
 }

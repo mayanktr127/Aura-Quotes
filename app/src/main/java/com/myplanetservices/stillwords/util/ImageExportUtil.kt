@@ -47,64 +47,64 @@ object ImageExportUtil {
         aspectRatio: CardAspectRatio,
         showWatermark: Boolean = true,
         photoAssetPath: String? = null,
-        photoFilter: PhotoFilter = PhotoFilter.ORIGINAL
+        photoFilter: PhotoFilter = PhotoFilter.ORIGINAL,
+        fontScale: Float = 1.0f
     ): Bitmap = withContext(Dispatchers.Default) {
+        // Section 7: Sizes: 1:1 = 1080 x 1080, 4:5 = 1080 x 1350, 9:16 = 1080 x 1920
         val targetWidth = 1080
-        val targetHeight = (targetWidth / aspectRatio.ratio).toInt()
+        val targetHeight = when (aspectRatio) {
+            CardAspectRatio.SQUARE_1_1 -> 1080
+            CardAspectRatio.PORTRAIT_4_5 -> 1350
+            CardAspectRatio.STORY_9_16 -> 1920
+            CardAspectRatio.LANDSCAPE_16_9 -> 608
+        }
 
         val bitmap = Bitmap.createBitmap(targetWidth, targetHeight, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bitmap)
 
+        // Ensure a photo is always included (Section 7 & requirement 4: "The image must include the photo")
+        val effectivePhotoPath = photoAssetPath
+            ?: BackgroundRepository(context).getBackgroundAssetPath("export_quote", category)
+            ?: "backgrounds/still-water/still-water-01.webp"
+
         var isPhotoDrawn = false
-        if (photoAssetPath != null) {
-            try {
-                val photoBitmap = context.assets.open(photoAssetPath).use { stream ->
-                    BitmapFactory.decodeStream(stream)
-                }
-                if (photoBitmap != null) {
-                    val scale = maxOf(targetWidth.toFloat() / photoBitmap.width, targetHeight.toFloat() / photoBitmap.height)
-                    val scaledW = photoBitmap.width * scale
-                    val scaledH = photoBitmap.height * scale
-                    val left = (targetWidth - scaledW) / 2f
-                    val top = (targetHeight - scaledH) / 2f
-                    val filterPaint = Paint(Paint.FILTER_BITMAP_FLAG).apply {
-                        colorFilter = ColorMatrixColorFilter(photoFilter.toAndroidColorMatrix())
-                    }
-                    canvas.drawBitmap(photoBitmap, null, RectF(left, top, left + scaledW, top + scaledH), filterPaint)
-                    photoBitmap.recycle()
-                    isPhotoDrawn = true
-                }
-            } catch (e: Exception) {
-                isPhotoDrawn = false
+        try {
+            val photoBitmap = context.assets.open(effectivePhotoPath).use { stream ->
+                BitmapFactory.decodeStream(stream)
             }
+            if (photoBitmap != null) {
+                val scale = maxOf(targetWidth.toFloat() / photoBitmap.width, targetHeight.toFloat() / photoBitmap.height)
+                val scaledW = photoBitmap.width * scale
+                val scaledH = photoBitmap.height * scale
+                val left = (targetWidth - scaledW) / 2f
+                val top = (targetHeight - scaledH) / 2f
+                val filterPaint = Paint(Paint.FILTER_BITMAP_FLAG).apply {
+                    colorFilter = ColorMatrixColorFilter(photoFilter.toAndroidColorMatrix())
+                }
+                canvas.drawBitmap(photoBitmap, null, RectF(left, top, left + scaledW, top + scaledH), filterPaint)
+                photoBitmap.recycle()
+                isPhotoDrawn = true
+            }
+        } catch (_: Exception) {
+            isPhotoDrawn = false
         }
 
         if (isPhotoDrawn) {
-            // Draw dark gradient scrim tuned for the filter to guarantee WCAG AA 4.5:1 contrast
-            val topColor = android.graphics.Color.argb(
-                (photoFilter.scrimTop.alpha * 255).toInt(),
-                (photoFilter.scrimTop.red * 255).toInt(),
-                (photoFilter.scrimTop.green * 255).toInt(),
-                (photoFilter.scrimTop.blue * 255).toInt()
-            )
-            val midColor = android.graphics.Color.argb(
-                (photoFilter.scrimMid.alpha * 255).toInt(),
-                (photoFilter.scrimMid.red * 255).toInt(),
-                (photoFilter.scrimMid.green * 255).toInt(),
-                (photoFilter.scrimMid.blue * 255).toInt()
-            )
-            val bottomColor = android.graphics.Color.argb(
-                (photoFilter.scrimBottom.alpha * 255).toInt(),
-                (photoFilter.scrimBottom.red * 255).toInt(),
-                (photoFilter.scrimBottom.green * 255).toInt(),
-                (photoFilter.scrimBottom.blue * 255).toInt()
-            )
+            // Scrim: 20% -> 65% Ink (#0F0E0C) top to bottom (with custom scrims for filters like Mist for WCAG AA compliance)
+            val topAlpha = if (photoFilter == PhotoFilter.MIST) (photoFilter.scrimTop.alpha * 255).toInt() else (0.20f * 255).toInt()
+            val bottomAlpha = if (photoFilter == PhotoFilter.MIST) (photoFilter.scrimBottom.alpha * 255).toInt() else (0.65f * 255).toInt()
+            val midAlpha = ((topAlpha + bottomAlpha) / 2)
+
+            val topColor = android.graphics.Color.argb(topAlpha, 15, 14, 12)
+            val midColor = android.graphics.Color.argb(midAlpha, 15, 14, 12)
+            val bottomColor = android.graphics.Color.argb(bottomAlpha, 15, 14, 12)
+
             val scrimPaint = Paint().apply {
                 isAntiAlias = true
                 shader = LinearGradient(
                     0f, 0f, 0f, targetHeight.toFloat(),
                     intArrayOf(topColor, midColor, bottomColor),
-                    floatArrayOf(0f, 0.45f, 1f),
+                    floatArrayOf(0f, 0.40f, 1f),
                     Shader.TileMode.CLAMP
                 )
             }
@@ -115,7 +115,7 @@ object ImageExportUtil {
                 isAntiAlias = true
                 style = Paint.Style.STROKE
                 strokeWidth = 3f
-                color = android.graphics.Color.argb(70, 229, 169, 60) // Gold
+                color = android.graphics.Color.argb(70, 229, 169, 60) // Brass/Gold
             }
             val inset = 40f
             canvas.drawRoundRect(
@@ -124,70 +124,59 @@ object ImageExportUtil {
                 framePaint
             )
         } else {
-            // Draw Background from cardStyle
+            // Fallback plain background
             val bgPaint = Paint().apply {
                 isAntiAlias = true
-                color = android.graphics.Color.argb(
-                    (cardStyle.backgroundColor.alpha * 255).toInt(),
-                    (cardStyle.backgroundColor.red * 255).toInt(),
-                    (cardStyle.backgroundColor.green * 255).toInt(),
-                    (cardStyle.backgroundColor.blue * 255).toInt()
-                )
+                color = android.graphics.Color.argb(255, 15, 14, 12)
             }
             canvas.drawRect(0f, 0f, targetWidth.toFloat(), targetHeight.toFloat(), bgPaint)
-
-            // Draw subtle border frame for noir / luxury
-            if (cardStyle == CardStyle.NOIR_STILLWORDS) {
-                val framePaint = Paint().apply {
-                    isAntiAlias = true
-                    style = Paint.Style.STROKE
-                    strokeWidth = 3f
-                    color = android.graphics.Color.argb(70, 229, 169, 60) // Gold
-                }
-                val inset = 40f
-                canvas.drawRoundRect(
-                    RectF(inset, inset, targetWidth - inset, targetHeight - inset),
-                    32f, 32f,
-                    framePaint
-                )
-            }
         }
 
-        // Active palette resolution: photo mode uses warm white and gold
-        val activeTextColor = if (isPhotoDrawn) {
-            android.graphics.Color.rgb(251, 247, 238)
-        } else {
-            android.graphics.Color.argb(
-                (cardStyle.textColor.alpha * 255).toInt(),
-                (cardStyle.textColor.red * 255).toInt(),
-                (cardStyle.textColor.green * 255).toInt(),
-                (cardStyle.textColor.blue * 255).toInt()
-            )
-        }
+        // Section 7 Bundled Fonts loading via ResourcesCompat
+        val newsreaderRegular = androidx.core.content.res.ResourcesCompat.getFont(
+            context,
+            com.myplanetservices.stillwords.R.font.newsreader_regular
+        ) ?: Typeface.SERIF
 
-        val activeAuthorColor = if (isPhotoDrawn) {
-            android.graphics.Color.rgb(212, 200, 176)
-        } else {
-            android.graphics.Color.argb(
-                (cardStyle.authorColor.alpha * 255).toInt(),
-                (cardStyle.authorColor.red * 255).toInt(),
-                (cardStyle.authorColor.green * 255).toInt(),
-                (cardStyle.authorColor.blue * 255).toInt()
-            )
-        }
+        val newsreaderItalic = androidx.core.content.res.ResourcesCompat.getFont(
+            context,
+            com.myplanetservices.stillwords.R.font.newsreader_italic
+        ) ?: Typeface.create(Typeface.SERIF, Typeface.ITALIC)
 
-        val activeMetaColor = if (isPhotoDrawn) {
-            android.graphics.Color.rgb(229, 169, 60)
-        } else {
-            activeAuthorColor
-        }
+        val newsreaderMedium = androidx.core.content.res.ResourcesCompat.getFont(
+            context,
+            com.myplanetservices.stillwords.R.font.newsreader_medium
+        ) ?: Typeface.SERIF
 
-        // Draw Category or Stillwords emblem top
+        val figtreeRegular = androidx.core.content.res.ResourcesCompat.getFont(
+            context,
+            com.myplanetservices.stillwords.R.font.figtree_regular
+        ) ?: Typeface.SANS_SERIF
+
+        val figtreeMedium = androidx.core.content.res.ResourcesCompat.getFont(
+            context,
+            com.myplanetservices.stillwords.R.font.figtree_medium
+        ) ?: Typeface.SANS_SERIF
+
+        val figtreeSemibold = androidx.core.content.res.ResourcesCompat.getFont(
+            context,
+            com.myplanetservices.stillwords.R.font.figtree_semibold
+        ) ?: Typeface.DEFAULT_BOLD
+
+        // Colors per Section 7:
+        // Quote text: Ivory #F3EDE3
+        val activeTextColor = android.graphics.Color.rgb(243, 237, 227)
+        // Author: Ivory 75%
+        val activeAuthorColor = android.graphics.Color.argb((0.75f * 255).toInt(), 243, 237, 227)
+        // Category: Brass/Gold #E8D3A8
+        val activeCategoryColor = android.graphics.Color.rgb(232, 211, 168)
+
+        // Top Category label (safe below gold frame: 190f for 1:1, 220f for 4:5, 320f for 9:16)
         val metaPaint = TextPaint().apply {
             isAntiAlias = true
-            textSize = 34f
-            color = activeMetaColor
-            typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL)
+            textSize = 32f
+            color = activeCategoryColor
+            typeface = figtreeMedium
             textAlign = Paint.Align.CENTER
             letterSpacing = 0.25f
         }
@@ -201,21 +190,31 @@ object ImageExportUtil {
 
         // Typeface selection
         val mainTypeface = when (quoteFont) {
-            QuoteFont.EDITORIAL_SERIF -> Typeface.create(Typeface.SERIF, Typeface.NORMAL)
-            QuoteFont.ELEGANT_ITALIC -> Typeface.create(Typeface.SERIF, Typeface.ITALIC)
-            QuoteFont.MODERN_SANS -> Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
-            QuoteFont.BOLD_DISPLAY -> Typeface.create(Typeface.SERIF, Typeface.BOLD)
-            QuoteFont.MINIMALIST -> Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL)
-            QuoteFont.MONOSPACE_POETIC -> Typeface.create(Typeface.MONOSPACE, Typeface.NORMAL)
+            QuoteFont.EDITORIAL_SERIF -> newsreaderRegular
+            QuoteFont.ELEGANT_ITALIC -> newsreaderItalic
+            QuoteFont.MODERN_SANS -> figtreeSemibold
+            QuoteFont.BOLD_DISPLAY -> newsreaderMedium
+            QuoteFont.MINIMALIST -> figtreeRegular
+            QuoteFont.MONOSPACE_POETIC -> Typeface.MONOSPACE
         }
 
-        // Quote Text Paint with dynamic auto-shrinking: adapts text size so it never overflows or clips
-        // Minimum fontSize is 48f (equivalent to 16sp at 1080px / 3.0 density)
-        val initialFontSize = when {
-            quoteText.length > 140 -> 48f
-            quoteText.length > 90  -> 56f
+        // Section 7: Quote in Newsreader 400, Ivory, auto-sized to fit with ~9% side margins, balanced lines, never truncated
+        val contentWidth = (targetWidth * 0.82f).toInt() // 9% margins on left and right
+        val formattedText = if (quoteFont.isAllCaps) quoteText.uppercase() else quoteText
+
+        val baseFontSize = when {
+            quoteText.length > 150 -> 48f
+            quoteText.length > 100 -> 56f
             quoteText.length > 50  -> 66f
             else -> 76f
+        }
+        val initialFontSize = (baseFontSize * fontScale)
+
+        val maxAvailableTextHeight = when (aspectRatio) {
+            CardAspectRatio.LANDSCAPE_16_9 -> targetHeight * 0.44f
+            CardAspectRatio.SQUARE_1_1 -> targetHeight * 0.50f
+            CardAspectRatio.PORTRAIT_4_5 -> targetHeight * 0.54f
+            CardAspectRatio.STORY_9_16 -> targetHeight * 0.58f
         }
 
         val textPaint = TextPaint().apply {
@@ -226,15 +225,6 @@ object ImageExportUtil {
             letterSpacing = quoteFont.letterSpacing
         }
 
-        val contentWidth = (targetWidth * 0.80f).toInt()
-        val formattedText = if (quoteFont.isAllCaps) quoteText.uppercase() else quoteText
-
-        val maxAvailableTextHeight = when (aspectRatio) {
-            CardAspectRatio.LANDSCAPE_16_9 -> targetHeight * 0.46f
-            CardAspectRatio.SQUARE_1_1 -> targetHeight * 0.54f
-            else -> targetHeight * 0.60f
-        }
-
         var currentFontSize = initialFontSize
         var staticLayout: StaticLayout
         while (true) {
@@ -243,7 +233,7 @@ object ImageExportUtil {
             staticLayout = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 StaticLayout.Builder.obtain(formattedText, 0, formattedText.length, textPaint, contentWidth)
                     .setAlignment(Layout.Alignment.ALIGN_CENTER)
-                    .setLineSpacing(16f, 1.15f)
+                    .setLineSpacing(14f, 1.25f)
                     .build()
             } else {
                 StaticLayout(
@@ -251,21 +241,21 @@ object ImageExportUtil {
                     textPaint,
                     contentWidth,
                     Layout.Alignment.ALIGN_CENTER,
-                    1.15f,
-                    16f,
+                    1.25f,
+                    14f,
                     false
                 )
             }
 
-            if (staticLayout.height <= maxAvailableTextHeight || currentFontSize <= 48f) {
+            if (staticLayout.height <= maxAvailableTextHeight || currentFontSize <= 26f) {
                 break
             }
             currentFontSize -= 2f
         }
 
-        // Center quote vertically safely between header and author
+        // Center quote vertically between header and author
         val textHeight = staticLayout.height
-        val startY = ((targetHeight - textHeight) / 2f - 20f).coerceAtLeast(topY + 65f)
+        val startY = ((targetHeight - textHeight) / 2f - 24f).coerceAtLeast(topY + 65f)
         val startX = (targetWidth - contentWidth) / 2f
 
         canvas.save()
@@ -273,38 +263,29 @@ object ImageExportUtil {
         staticLayout.draw(canvas)
         canvas.restore()
 
-        // Author Text
+        // Section 7: Author in Newsreader Italic, Ivory 75%
         val authorPaint = TextPaint().apply {
             isAntiAlias = true
             textSize = 38f
             color = activeAuthorColor
-            typeface = Typeface.create(Typeface.SERIF, Typeface.ITALIC)
+            typeface = newsreaderItalic
             textAlign = Paint.Align.CENTER
         }
-        val authorY = startY + textHeight + 70f
+        val authorY = startY + textHeight + 64f
         canvas.drawText("— $author", targetWidth / 2f, authorY, authorPaint)
 
-        // Watermark bottom
+        // Section 7: Small "STILLWORDS" wordmark centred near the bottom, Figtree, letter-spacing ~2.5, Ivory 55%
         if (showWatermark) {
             val watermarkPaint = TextPaint().apply {
                 isAntiAlias = true
-                textSize = 28f
-                color = if (isPhotoDrawn) {
-                    android.graphics.Color.argb(160, 212, 200, 176)
-                } else {
-                    android.graphics.Color.argb(
-                        120,
-                        (cardStyle.authorColor.red * 255).toInt(),
-                        (cardStyle.authorColor.green * 255).toInt(),
-                        (cardStyle.authorColor.blue * 255).toInt()
-                    )
-                }
-                typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.NORMAL)
+                textSize = 26f
+                color = android.graphics.Color.argb((0.55f * 255).toInt(), 243, 237, 227) // Ivory 55%
+                typeface = figtreeSemibold
                 textAlign = Paint.Align.CENTER
-                letterSpacing = 0.2f
+                letterSpacing = 0.25f
             }
-            val bottomY = targetHeight - 50f
-            canvas.drawText("STILLWORDS • DAILY INSPIRATION", targetWidth / 2f, bottomY, watermarkPaint)
+            val bottomY = targetHeight - 68f
+            canvas.drawText("STILLWORDS", targetWidth / 2f, bottomY, watermarkPaint)
         }
 
         bitmap

@@ -21,8 +21,12 @@ data class UserPreferences(
     val defaultQuoteStyle: String = "NOIR_STILLWORDS",
     val defaultAspectRatio: String = "PORTRAIT_4_5",
     val openedDates: Set<String> = emptySet(),
-    val readSwipeHintCount: Int = 0
-)
+    val readSwipeHintCount: Int = 0,
+    val premiumUnlockedUntil: Long = 0L
+) {
+    val isPremiumUnlocked: Boolean
+        get() = System.currentTimeMillis() < premiumUnlockedUntil
+}
 
 class UserPreferencesRepository(private val context: Context) {
 
@@ -37,6 +41,7 @@ class UserPreferencesRepository(private val context: Context) {
         val DEFAULT_ASPECT_RATIO = stringPreferencesKey("default_aspect_ratio")
         val OPENED_DATES = stringSetPreferencesKey("opened_dates")
         val READ_SWIPE_HINT_COUNT = intPreferencesKey("read_swipe_hint_count")
+        val PREMIUM_UNLOCKED_UNTIL = longPreferencesKey("premium_unlocked_until")
     }
 
     val userPreferencesFlow: Flow<UserPreferences> = context.dataStore.data
@@ -59,7 +64,8 @@ class UserPreferencesRepository(private val context: Context) {
                 defaultQuoteStyle = preferences[PreferencesKeys.DEFAULT_QUOTE_STYLE] ?: "NOIR_STILLWORDS",
                 defaultAspectRatio = preferences[PreferencesKeys.DEFAULT_ASPECT_RATIO] ?: "PORTRAIT_4_5",
                 openedDates = preferences[PreferencesKeys.OPENED_DATES] ?: emptySet(),
-                readSwipeHintCount = preferences[PreferencesKeys.READ_SWIPE_HINT_COUNT] ?: 0
+                readSwipeHintCount = preferences[PreferencesKeys.READ_SWIPE_HINT_COUNT] ?: 0,
+                premiumUnlockedUntil = preferences[PreferencesKeys.PREMIUM_UNLOCKED_UNTIL] ?: 0L
             )
         }
 
@@ -113,6 +119,17 @@ class UserPreferencesRepository(private val context: Context) {
             val current = preferences[PreferencesKeys.READ_SWIPE_HINT_COUNT] ?: 0
             preferences[PreferencesKeys.READ_SWIPE_HINT_COUNT] = current + 1
         }
+    }
+
+    suspend fun setPremiumUnlockedUntil(timestampMillis: Long) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.PREMIUM_UNLOCKED_UNTIL] = timestampMillis
+        }
+    }
+
+    suspend fun unlockPremiumFor24Hours() {
+        val expiryTime = System.currentTimeMillis() + (24L * 60 * 60 * 1000)
+        setPremiumUnlockedUntil(expiryTime)
     }
 
     suspend fun resetPreferences() {

@@ -40,7 +40,7 @@ class SearchViewModel(
     private val _selectedFilter = MutableStateFlow(SearchFilter.ALL)
 
     val uiState: StateFlow<SearchUiState> = combine(
-        _query.debounce(200),
+        _query,
         _selectedFilter,
         repository.allQuotesFlow
     ) { query, filter, allQuotes ->

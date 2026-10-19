@@ -23,8 +23,10 @@ workRuntime = "2.10.0"
 playAppUpdate = "2.1.0"
 coreSplashScreen = "1.2.0"
 profileInstaller = "1.4.1"
+leakcanary = "2.14"
 
 [libraries]
+leakcanary-android = { group = "com.squareup.leakcanary", name = "leakcanary-android", version.ref = "leakcanary" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }

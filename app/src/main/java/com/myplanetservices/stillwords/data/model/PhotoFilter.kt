@@ -16,7 +16,8 @@ enum class PhotoFilter(
     // Scrim gradient colors tuned to guarantee WCAG AA 4.5:1 contrast for each filter
     val scrimTop: Color = Color(0x66000000),
     val scrimMid: Color = Color(0x99000000),
-    val scrimBottom: Color = Color(0xDD000000)
+    val scrimBottom: Color = Color(0xDD000000),
+    val isPremium: Boolean = false
 ) {
     ORIGINAL(
         id = "original",
@@ -89,7 +90,8 @@ enum class PhotoFilter(
         ),
         scrimTop = Color(0x66000000),
         scrimMid = Color(0x99000000),
-        scrimBottom = Color(0xDD000000)
+        scrimBottom = Color(0xDD000000),
+        isPremium = true
     ),
 
     MIST(
@@ -105,7 +107,8 @@ enum class PhotoFilter(
         ),
         scrimTop = Color(0x77000000),
         scrimMid = Color(0xBB000000),
-        scrimBottom = Color(0xEE000000)
+        scrimBottom = Color(0xEE000000),
+        isPremium = true
     ),
 
     MIDNIGHT(
@@ -120,7 +123,8 @@ enum class PhotoFilter(
         ),
         scrimTop = Color(0x66000000),
         scrimMid = Color(0x99000000),
-        scrimBottom = Color(0xDD000000)
+        scrimBottom = Color(0xDD000000),
+        isPremium = true
     );
 
     val composeColorFilter: ColorFilter

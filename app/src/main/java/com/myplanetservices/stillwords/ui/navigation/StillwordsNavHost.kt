@@ -66,6 +66,7 @@ val bottomNavItems = listOf(
     BottomNavItem("Saved", Screen.Favorites.createRoute(0), Icons.Filled.Bookmark, Icons.Outlined.BookmarkBorder)
 )
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun StillwordsApp(
     quoteRepository: QuoteRepository,
@@ -80,14 +81,16 @@ fun StillwordsApp(
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
-    // Check if bottom bar should be visible (the 4 main tabs and collection detail as per DESIGN_SPEC.md Screen 12)
-    val showBottomBar = currentRoute in listOf(
+    // Bottom bar is hidden while keyboard is open to prevent keyboard overlap
+    val isKeyboardOpen = WindowInsets.isImeVisible
+    val isMainTabOrCollection = currentRoute in listOf(
         Screen.Home.route,
         Screen.Explore.route,
         Screen.Create.route,
         "create",
         Screen.Favorites.route
     ) || currentRoute?.startsWith("collection_detail") == true || currentRoute?.startsWith("favorites") == true
+    val showBottomBar = !isKeyboardOpen && isMainTabOrCollection
 
     fun isTabSelected(title: String, route: String?): Boolean {
         return when (title) {
@@ -375,7 +378,7 @@ private fun AppNavigationHost(
         ) { backStackEntry ->
             val quoteId = backStackEntry.arguments?.getString("quoteId")
             val designerViewModel: QuoteDesignerViewModel = androidx.lifecycle.viewmodel.compose.viewModel(
-                factory = QuoteDesignerViewModel.Factory(appContext, quoteId, quoteRepository)
+                factory = QuoteDesignerViewModel.Factory(appContext, quoteId, quoteRepository, preferencesRepository)
             )
             QuoteDesignerScreen(
                 viewModel = designerViewModel,

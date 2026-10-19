@@ -1,4 +1,4 @@
-﻿package com.myplanetservices.stillwords.ui.screens.detail
+package com.myplanetservices.stillwords.ui.screens.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -29,8 +29,8 @@ private data class UiControls(
 )
 
 class QuoteDetailViewModel(
-    private val quoteId: String,
-    private val repository: QuoteRepository
+    val quoteId: String,
+    val repository: QuoteRepository
 ) : ViewModel() {
 
     private val _cardStyle = MutableStateFlow(CardStyle.NOIR_STILLWORDS)

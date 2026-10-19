@@ -19,7 +19,7 @@ data class ReadUiState(
 class ReadViewModel(
     private val initialQuoteId: String?,
     private val categories: List<String>?,
-    private val quoteRepository: QuoteRepository,
+    val quoteRepository: QuoteRepository,
     private val preferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 

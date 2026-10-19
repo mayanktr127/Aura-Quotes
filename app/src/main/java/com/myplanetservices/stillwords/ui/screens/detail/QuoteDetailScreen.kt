@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -24,6 +26,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.onFocusEvent
+import kotlinx.coroutines.launch
+import com.myplanetservices.stillwords.ui.components.AddToCollectionBottomSheet
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -67,8 +72,10 @@ fun QuoteDetailScreen(
 
     var showShareSheet by remember { mutableStateOf(false) }
     var showMoreMenu by remember { mutableStateOf(false) }
-    var newCollectionName by remember { mutableStateOf("") }
-    var isCreatingCollection by remember { mutableStateOf(false) }
+    var showCollectionSheet by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
+    val reflectionBringIntoView = remember { BringIntoViewRequester() }
 
     BackHandler {
         onNavigateBack()
@@ -142,6 +149,7 @@ fun QuoteDetailScreen(
                 .fillMaxSize()
                 .statusBarsPadding()
                 .navigationBarsPadding()
+                .imePadding()
         ) {
             // Header: Back · Category · More
             Row(
@@ -286,20 +294,44 @@ fun QuoteDetailScreen(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.Top
                     ) {
-                        // 1. Save
+                        // 1. Save (Heart)
                         DetailActionButton(
                             icon = if (quote.isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
                             label = if (quote.isFavorite) "Saved" else "Save",
                             isSelected = quote.isFavorite,
                             accentColor = Brass,
-                            onClick = { viewModel.toggleFavorite() }
+                            onClick = {
+                                coroutineScope.launch {
+                                    if (!quote.isFavorite) {
+                                        viewModel.toggleFavorite()
+                                        val result = snackbarHostState.showSnackbar(
+                                            message = "Saved",
+                                            actionLabel = "Add to collection",
+                                            duration = SnackbarDuration.Short
+                                        )
+                                        if (result == SnackbarResult.ActionPerformed) {
+                                            showCollectionSheet = true
+                                        }
+                                    } else {
+                                        viewModel.toggleFavorite()
+                                        val result = snackbarHostState.showSnackbar(
+                                            message = "Removed from Saved",
+                                            actionLabel = "Undo",
+                                            duration = SnackbarDuration.Short
+                                        )
+                                        if (result == SnackbarResult.ActionPerformed) {
+                                            viewModel.toggleFavorite()
+                                        }
+                                    }
+                                }
+                            }
                         )
 
                         // 2. Collect
                         DetailActionButton(
                             icon = Icons.Outlined.BookmarkAdd,
                             label = "Collect",
-                            onClick = { viewModel.setCollectionSheetOpen(true) }
+                            onClick = { showCollectionSheet = true }
                         )
 
                         // 3. Copy
@@ -402,6 +434,14 @@ fun QuoteDetailScreen(
                                     },
                                     modifier = Modifier
                                         .fillMaxWidth()
+                                        .bringIntoViewRequester(reflectionBringIntoView)
+                                        .onFocusEvent {
+                                            if (it.isFocused) {
+                                                coroutineScope.launch {
+                                                    reflectionBringIntoView.bringIntoView()
+                                                }
+                                            }
+                                        }
                                         .testTag("reflection_input"),
                                     shape = RoundedCornerShape(14.dp),
                                     colors = OutlinedTextFieldDefaults.colors(
@@ -499,125 +539,23 @@ fun QuoteDetailScreen(
         }
 
         // Add to Collection Bottom Sheet
-        if (state.isCollectionSheetOpen) {
-            ModalBottomSheet(
-                onDismissRequest = {
-                    viewModel.setCollectionSheetOpen(false)
-                    isCreatingCollection = false
-                    newCollectionName = ""
-                },
-                shape = BottomSheetShape,
-                containerColor = MaterialTheme.colorScheme.surface,
-                dragHandle = {
-                    Box(
-                        modifier = Modifier
-                            .padding(vertical = 12.dp)
-                            .width(40.dp)
-                            .height(4.dp)
-                            .clip(RoundedCornerShape(2.dp))
-                            .background(StillwordsTheme.colors.muted)
-                    )
-                }
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 24.dp)
-                        .padding(bottom = 32.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Text(
-                        text = "Add to Collection",
-                        style = SectionTitleStyle,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-
-                    state.collections.forEach { collection ->
-                        val isContained = state.activeCollectionIds.contains(collection.id)
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clip(RoundedCornerShape(12.dp))
-                                .clickable {
-                                    viewModel.toggleCollectionMembership(collection.id)
-                                }
-                                .padding(vertical = 10.dp, horizontal = 4.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = collection.name,
-                                style = BodyStyle,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                            Checkbox(
-                                checked = isContained,
-                                onCheckedChange = { _ ->
-                                    viewModel.toggleCollectionMembership(collection.id)
-                                },
-                                colors = CheckboxDefaults.colors(
-                                    checkedColor = MaterialTheme.colorScheme.primary,
-                                    uncheckedColor = MaterialTheme.colorScheme.outline
-                                )
-                            )
-                        }
-                    }
-
-                    if (!isCreatingCollection) {
-                        OutlinedButton(
-                            onClick = { isCreatingCollection = true },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = ButtonShape,
-                            border = androidx.compose.foundation.BorderStroke(
-                                1.dp,
-                                MaterialTheme.colorScheme.outline
-                            )
-                        ) {
-                            Icon(
-                                imageVector = Icons.Outlined.Add,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.onSurface,
-                                modifier = Modifier.size(18.dp)
-                            )
-                            Spacer(modifier = Modifier.width(6.dp))
-                            Text(
-                                "New Collection",
-                                style = ButtonSecondaryStyle,
-                                color = MaterialTheme.colorScheme.onSurface
-                            )
-                        }
-                    } else {
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            OutlinedTextField(
-                                value = newCollectionName,
-                                onValueChange = { newCollectionName = it },
-                                placeholder = { Text("Collection name", style = BodyStyle) },
-                                modifier = Modifier.weight(1f),
-                                shape = RoundedCornerShape(12.dp),
-                                singleLine = true
-                            )
-                            PrimaryButton(
-                                text = "Create",
-                                height = 50.dp,
-                                modifier = Modifier.width(100.dp),
-                                enabled = newCollectionName.isNotBlank(),
-                                onClick = {
-                                    if (newCollectionName.isNotBlank()) {
-                                        viewModel.createAndAddToCollection(newCollectionName.trim())
-                                        newCollectionName = ""
-                                        isCreatingCollection = false
-                                    }
-                                }
-                            )
-                        }
-                    }
-                }
-            }
+        if (showCollectionSheet) {
+            AddToCollectionBottomSheet(
+                quoteId = quote.id,
+                quoteRepository = viewModel.repository,
+                onDismissRequest = { showCollectionSheet = false },
+                snackbarHostState = snackbarHostState
+            )
         }
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .navigationBarsPadding()
+                .imePadding()
+                .padding(bottom = 16.dp)
+        )
     }
 }
 

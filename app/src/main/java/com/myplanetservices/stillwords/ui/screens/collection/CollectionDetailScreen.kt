@@ -32,6 +32,13 @@ import coil.size.Precision
 import coil.size.Scale
 import com.myplanetservices.stillwords.data.model.BackgroundTheme
 import com.myplanetservices.stillwords.data.repository.BackgroundRepository
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.focus.onFocusEvent
+import androidx.compose.ui.window.DialogProperties
+import kotlinx.coroutines.launch
 import com.myplanetservices.stillwords.ui.components.EmptyState
 import com.myplanetservices.stillwords.ui.components.PrimaryButton
 import com.myplanetservices.stillwords.ui.components.SecondaryButton
@@ -55,6 +62,8 @@ fun CollectionDetailScreen(
     var showDeleteConfirmDialog by remember { mutableStateOf(false) }
     var showRenameDialog by remember { mutableStateOf(false) }
     var renameText by remember { mutableStateOf("") }
+    val renameBringIntoView = remember { BringIntoViewRequester() }
+    val coroutineScope = rememberCoroutineScope()
 
     // Dialog: Delete Collection
     if (showDeleteConfirmDialog) {
@@ -102,6 +111,8 @@ fun CollectionDetailScreen(
             onDismissRequest = { showRenameDialog = false },
             containerColor = MaterialTheme.colorScheme.surface,
             shape = RoundedCornerShape(20.dp),
+            modifier = Modifier.imePadding(),
+            properties = DialogProperties(decorFitsSystemWindows = false),
             title = {
                 Text(
                     text = "Rename Collection",
@@ -119,7 +130,16 @@ fun CollectionDetailScreen(
                         focusedBorderColor = MaterialTheme.colorScheme.primary,
                         unfocusedBorderColor = MaterialTheme.colorScheme.outline
                     ),
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .bringIntoViewRequester(renameBringIntoView)
+                        .onFocusEvent {
+                            if (it.isFocused) {
+                                coroutineScope.launch {
+                                    renameBringIntoView.bringIntoView()
+                                }
+                            }
+                        }
                 )
             },
             confirmButton = {

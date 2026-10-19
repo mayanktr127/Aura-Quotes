@@ -37,6 +37,13 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Precision
 import coil.size.Scale
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.focus.onFocusEvent
+import androidx.compose.ui.window.DialogProperties
+import kotlinx.coroutines.launch
 import com.myplanetservices.stillwords.data.model.BackgroundTheme
 import com.myplanetservices.stillwords.data.repository.BackgroundRepository
 import com.myplanetservices.stillwords.ui.components.*
@@ -57,6 +64,9 @@ fun FavoritesScreen(
 
     var newColName by remember { mutableStateOf("") }
     var newColDesc by remember { mutableStateOf("") }
+    val colNameBringIntoView = remember { BringIntoViewRequester() }
+    val colDescBringIntoView = remember { BringIntoViewRequester() }
+    val coroutineScope = rememberCoroutineScope()
 
     // Dialog: Create Collection
     if (state.isCreateCollectionDialogOpen) {
@@ -66,6 +76,8 @@ fun FavoritesScreen(
             titleContentColor = MaterialTheme.colorScheme.onSurface,
             textContentColor = MaterialTheme.colorScheme.onSurfaceVariant,
             shape = RoundedCornerShape(20.dp),
+            modifier = Modifier.imePadding(),
+            properties = DialogProperties(decorFitsSystemWindows = false),
             title = {
                 Text(
                     text = "New Collection",
@@ -75,7 +87,9 @@ fun FavoritesScreen(
             },
             text = {
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     OutlinedTextField(
@@ -91,6 +105,14 @@ fun FavoritesScreen(
                         ),
                         modifier = Modifier
                             .fillMaxWidth()
+                            .bringIntoViewRequester(colNameBringIntoView)
+                            .onFocusEvent {
+                                if (it.isFocused) {
+                                    coroutineScope.launch {
+                                        colNameBringIntoView.bringIntoView()
+                                    }
+                                }
+                            }
                             .testTag("collection_name_input")
                     )
 
@@ -105,7 +127,16 @@ fun FavoritesScreen(
                             focusedBorderColor = MaterialTheme.colorScheme.primary,
                             unfocusedBorderColor = MaterialTheme.colorScheme.outline
                         ),
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .bringIntoViewRequester(colDescBringIntoView)
+                            .onFocusEvent {
+                                if (it.isFocused) {
+                                    coroutineScope.launch {
+                                        colDescBringIntoView.bringIntoView()
+                                    }
+                                }
+                            }
                     )
                 }
             },

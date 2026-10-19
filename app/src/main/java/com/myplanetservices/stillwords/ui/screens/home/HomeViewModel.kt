@@ -32,7 +32,7 @@ data class HomeUiState(
 )
 
 class HomeViewModel(
-    private val repository: QuoteRepository,
+    val repository: QuoteRepository,
     private val preferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 

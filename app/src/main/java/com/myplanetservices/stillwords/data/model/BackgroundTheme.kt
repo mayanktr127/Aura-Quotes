@@ -17,42 +17,50 @@ package com.myplanetservices.stillwords.data.model
 enum class BackgroundTheme(
     val id: String,
     val displayName: String,
-    val categories: List<String>
+    val categories: List<String>,
+    val isPremium: Boolean = false
 ) {
     SUNRISE_ROADS(
         id = "sunrise-roads",
         displayName = "Sunrise Roads",
-        categories = listOf("Motivation", "Success", "Discipline", "Fitness", "Work")
+        categories = listOf("Motivation", "Success", "Discipline", "Fitness", "Work"),
+        isPremium = true
     ),
     MOUNTAINS(
         id = "mountains",
         displayName = "Mountains",
-        categories = listOf("Courage", "Confidence", "Leadership", "Growth")
+        categories = listOf("Courage", "Confidence", "Leadership", "Growth"),
+        isPremium = false
     ),
     STILL_WATER(
         id = "still-water",
         displayName = "Still Water",
-        categories = listOf("Peace", "Mindfulness", "Healing")
+        categories = listOf("Peace", "Mindfulness", "Healing"),
+        isPremium = false
     ),
     FOREST_BOTANICAL(
         id = "forest-botanical",
         displayName = "Forest & Botanical",
-        categories = listOf("Life", "Gratitude", "Self-Love")
+        categories = listOf("Life", "Gratitude", "Self-Love"),
+        isPremium = true
     ),
     GOLDEN_HOUR(
         id = "golden-hour",
         displayName = "Golden Hour",
-        categories = listOf("Love", "Relationships", "Friendship", "Happiness")
+        categories = listOf("Love", "Relationships", "Friendship", "Happiness"),
+        isPremium = false
     ),
     NIGHT_SKY(
         id = "night-sky",
         displayName = "Night Sky",
-        categories = listOf("Wisdom", "Creativity")
+        categories = listOf("Wisdom", "Creativity"),
+        isPremium = false
     ),
     QUIET_SPACES(
         id = "quiet-spaces",
         displayName = "Quiet Spaces",
-        categories = listOf("Study")
+        categories = listOf("Study"),
+        isPremium = true
     );
 
     companion object {

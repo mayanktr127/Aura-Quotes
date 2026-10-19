@@ -17,14 +17,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.myplanetservices.stillwords.data.model.Quote
 import com.myplanetservices.stillwords.data.repository.BackgroundRepository
+import com.myplanetservices.stillwords.ui.components.AddToCollectionBottomSheet
 import com.myplanetservices.stillwords.ui.components.PhotoQuoteCard
 import com.myplanetservices.stillwords.ui.components.ShareFormatBottomSheet
 import com.myplanetservices.stillwords.ui.components.StillwordsChip
 import com.myplanetservices.stillwords.ui.components.WeekDots
 import com.myplanetservices.stillwords.ui.theme.*
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -45,6 +50,9 @@ fun HomeScreen(
     val backgroundRepo = remember(context) { BackgroundRepository(context) }
 
     var shareQuote by remember { mutableStateOf<Quote?>(null) }
+    var showCollectionSheet by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     if (shareQuote != null) {
         val q = shareQuote!!
@@ -67,13 +75,17 @@ fun HomeScreen(
         "No. $dayOfYear · $formattedDate"
     }
 
-    Column(
+    Box(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            .statusBarsPadding()
-            .testTag("home_screen")
     ) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .testTag("home_screen")
+        ) {
         // Top Header — docs/DESIGN_SPEC.md Sec. 6 (Screen 4) & Main.dc.html
         Row(
             modifier = Modifier
@@ -149,7 +161,31 @@ fun HomeScreen(
                         category = qotd.category,
                         photoPath = photoPath,
                         isFavorite = qotd.isFavorite,
-                        onFavoriteToggle = { viewModel.toggleFavorite(qotd.id) },
+                        onFavoriteToggle = {
+                            coroutineScope.launch {
+                                if (!qotd.isFavorite) {
+                                    viewModel.toggleFavorite(qotd.id)
+                                    val result = snackbarHostState.showSnackbar(
+                                        message = "Saved",
+                                        actionLabel = "Add to collection",
+                                        duration = SnackbarDuration.Short
+                                    )
+                                    if (result == SnackbarResult.ActionPerformed) {
+                                        showCollectionSheet = true
+                                    }
+                                } else {
+                                    viewModel.toggleFavorite(qotd.id)
+                                    val result = snackbarHostState.showSnackbar(
+                                        message = "Removed from Saved",
+                                        actionLabel = "Undo",
+                                        duration = SnackbarDuration.Short
+                                    )
+                                    if (result == SnackbarResult.ActionPerformed) {
+                                        viewModel.toggleFavorite(qotd.id)
+                                    }
+                                }
+                            }
+                        },
                         onShare = { shareQuote = qotd },
                         onDownload = { shareQuote = qotd },
                         onEdit = { onNavigateToDesigner(qotd.id) },
@@ -211,4 +247,23 @@ fun HomeScreen(
             }
         }
     }
+
+    if (showCollectionSheet && state.quoteOfTheDay != null) {
+        AddToCollectionBottomSheet(
+            quoteId = state.quoteOfTheDay!!.id,
+            quoteRepository = viewModel.repository,
+            onDismissRequest = { showCollectionSheet = false },
+            snackbarHostState = snackbarHostState
+        )
+    }
+
+    SnackbarHost(
+        hostState = snackbarHostState,
+        modifier = Modifier
+            .align(Alignment.BottomCenter)
+            .navigationBarsPadding()
+            .imePadding()
+            .padding(bottom = 8.dp)
+    )
+}
 }

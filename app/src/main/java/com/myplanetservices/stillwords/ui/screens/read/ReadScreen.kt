@@ -21,6 +21,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -40,17 +44,19 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.ImageLoader
 import coil.compose.AsyncImage
+import coil.imageLoader
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import coil.size.Precision
 import coil.size.Scale
 import com.myplanetservices.stillwords.data.model.Quote
 import com.myplanetservices.stillwords.data.repository.BackgroundRepository
+import com.myplanetservices.stillwords.ui.components.AddToCollectionBottomSheet
 import com.myplanetservices.stillwords.ui.components.AutoShrinkQuoteText
 import com.myplanetservices.stillwords.ui.components.ShareFormatBottomSheet
 import com.myplanetservices.stillwords.ui.theme.*
+import kotlinx.coroutines.launch
 
 @Composable
 fun ReadScreen(
@@ -62,9 +68,12 @@ fun ReadScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val backgroundRepo = remember(context) { BackgroundRepository(context) }
-    val imageLoader = remember(context) { ImageLoader(context) }
+    val imageLoader = context.imageLoader
 
     var activeShareQuote by remember { mutableStateOf<Quote?>(null) }
+    var activeCollectionQuoteId by remember { mutableStateOf<String?>(null) }
+    val snackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     BackHandler {
         onNavigateBack()
@@ -172,12 +181,56 @@ fun ReadScreen(
                 isSettled = pagerState.settledPage == page,
                 showSwipeHint = state.showSwipeHint && page == 0,
                 onClose = onNavigateBack,
-                onFavoriteToggle = { viewModel.toggleFavorite(quote.id) },
+                onFavoriteToggle = {
+                    coroutineScope.launch {
+                        if (!quote.isFavorite) {
+                            viewModel.toggleFavorite(quote.id)
+                            val result = snackbarHostState.showSnackbar(
+                                message = "Saved",
+                                actionLabel = "Add to collection",
+                                duration = SnackbarDuration.Short
+                            )
+                            if (result == SnackbarResult.ActionPerformed) {
+                                activeCollectionQuoteId = quote.id
+                            }
+                        } else {
+                            viewModel.toggleFavorite(quote.id)
+                            val result = snackbarHostState.showSnackbar(
+                                message = "Removed from Saved",
+                                actionLabel = "Undo",
+                                duration = SnackbarDuration.Short
+                            )
+                            if (result == SnackbarResult.ActionPerformed) {
+                                viewModel.toggleFavorite(quote.id)
+                            }
+                        }
+                    }
+                },
+                onCollect = {
+                    activeCollectionQuoteId = quote.id
+                },
                 onShare = { activeShareQuote = quote },
                 onDownload = { activeShareQuote = quote },
                 onEdit = { onNavigateToDesigner(quote.id) }
             )
         }
+
+        if (activeCollectionQuoteId != null) {
+            AddToCollectionBottomSheet(
+                quoteId = activeCollectionQuoteId!!,
+                quoteRepository = viewModel.quoteRepository,
+                onDismissRequest = { activeCollectionQuoteId = null },
+                snackbarHostState = snackbarHostState
+            )
+        }
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .navigationBarsPadding()
+                .padding(bottom = 16.dp)
+        )
     }
 }
 
@@ -191,6 +244,7 @@ private fun ReadQuotePage(
     showSwipeHint: Boolean,
     onClose: () -> Unit,
     onFavoriteToggle: () -> Unit,
+    onCollect: () -> Unit,
     onShare: () -> Unit,
     onDownload: () -> Unit,
     onEdit: () -> Unit
@@ -263,7 +317,19 @@ private fun ReadQuotePage(
                     color = PhotoCategoryAccent
                 )
 
-                Spacer(modifier = Modifier.width(44.dp))
+                IconButton(
+                    onClick = onCollect,
+                    modifier = Modifier
+                        .size(44.dp)
+                        .testTag("read_collect_button")
+                ) {
+                    Icon(
+                        imageVector = Icons.Outlined.BookmarkAdd,
+                        contentDescription = "Collect",
+                        tint = Ivory,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
             }
 
             // Center: Brass Quotation Mark + Quote Text (Auto-shrink) + Author

@@ -129,9 +129,8 @@ fun ExploreScreen(
                         key = { "all_topic_$it" },
                         contentType = { "topic_tile" }
                     ) { category ->
-                        val theme = remember(category) { BackgroundTheme.fromCategory(category) }
-                        val photoPath = remember(theme) {
-                            theme?.let { backgroundRepo.getThumbnailAssetPath(it) }
+                        val photoPath = remember(category) {
+                            backgroundRepo.getCategoryThumbnailAssetPath(category)
                         }
                         TopicTile(
                             topicName = category,
@@ -500,8 +499,7 @@ fun ExploreScreen(
                                 horizontalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
                                 topics.getOrNull(0)?.let { topic ->
-                                    val theme = remember(topic) { BackgroundTheme.fromCategory(topic) }
-                                    val photo = remember(theme) { theme?.let { backgroundRepo.getThumbnailAssetPath(it) } }
+                                    val photo = remember(topic) { backgroundRepo.getCategoryThumbnailAssetPath(topic) }
                                     TopicTile(
                                         topicName = topic,
                                         photoPath = photo,
@@ -510,8 +508,7 @@ fun ExploreScreen(
                                     )
                                 }
                                 topics.getOrNull(1)?.let { topic ->
-                                    val theme = remember(topic) { BackgroundTheme.fromCategory(topic) }
-                                    val photo = remember(theme) { theme?.let { backgroundRepo.getThumbnailAssetPath(it) } }
+                                    val photo = remember(topic) { backgroundRepo.getCategoryThumbnailAssetPath(topic) }
                                     TopicTile(
                                         topicName = topic,
                                         photoPath = photo,
@@ -527,8 +524,7 @@ fun ExploreScreen(
                                 horizontalArrangement = Arrangement.spacedBy(10.dp)
                             ) {
                                 topics.getOrNull(2)?.let { topic ->
-                                    val theme = remember(topic) { BackgroundTheme.fromCategory(topic) }
-                                    val photo = remember(theme) { theme?.let { backgroundRepo.getThumbnailAssetPath(it) } }
+                                    val photo = remember(topic) { backgroundRepo.getCategoryThumbnailAssetPath(topic) }
                                     TopicTile(
                                         topicName = topic,
                                         photoPath = photo,
@@ -537,8 +533,7 @@ fun ExploreScreen(
                                     )
                                 }
                                 topics.getOrNull(3)?.let { topic ->
-                                    val theme = remember(topic) { BackgroundTheme.fromCategory(topic) }
-                                    val photo = remember(theme) { theme?.let { backgroundRepo.getThumbnailAssetPath(it) } }
+                                    val photo = remember(topic) { backgroundRepo.getCategoryThumbnailAssetPath(topic) }
                                     TopicTile(
                                         topicName = topic,
                                         photoPath = photo,

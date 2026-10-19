@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -20,11 +22,14 @@ import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.onFocusEvent
+import kotlinx.coroutines.launch
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.SolidColor
@@ -66,7 +71,17 @@ fun SearchScreen(
     val context = LocalContext.current
     val backgroundRepo = remember(context) { BackgroundRepository(context) }
     val focusRequester = remember { FocusRequester() }
+    val bringIntoViewRequester = remember { BringIntoViewRequester() }
+    val coroutineScope = rememberCoroutineScope()
     val keyboardController = LocalSoftwareKeyboardController.current
+
+    var queryText by rememberSaveable { mutableStateOf(state.query) }
+
+    LaunchedEffect(state.query) {
+        if (queryText != state.query) {
+            queryText = state.query
+        }
+    }
 
     LaunchedEffect(Unit) {
         focusRequester.requestFocus()
@@ -77,6 +92,8 @@ fun SearchScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
             .statusBarsPadding()
+            .navigationBarsPadding()
+            .imePadding()
     ) {
         // ====================================================================
         // 1. TOP HEADER & SEARCH INPUT (Search.dc.html lines 28-36)
@@ -125,7 +142,7 @@ fun SearchScreen(
                     modifier = Modifier.weight(1f),
                     contentAlignment = Alignment.CenterStart
                 ) {
-                    if (state.query.isEmpty()) {
+                    if (queryText.isEmpty()) {
                         Text(
                             text = "Search words, topics or authors",
                             style = BodyStyle.copy(fontSize = 15.sp),
@@ -134,11 +151,22 @@ fun SearchScreen(
                     }
 
                     BasicTextField(
-                        value = state.query,
-                        onValueChange = { viewModel.onQueryChanged(it) },
+                        value = queryText,
+                        onValueChange = {
+                            queryText = it
+                            viewModel.onQueryChanged(it)
+                        },
                         modifier = Modifier
                             .fillMaxWidth()
                             .focusRequester(focusRequester)
+                            .bringIntoViewRequester(bringIntoViewRequester)
+                            .onFocusEvent {
+                                if (it.isFocused) {
+                                    coroutineScope.launch {
+                                        bringIntoViewRequester.bringIntoView()
+                                    }
+                                }
+                            }
                             .testTag("search_input_field"),
                         textStyle = BodyStyle.copy(
                             fontSize = 15.sp,
@@ -151,9 +179,12 @@ fun SearchScreen(
                     )
                 }
 
-                if (state.query.isNotEmpty()) {
+                if (queryText.isNotEmpty()) {
                     IconButton(
-                        onClick = { viewModel.clearQuery() },
+                        onClick = {
+                            queryText = ""
+                            viewModel.clearQuery()
+                        },
                         modifier = Modifier.size(36.dp)
                     ) {
                         Icon(
@@ -390,8 +421,7 @@ fun SearchScreen(
                                 .padding(bottom = 16.dp)
                         ) {
                             items(state.matchingTopics, key = { "match_topic_$it" }) { topic ->
-                                val bgTheme = remember(topic) { BackgroundTheme.fromCategory(topic) }
-                                val photoPath = remember(bgTheme) { bgTheme?.let { backgroundRepo.getThumbnailAssetPath(it) } }
+                                val photoPath = remember(topic) { backgroundRepo.getCategoryThumbnailAssetPath(topic) }
 
                                 Row(
                                     modifier = Modifier
@@ -445,8 +475,7 @@ fun SearchScreen(
                     key = { "search_res_${it.id}" },
                     contentType = { "search_result_row" }
                 ) { quote ->
-                    val bgTheme = remember(quote.category) { BackgroundTheme.fromCategory(quote.category) }
-                    val photoPath = remember(bgTheme) { bgTheme?.let { backgroundRepo.getThumbnailAssetPath(it) } }
+                    val photoPath = remember(quote.category) { backgroundRepo.getCategoryThumbnailAssetPath(quote.category) }
 
                     Column(
                         modifier = Modifier
