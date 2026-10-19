@@ -24,7 +24,7 @@ enum class BackgroundTheme(
         id = "sunrise-roads",
         displayName = "Sunrise Roads",
         categories = listOf("Motivation", "Success", "Discipline", "Fitness", "Work"),
-        isPremium = true
+        isPremium = false
     ),
     MOUNTAINS(
         id = "mountains",

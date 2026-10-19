@@ -20,3 +20,5 @@ design-assets/backgrounds/
 scripts/wikiquote_cache/
 __pycache__/
 *.pyc
+
+docs/phase4d-exports/

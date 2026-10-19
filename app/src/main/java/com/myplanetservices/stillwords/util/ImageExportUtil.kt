@@ -292,7 +292,7 @@ object ImageExportUtil {
     }
 
     suspend fun saveBitmapToGallery(context: Context, bitmap: Bitmap): Uri? = withContext(Dispatchers.IO) {
-        val filename = "Stillwords_${System.currentTimeMillis()}.png"
+        val filename = "Stillwords_${System.currentTimeMillis()}.jpg"
         var fos: OutputStream? = null
         var imageUri: Uri? = null
 
@@ -301,7 +301,7 @@ object ImageExportUtil {
                 val resolver = context.contentResolver
                 val contentValues = ContentValues().apply {
                     put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
-                    put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
+                    put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
                     put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES + "/Stillwords")
                 }
                 imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
@@ -317,7 +317,7 @@ object ImageExportUtil {
             }
 
             fos?.use {
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, it)
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 92, it)
             }
             imageUri
         } catch (e: Exception) {
@@ -332,7 +332,7 @@ object ImageExportUtil {
             if (!cachePath.exists()) cachePath.mkdirs()
             val file = File(cachePath, "shared_quote_${System.currentTimeMillis()}.jpg")
             FileOutputStream(file).use { out ->
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 95, out)
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 92, out)
             }
             FileProvider.getUriForFile(
                 context,

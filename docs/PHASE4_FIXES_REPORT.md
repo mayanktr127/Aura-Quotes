@@ -88,6 +88,36 @@ The changes were built and verified on a physical connected device (`00161357S00
 
 ---
 
+### Fix 6: Premium Looks Configuration
+- **Plain English Explanation:**
+  Only two background photo themes are designated as premium: **Forest & Botanical** and **Quiet Spaces**. **Sunrise Roads** was previously flagged as premium; it has now been set to `isPremium = false` so it is completely free for all users. The photo filters **Earthy**, **Mist**, and **Midnight** remain premium as specified.
+- **Changes:**
+  - `BackgroundTheme.kt`: Updated `SUNRISE_ROADS` with `isPremium = false`. `FOREST_BOTANICAL` and `QUIET_SPACES` remain `isPremium = true`.
+  - `PhotoFilter.kt`: Kept `EARTHY`, `MIST`, and `MIDNIGHT` with `isPremium = true`.
+
+---
+
+### Fix 7: Export Format (JPEG at Quality 92, 1080 px Wide)
+- **Plain English Explanation:**
+  Previously, quote cards saved to gallery were compressed as PNG (100% lossless), creating excessively large files. All exports (saving to gallery and sharing to third-party apps) now compress directly as JPEG at quality 92 with MIME type `"image/jpeg"` and `".jpg"` file extensions. Card dimensions remain exactly 1080 px wide across all three export formats:
+  - Square 1:1: 1080 × 1080 px
+  - Portrait 4:5: 1080 × 1350 px
+  - Story 9:16: 1080 × 1920 px
+- **Changes:**
+  - `ImageExportUtil.kt`: Updated `saveBitmapToGallery` to use `"Stillwords_${timestamp}.jpg"`, `MediaStore.MediaColumns.MIME_TYPE = "image/jpeg"`, and `bitmap.compress(Bitmap.CompressFormat.JPEG, 92, it)`.
+  - `ImageExportUtil.kt`: Updated `cacheBitmapForSharing` to compress at `Bitmap.CompressFormat.JPEG, 92`.
+
+---
+
+### Fix 8: Ad Placeholders (Today and Read Feed)
+- **Plain English Explanation:**
+  Confirmed that ad slots on both the **Today** screen (`HomeScreen`) and the **Read** feed (`ReadScreen`) render **nothing at all** (no empty space, no placeholder box, no reserved gap, and no layout shifting) until Phase 5 activates them following the UMP consent flow.
+- **Verification:**
+  - `HomeScreen`: `LazyColumn` renders only the Quote of the Day `PhotoQuoteCard`, `WeekDots`, and "For this moment" mood chips. No ad containers exist in the composition hierarchy.
+  - `ReadScreen`: `VerticalPager` iterates strictly over available quote models. No dummy or placeholder ad pages are present in the feed.
+
+---
+
 ## 2. Real-Device Memory Verification (adb dumpsys meminfo)
 
 The memory profile of package `com.myplanetservices.stillwords` was measured on a physical connected phone (`A059`, Android physical device `00161357S001177`) before and after 30 continuous back-swipe cycles between screens.
@@ -156,6 +186,9 @@ Configuration cache entry reused.
 - `app/src/main/java/com/myplanetservices/stillwords/ui/screens/read/ReadScreen.kt`: Added top bar Collect action, wired bottom heart to snackbar with "Add to collection", and switched to singleton `imageLoader`.
 - `app/src/main/java/com/myplanetservices/stillwords/ui/screens/favorites/FavoritesScreen.kt`: Added `imePadding`, `DialogProperties(decorFitsSystemWindows = false)`, and `BringIntoViewRequester` to "New Collection" dialog.
 - `app/src/main/java/com/myplanetservices/stillwords/ui/screens/collection/CollectionDetailScreen.kt`: Added `imePadding`, `DialogProperties(decorFitsSystemWindows = false)`, and `BringIntoViewRequester` to "Rename Collection" dialog.
+- `app/src/main/java/com/myplanetservices/stillwords/data/model/BackgroundTheme.kt`: Made Sunrise Roads background theme free (`isPremium = false`); kept Forest & Botanical and Quiet Spaces premium.
+- `app/src/main/java/com/myplanetservices/stillwords/util/ImageExportUtil.kt`: Updated gallery save and share cache to export as JPEG at quality 92 (1080 px wide).
+- `app/src/test/java/com/myplanetservices/stillwords/Phase4dExportTest.kt`: Added unit tests verifying premium looks configuration, 1080 px width across all 3 formats, and JPEG quality 92 export.
 
 ### How to Test Manually on a Phone:
 1. **Search Typing:**

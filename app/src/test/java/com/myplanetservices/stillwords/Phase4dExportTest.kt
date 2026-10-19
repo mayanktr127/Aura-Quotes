@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import androidx.test.core.app.ApplicationProvider
 import com.myplanetservices.stillwords.data.local.SeedQuotes
+import com.myplanetservices.stillwords.data.model.BackgroundTheme
 import com.myplanetservices.stillwords.data.model.CardAspectRatio
 import com.myplanetservices.stillwords.data.model.CardStyle
 import com.myplanetservices.stillwords.data.model.PhotoFilter
@@ -14,6 +15,7 @@ import com.myplanetservices.stillwords.data.repository.BackgroundRepository
 import com.myplanetservices.stillwords.util.ImageExportUtil
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -89,11 +91,11 @@ class Phase4dExportTest {
                             CardAspectRatio.LANDSCAPE_16_9 -> "16x9"
                         }
                         val scaleLabel = if (fontScale == 1.0f) "scale1_0" else "scale1_3"
-                        val fileName = "quote${quoteIdx + 1}_${formatLabel}_${scaleLabel}_${filter.name.lowercase()}.png"
+                        val fileName = "quote${quoteIdx + 1}_${formatLabel}_${scaleLabel}_${filter.name.lowercase()}.jpg"
                         val outFile = File(exportDir, fileName)
 
                         FileOutputStream(outFile).use { fos ->
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
+                            bitmap.compress(Bitmap.CompressFormat.JPEG, 92, fos)
                         }
 
                         assertTrue(outFile.exists())
@@ -127,5 +129,41 @@ class Phase4dExportTest {
         assertEquals("com.whatsapp", whatsAppIntent.`package`)
         assertEquals(fakeUri, whatsAppIntent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java))
         assertTrue(whatsAppIntent.getStringExtra(Intent.EXTRA_TEXT)?.contains("Stillwords") == true)
+    }
+
+    @Test
+    fun verifyPremiumLooksConfiguration() {
+        // Only Forest & Botanical and Quiet Spaces are premium backgrounds; Sunrise Roads is free
+        assertFalse(BackgroundTheme.SUNRISE_ROADS.isPremium)
+        assertTrue(BackgroundTheme.FOREST_BOTANICAL.isPremium)
+        assertTrue(BackgroundTheme.QUIET_SPACES.isPremium)
+        assertFalse(BackgroundTheme.MOUNTAINS.isPremium)
+        assertFalse(BackgroundTheme.STILL_WATER.isPremium)
+        assertFalse(BackgroundTheme.GOLDEN_HOUR.isPremium)
+        assertFalse(BackgroundTheme.NIGHT_SKY.isPremium)
+
+        // Earthy, Mist and Midnight are premium filters
+        assertTrue(PhotoFilter.EARTHY.isPremium)
+        assertTrue(PhotoFilter.MIST.isPremium)
+        assertTrue(PhotoFilter.MIDNIGHT.isPremium)
+        assertFalse(PhotoFilter.ORIGINAL.isPremium)
+        assertFalse(PhotoFilter.NOIR.isPremium)
+        assertFalse(PhotoFilter.WARM.isPremium)
+        assertFalse(PhotoFilter.GOLDEN.isPremium)
+    }
+
+    @Test
+    fun verifyExportFormatIsJpegQuality92() = runBlocking {
+        val bitmap = Bitmap.createBitmap(1080, 1350, Bitmap.Config.ARGB_8888)
+        assertEquals(1080, bitmap.width)
+
+        val stream = java.io.ByteArrayOutputStream()
+        val success = bitmap.compress(Bitmap.CompressFormat.JPEG, 92, stream)
+        assertTrue(success)
+        val bytes = stream.toByteArray()
+        assertTrue(bytes.size > 2)
+        // Verify JPEG magic SOI marker
+        assertEquals(0xFF.toByte(), bytes[0])
+        assertEquals(0xD8.toByte(), bytes[1])
     }
 }
