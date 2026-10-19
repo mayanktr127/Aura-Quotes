@@ -31,8 +31,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.myplanetservices.stillwords.ui.components.QuoteCard
+import com.myplanetservices.stillwords.ui.components.ShareFormatBottomSheet
 import com.myplanetservices.stillwords.ui.components.StyleSelectorCarousel
-import com.myplanetservices.stillwords.util.ImageExportUtil
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,6 +49,7 @@ fun QuoteDetailScreen(
 
     var newCollectionName by remember { mutableStateOf("") }
     var isCreatingCollection by remember { mutableStateOf(false) }
+    var showTopBarShareSheet by remember { mutableStateOf(false) }
 
     if (quote == null) {
         Box(
@@ -58,6 +59,17 @@ fun QuoteDetailScreen(
             CircularProgressIndicator(color = MaterialTheme.colorScheme.tertiary)
         }
         return
+    }
+
+    if (showTopBarShareSheet) {
+        ShareFormatBottomSheet(
+            quoteText = quote.text,
+            author = quote.author,
+            category = quote.category,
+            quoteId = quote.id,
+            cardStyle = state.cardStyle,
+            onDismissRequest = { showTopBarShareSheet = false }
+        )
     }
 
     Scaffold(
@@ -94,7 +106,7 @@ fun QuoteDetailScreen(
                         )
                     }
                     IconButton(
-                        onClick = { ImageExportUtil.shareCardImage(context, quote.text, quote.author, state.cardStyle, category = quote.category, quoteId = quote.id) },
+                        onClick = { showTopBarShareSheet = true },
                         modifier = Modifier.testTag("detail_share_button")
                     ) {
                         Icon(
@@ -126,7 +138,6 @@ fun QuoteDetailScreen(
                     cardStyle = state.cardStyle,
                     isHero = true,
                     onFavoriteToggle = { viewModel.toggleFavorite() },
-                    onShare = { ImageExportUtil.shareCardImage(context, quote.text, quote.author, state.cardStyle, category = quote.category, quoteId = quote.id) },
                     onOpenDesigner = { onNavigateToDesigner(quote.id) }
                 )
             }
@@ -195,7 +206,7 @@ fun QuoteDetailScreen(
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(quote.tags) { tag ->
+                        items(quote.tags, key = { "tag_$it" }) { tag ->
                             Surface(
                                 shape = RoundedCornerShape(12.dp),
                                 color = MaterialTheme.colorScheme.surfaceVariant,
@@ -396,7 +407,6 @@ fun QuoteDetailScreen(
                         isHero = false,
                         modifier = Modifier.fillMaxWidth(),
                         onFavoriteToggle = { /* handled in repo */ },
-                        onShare = { ImageExportUtil.shareCardImage(context, relQuote.text, relQuote.author, relQuote.defaultStyle, category = relQuote.category, quoteId = relQuote.id) },
                         onOpenDesigner = { onNavigateToDesigner(relQuote.id) },
                         onClick = { onNavigateToOtherQuote(relQuote.id) }
                     )

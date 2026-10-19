@@ -34,7 +34,6 @@ import com.myplanetservices.stillwords.data.model.Quote
 import com.myplanetservices.stillwords.ui.components.MoodChipRow
 import com.myplanetservices.stillwords.ui.components.QuoteCard
 import com.myplanetservices.stillwords.ui.components.StyleSelectorCarousel
-import com.myplanetservices.stillwords.util.ImageExportUtil
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -175,7 +174,6 @@ fun HomeScreen(
                         cardStyle = state.heroStyle,
                         isHero = true,
                         onFavoriteToggle = { viewModel.toggleFavorite(qotd.id) },
-                        onShare = { ImageExportUtil.shareCardImage(context, qotd.text, qotd.author, state.heroStyle, category = qotd.category, quoteId = qotd.id) },
                         onOpenDesigner = { onNavigateToDesigner(qotd.id) },
                         onClick = {
                             viewModel.recordHistory(qotd.id)
@@ -228,14 +226,13 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(14.dp),
                     modifier = Modifier.padding(vertical = 4.dp)
                 ) {
-                    items(state.moodQuotes, key = { it.id }) { quote ->
+                    items(state.moodQuotes, key = { "mood_${it.id}" }) { quote ->
                         QuoteCard(
                             quote = quote,
                             cardStyle = quote.defaultStyle,
                             isHero = false,
                             modifier = Modifier.width(300.dp),
                             onFavoriteToggle = { viewModel.toggleFavorite(quote.id) },
-                            onShare = { ImageExportUtil.shareCardImage(context, quote.text, quote.author, quote.defaultStyle, category = quote.category, quoteId = quote.id) },
                             onOpenDesigner = { onNavigateToDesigner(quote.id) },
                             onClick = {
                                 viewModel.recordHistory(quote.id)
@@ -268,7 +265,7 @@ fun HomeScreen(
                 LazyRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(state.categories) { category ->
+                    items(state.categories, key = { "cat_$it" }) { category ->
                         val shape = RoundedCornerShape(16.dp)
                         Box(
                             modifier = Modifier
@@ -335,7 +332,6 @@ fun HomeScreen(
                                 isHero = false,
                                 modifier = Modifier.width(280.dp),
                                 onFavoriteToggle = { viewModel.toggleFavorite(quote.id) },
-                                onShare = { ImageExportUtil.shareCardImage(context, quote.text, quote.author, quote.defaultStyle, category = quote.category, quoteId = quote.id) },
                                 onOpenDesigner = { onNavigateToDesigner(quote.id) },
                                 onClick = {
                                     viewModel.recordHistory(quote.id)
@@ -437,7 +433,6 @@ fun HomeScreen(
                         isHero = false,
                         modifier = Modifier.fillMaxWidth(),
                         onFavoriteToggle = { viewModel.toggleFavorite(quote.id) },
-                        onShare = { ImageExportUtil.shareCardImage(context, quote.text, quote.author, quote.defaultStyle, category = quote.category, quoteId = quote.id) },
                         onOpenDesigner = { onNavigateToDesigner(quote.id) },
                         onClick = {
                             viewModel.recordHistory(quote.id)

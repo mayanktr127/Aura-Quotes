@@ -45,6 +45,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
+import coil.size.Precision
+import coil.size.Scale
 import com.myplanetservices.stillwords.data.model.CardStyle
 import com.myplanetservices.stillwords.data.model.Quote
 import com.myplanetservices.stillwords.data.repository.BackgroundRepository
@@ -58,7 +60,7 @@ fun QuoteCard(
     usePhotoBackground: Boolean = true,
     isHero: Boolean = false,
     onFavoriteToggle: () -> Unit = {},
-    onShare: () -> Unit = {},
+    onShare: (() -> Unit)? = null,
     onOpenDesigner: () -> Unit = {},
     onClick: () -> Unit = {}
 ) {
@@ -74,6 +76,19 @@ fun QuoteCard(
     val isPhotoActive = effectivePhotoPath != null && !hasImageError
 
     var isLiked by remember(quote.isFavorite) { mutableStateOf(quote.isFavorite) }
+    var showShareSheet by remember { mutableStateOf(false) }
+
+    if (showShareSheet) {
+        ShareFormatBottomSheet(
+            quoteText = quote.text,
+            author = quote.author,
+            category = quote.category,
+            quoteId = quote.id,
+            cardStyle = cardStyle,
+            photoAssetPath = effectivePhotoPath,
+            onDismissRequest = { showShareSheet = false }
+        )
+    }
 
     // Heart scale animation on favorite
     val heartScale by animateFloatAsState(
@@ -118,13 +133,18 @@ fun QuoteCard(
             .clip(shape)
             .clickable(onClick = onClick)
     ) {
-        // Layer 1: Photo background (Coil with memory caching)
+        // Layer 1: Photo background (Coil with memory caching, size & scale hints)
         if (isPhotoActive) {
             AsyncImage(
                 model = ImageRequest.Builder(context)
                     .data(backgroundRepo.getCoilUri(effectivePhotoPath!!))
-                    .crossfade(true)
+                    .memoryCacheKey(effectivePhotoPath)
+                    .diskCacheKey(effectivePhotoPath)
                     .memoryCachePolicy(CachePolicy.ENABLED)
+                    .diskCachePolicy(CachePolicy.ENABLED)
+                    .precision(Precision.INEXACT)
+                    .scale(Scale.FILL)
+                    .crossfade(false)
                     .build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
@@ -295,7 +315,13 @@ fun QuoteCard(
             ) {
                 // Share
                 IconButton(
-                    onClick = onShare,
+                    onClick = {
+                        if (onShare != null) {
+                            onShare()
+                        } else {
+                            showShareSheet = true
+                        }
+                    },
                     modifier = Modifier.testTag("share_button_${quote.id}")
                 ) {
                     Icon(

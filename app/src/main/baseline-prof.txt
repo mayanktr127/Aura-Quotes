@@ -1,0 +1,78 @@
+# Baseline Profile for Stillwords
+# Covers: App Start, Today Scroll, Opening a Quote, and Back Navigation / Predictive Back
+
+# 1. App Startup & Core Architecture
+Lcom/myplanetservices/stillwords/MainActivity;
+Lcom/myplanetservices/stillwords/MainActivity$onCreate$$inlined$installSplashScreen$1;
+Lcom/myplanetservices/stillwords/data/local/StillwordsDatabase;
+Lcom/myplanetservices/stillwords/data/local/StillwordsDatabase_Impl;
+Lcom/myplanetservices/stillwords/data/local/QuoteDao;
+Lcom/myplanetservices/stillwords/data/local/QuoteDao_Impl;
+Lcom/myplanetservices/stillwords/data/local/QuoteEntity;
+Lcom/myplanetservices/stillwords/data/preferences/UserPreferences;
+Lcom/myplanetservices/stillwords/data/preferences/UserPreferencesRepository;
+Lcom/myplanetservices/stillwords/data/repository/QuoteRepository;
+Lcom/myplanetservices/stillwords/data/repository/BackgroundRepository;
+Lcom/myplanetservices/stillwords/data/model/Quote;
+Lcom/myplanetservices/stillwords/data/model/CardStyle;
+Lcom/myplanetservices/stillwords/data/model/BackgroundTheme;
+
+# 2. Jetpack Compose Navigation & App Shell
+Lcom/myplanetservices/stillwords/ui/navigation/StillwordsAppKt;
+Lcom/myplanetservices/stillwords/ui/navigation/StillwordsNavHostKt;
+Lcom/myplanetservices/stillwords/ui/navigation/Screen;
+Lcom/myplanetservices/stillwords/ui/navigation/BottomNavItem;
+Lcom/myplanetservices/stillwords/ui/theme/ThemeKt;
+Lcom/myplanetservices/stillwords/ui/theme/ColorKt;
+Lcom/myplanetservices/stillwords/ui/theme/TypeKt;
+
+# 3. Today Screen & Smooth Scrolling Pipeline
+Lcom/myplanetservices/stillwords/ui/screens/home/HomeScreenKt;
+Lcom/myplanetservices/stillwords/ui/screens/home/HomeViewModel;
+Lcom/myplanetservices/stillwords/ui/screens/home/HomeViewModel$Factory;
+Lcom/myplanetservices/stillwords/ui/screens/home/HomeUiState;
+Lcom/myplanetservices/stillwords/ui/components/QuoteCardKt;
+Lcom/myplanetservices/stillwords/ui/components/StyleSelectorCarouselKt;
+Lcom/myplanetservices/stillwords/ui/components/MoodChipRowKt;
+
+# 4. Opening a Quote & Detail Screen
+Lcom/myplanetservices/stillwords/ui/screens/detail/QuoteDetailScreenKt;
+Lcom/myplanetservices/stillwords/ui/screens/detail/QuoteDetailViewModel;
+Lcom/myplanetservices/stillwords/ui/screens/detail/QuoteDetailViewModel$Factory;
+Lcom/myplanetservices/stillwords/ui/screens/detail/QuoteDetailUiState;
+
+# 5. Quote Designer & Image Export
+Lcom/myplanetservices/stillwords/ui/screens/designer/QuoteDesignerScreenKt;
+Lcom/myplanetservices/stillwords/ui/screens/designer/QuoteDesignerViewModel;
+Lcom/myplanetservices/stillwords/ui/screens/designer/QuoteDesignerViewModel$Factory;
+Lcom/myplanetservices/stillwords/ui/screens/designer/QuoteDesignerUiState;
+Lcom/myplanetservices/stillwords/data/model/PhotoFilter;
+Lcom/myplanetservices/stillwords/data/model/CardAspectRatio;
+Lcom/myplanetservices/stillwords/data/model/QuoteFont;
+Lcom/myplanetservices/stillwords/util/ImageExportUtil;
+
+# 6. Coil Image Loading & Memory Caching Pipeline
+Lcoil/compose/AsyncImageKt;
+Lcoil/compose/AsyncImagePainter;
+Lcoil/ImageLoader;
+Lcoil/request/ImageRequest;
+Lcoil/request/ImageRequest$Builder;
+Lcoil/memory/MemoryCache;
+Lcoil/size/Precision;
+Lcoil/size/Scale;
+
+# 7. Predictive Back Navigation & AndroidX Back Handlers
+Landroidx/activity/OnBackPressedDispatcher;
+Landroidx/activity/OnBackPressedDispatcherKt;
+Landroidx/activity/compose/BackHandlerKt;
+Landroidx/activity/compose/PredictiveBackHandlerKt;
+Landroidx/navigation/NavHostController;
+Landroidx/navigation/compose/NavHostKt;
+Landroidx/navigation/compose/NavBackStackEntryProviderKt;
+Landroidx/compose/animation/EnterTransition;
+Landroidx/compose/animation/ExitTransition;
+Landroidx/compose/animation/AnimatedContentTransitionScope;
+
+# 8. ProfileInstaller
+Landroidx/profileinstaller/ProfileInstaller;
+Landroidx/profileinstaller/ProfileInstallerInitializer;

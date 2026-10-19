@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.myplanetservices.stillwords.data.model.BackgroundTheme
 import com.myplanetservices.stillwords.data.model.CardAspectRatio
 import com.myplanetservices.stillwords.data.model.CardStyle
+import com.myplanetservices.stillwords.data.model.PhotoFilter
 import com.myplanetservices.stillwords.data.model.Quote
 import com.myplanetservices.stillwords.data.model.QuoteFont
 import com.myplanetservices.stillwords.data.repository.BackgroundRepository
@@ -23,6 +24,7 @@ data class QuoteDesignerUiState(
     val category: String = "Motivation",
     val cardStyle: CardStyle = CardStyle.NOIR_STILLWORDS,
     val selectedPhotoPath: String? = null,
+    val selectedFilter: PhotoFilter = PhotoFilter.ORIGINAL,
     val availableThemes: List<Pair<BackgroundTheme, String>> = emptyList(),
     val quoteFont: QuoteFont = QuoteFont.EDITORIAL_SERIF,
     val aspectRatio: CardAspectRatio = CardAspectRatio.PORTRAIT_4_5,
@@ -86,6 +88,10 @@ class QuoteDesignerViewModel(
         _uiState.value = _uiState.value.copy(selectedPhotoPath = photoPath)
     }
 
+    fun onFilterSelected(filter: PhotoFilter) {
+        _uiState.value = _uiState.value.copy(selectedFilter = filter)
+    }
+
     fun onStyleSelected(style: CardStyle) {
         // When a solid/gradient card style is explicitly selected, clear photo so style is displayed
         _uiState.value = _uiState.value.copy(cardStyle = style, selectedPhotoPath = null)
@@ -130,7 +136,8 @@ class QuoteDesignerViewModel(
                     quoteFont = state.quoteFont,
                     aspectRatio = state.aspectRatio,
                     showWatermark = state.showWatermark,
-                    photoAssetPath = state.selectedPhotoPath
+                    photoAssetPath = state.selectedPhotoPath,
+                    photoFilter = state.selectedFilter
                 )
                 val uri = ImageExportUtil.saveBitmapToGallery(context, bitmap)
                 _uiState.value = _uiState.value.copy(isExporting = false)
@@ -160,7 +167,8 @@ class QuoteDesignerViewModel(
                     quoteFont = state.quoteFont,
                     aspectRatio = state.aspectRatio,
                     showWatermark = state.showWatermark,
-                    photoAssetPath = state.selectedPhotoPath
+                    photoAssetPath = state.selectedPhotoPath,
+                    photoFilter = state.selectedFilter
                 )
                 val uri = ImageExportUtil.cacheBitmapForSharing(context, bitmap)
                 _uiState.value = _uiState.value.copy(isExporting = false)

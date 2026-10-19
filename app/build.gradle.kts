@@ -121,6 +121,8 @@ dependencies {
     implementation(libs.kotlinx.coroutines.core)
     implementation(libs.play.app.update)
     implementation(libs.play.app.update.ktx)
+    implementation(libs.androidx.core.splashscreen)
+    implementation(libs.androidx.profileinstaller)
 
     "ksp"(libs.androidx.room.compiler)
 

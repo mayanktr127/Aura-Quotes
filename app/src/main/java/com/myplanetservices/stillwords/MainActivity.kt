@@ -12,6 +12,7 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.myplanetservices.stillwords.data.local.StillwordsDatabase
 import com.myplanetservices.stillwords.data.preferences.UserPreferences
@@ -27,6 +28,7 @@ class MainActivity : ComponentActivity() {
     private var inAppUpdateHelper: InAppUpdateHelper? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
@@ -41,8 +43,14 @@ class MainActivity : ComponentActivity() {
         }.also { it.start() }
 
         setContent {
-            val userPrefs by preferencesRepository.userPreferencesFlow
-                .collectAsStateWithLifecycle(initialValue = UserPreferences())
+            val userPrefsState by preferencesRepository.userPreferencesFlow
+                .collectAsStateWithLifecycle(initialValue = null)
+
+            splashScreen.setKeepOnScreenCondition {
+                userPrefsState == null
+            }
+
+            val userPrefs = userPrefsState ?: return@setContent
 
             val isDarkTheme = when (userPrefs.themeMode) {
                 "LIGHT" -> false

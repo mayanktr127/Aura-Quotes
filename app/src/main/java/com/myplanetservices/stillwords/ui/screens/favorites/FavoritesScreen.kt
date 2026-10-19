@@ -27,7 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.myplanetservices.stillwords.ui.components.QuoteCard
-import com.myplanetservices.stillwords.util.ImageExportUtil
 
 @Composable
 fun FavoritesScreen(
@@ -178,14 +177,13 @@ fun FavoritesScreen(
                         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        items(state.savedQuotes, key = { it.id }) { quote ->
+                        items(state.savedQuotes, key = { "fav_${it.id}" }) { quote ->
                             QuoteCard(
                                 quote = quote,
                                 cardStyle = quote.defaultStyle,
                                 isHero = false,
                                 modifier = Modifier.fillMaxWidth(),
                                 onFavoriteToggle = { viewModel.toggleFavorite(quote.id) },
-                                onShare = { ImageExportUtil.shareCardImage(context, quote.text, quote.author, quote.defaultStyle, category = quote.category, quoteId = quote.id) },
                                 onOpenDesigner = { onNavigateToDesigner(quote.id) },
                                 onClick = { onNavigateToDetail(quote.id) }
                             )
@@ -282,7 +280,6 @@ fun FavoritesScreen(
                                     isHero = false,
                                     modifier = Modifier.fillMaxWidth(),
                                     onFavoriteToggle = { viewModel.toggleFavorite(quote.id) },
-                                    onShare = { ImageExportUtil.shareCardImage(context, quote.text, quote.author, quote.defaultStyle, category = quote.category, quoteId = quote.id) },
                                     onOpenDesigner = { onNavigateToDesigner(quote.id) },
                                     onClick = { onNavigateToDetail(quote.id) }
                                 )
@@ -455,7 +452,6 @@ fun FavoritesScreen(
                                 isHero = false,
                                 modifier = Modifier.fillMaxWidth(),
                                 onFavoriteToggle = { viewModel.toggleFavorite(quote.id) },
-                                onShare = { ImageExportUtil.shareCardImage(context, quote.text, quote.author, quote.defaultStyle, category = quote.category, quoteId = quote.id) },
                                 onOpenDesigner = { onNavigateToDesigner(quote.id) },
                                 onClick = { onNavigateToDetail(quote.id) }
                             )

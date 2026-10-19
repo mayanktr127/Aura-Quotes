@@ -22,7 +22,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.myplanetservices.stillwords.ui.components.QuoteCard
-import com.myplanetservices.stillwords.util.ImageExportUtil
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -177,7 +176,6 @@ fun CollectionDetailScreen(
                             isHero = false,
                             modifier = Modifier.fillMaxWidth(),
                             onFavoriteToggle = { viewModel.toggleFavorite(quote.id) },
-                            onShare = { ImageExportUtil.shareCardImage(context, quote.text, quote.author, quote.defaultStyle, category = quote.category, quoteId = quote.id) },
                             onOpenDesigner = { onNavigateToDesigner(quote.id) },
                             onClick = { onNavigateToDetail(quote.id) }
                         )

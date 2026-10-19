@@ -79,10 +79,12 @@ fun StillwordsApp(
         Screen.Settings.route
     )
 
-    val startDestination = if (userPreferences.onboardingCompleted) {
-        Screen.Home.route
-    } else {
-        Screen.Onboarding.route
+    val startDestination = remember {
+        if (userPreferences.onboardingCompleted) {
+            Screen.Home.route
+        } else {
+            Screen.Onboarding.route
+        }
     }
 
     BoxWithConstraints(modifier = modifier.fillMaxSize()) {

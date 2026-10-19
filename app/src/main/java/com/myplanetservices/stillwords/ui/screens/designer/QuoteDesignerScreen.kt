@@ -35,6 +35,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.myplanetservices.stillwords.data.model.CardAspectRatio
 import com.myplanetservices.stillwords.data.model.CardStyle
+import com.myplanetservices.stillwords.data.model.PhotoFilter
 import com.myplanetservices.stillwords.data.model.QuoteFont
 import com.myplanetservices.stillwords.ui.components.StyleSelectorCarousel
 
@@ -188,7 +189,6 @@ fun QuoteDesignerScreen(
                         .then(bgMod)
                         .then(borderMod)
                         .clip(cardShape)
-                        .padding(20.dp)
                         .testTag("designer_canvas_preview"),
                     contentAlignment = Alignment.Center
                 ) {
@@ -201,6 +201,7 @@ fun QuoteDesignerScreen(
                                 .build(),
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
+                            colorFilter = state.selectedFilter.composeColorFilter,
                             modifier = Modifier
                                 .matchParentSize()
                                 .clip(cardShape)
@@ -213,17 +214,42 @@ fun QuoteDesignerScreen(
                                 .background(
                                     Brush.verticalGradient(
                                         colors = listOf(
-                                            Color(0x66000000),
-                                            Color(0x99000000),
-                                            Color(0xDD000000)
+                                            state.selectedFilter.scrimTop,
+                                            state.selectedFilter.scrimMid,
+                                            state.selectedFilter.scrimBottom
                                         )
                                     )
                                 )
                         )
                     }
 
+                    // Luxury inner gold frame matching ImageExportUtil
+                    Box(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .padding(10.dp)
+                            .border(1.dp, Color(0x33E5A93C), RoundedCornerShape(16.dp))
+                    )
+
                     Column(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(
+                                top = when (state.aspectRatio) {
+                                    CardAspectRatio.LANDSCAPE_16_9 -> 18.dp
+                                    CardAspectRatio.STORY_9_16 -> 38.dp
+                                    CardAspectRatio.PORTRAIT_4_5 -> 28.dp
+                                    CardAspectRatio.SQUARE_1_1 -> 24.dp
+                                },
+                                bottom = when (state.aspectRatio) {
+                                    CardAspectRatio.LANDSCAPE_16_9 -> 14.dp
+                                    CardAspectRatio.STORY_9_16 -> 30.dp
+                                    CardAspectRatio.PORTRAIT_4_5 -> 22.dp
+                                    CardAspectRatio.SQUARE_1_1 -> 20.dp
+                                },
+                                start = 24.dp,
+                                end = 24.dp
+                            ),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.SpaceBetween
                     ) {
@@ -395,6 +421,46 @@ fun QuoteDesignerScreen(
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
+                        item {
+                            val isPlain = state.selectedPhotoPath == null
+                            val shape = RoundedCornerShape(14.dp)
+                            Box(
+                                modifier = Modifier
+                                    .size(width = 72.dp, height = 76.dp)
+                                    .shadow(if (isPlain) 6.dp else 2.dp, shape)
+                                    .border(
+                                        width = if (isPlain) 2.5.dp else 1.dp,
+                                        color = if (isPlain) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                                        shape = shape
+                                    )
+                                    .clip(shape)
+                                    .background(MaterialTheme.colorScheme.surfaceVariant)
+                                    .clickable { viewModel.onPhotoSelected(null) },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Column(
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    verticalArrangement = Arrangement.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Outlined.FormatColorFill,
+                                        contentDescription = "Plain Color",
+                                        tint = if (isPlain) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant,
+                                        modifier = Modifier.size(22.dp)
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = "Plain",
+                                        style = MaterialTheme.typography.labelSmall.copy(
+                                            fontSize = 9.sp,
+                                            fontWeight = FontWeight.Bold
+                                        ),
+                                        color = if (isPlain) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                }
+                            }
+                        }
+
                         items(state.availableThemes) { (theme, photoPath) ->
                             val isSelected = state.selectedPhotoPath == photoPath
                             val shape = RoundedCornerShape(14.dp)
@@ -467,11 +533,107 @@ fun QuoteDesignerScreen(
 
                     Spacer(modifier = Modifier.height(4.dp))
 
-                    // Style Carousel
-                    StyleSelectorCarousel(
-                        selectedStyle = state.cardStyle,
-                        onStyleSelected = { viewModel.onStyleSelected(it) }
-                    )
+                    if (state.selectedPhotoPath != null) {
+                        // Photo Filters Carousel (replaces Choose Style when photo background is selected)
+                        Text(
+                            text = "Photo Filters",
+                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+
+                        LazyRow(
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            items(PhotoFilter.values()) { filter ->
+                                val isSelected = filter == state.selectedFilter
+                                val shape = RoundedCornerShape(14.dp)
+                                Box(
+                                    modifier = Modifier
+                                        .size(width = 72.dp, height = 76.dp)
+                                        .shadow(if (isSelected) 6.dp else 2.dp, shape)
+                                        .border(
+                                            width = if (isSelected) 2.5.dp else 1.dp,
+                                            color = if (isSelected) MaterialTheme.colorScheme.tertiary else MaterialTheme.colorScheme.outline.copy(alpha = 0.3f),
+                                            shape = shape
+                                        )
+                                        .clip(shape)
+                                        .clickable { viewModel.onFilterSelected(filter) }
+                                ) {
+                                    AsyncImage(
+                                        model = ImageRequest.Builder(context)
+                                            .data("file:///android_asset/${state.selectedPhotoPath}")
+                                            .crossfade(true)
+                                            .build(),
+                                        contentDescription = filter.displayName,
+                                        contentScale = ContentScale.Crop,
+                                        colorFilter = filter.composeColorFilter,
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .background(
+                                                Brush.verticalGradient(
+                                                    colors = listOf(
+                                                        Color.Transparent,
+                                                        Color(0x99000000)
+                                                    )
+                                                )
+                                            )
+                                    )
+
+                                    Column(
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(4.dp),
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        verticalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        if (isSelected) {
+                                            Box(
+                                                modifier = Modifier
+                                                    .size(20.dp)
+                                                    .background(MaterialTheme.colorScheme.tertiary, CircleShape),
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Default.Check,
+                                                    contentDescription = "Selected",
+                                                    tint = Color.Black,
+                                                    modifier = Modifier.size(14.dp)
+                                                )
+                                            }
+                                        } else {
+                                            Spacer(modifier = Modifier.height(1.dp))
+                                        }
+
+                                        Text(
+                                            text = filter.displayName,
+                                            style = MaterialTheme.typography.labelSmall.copy(
+                                                fontSize = 9.sp,
+                                                fontWeight = FontWeight.Bold
+                                            ),
+                                            color = Color.White,
+                                            maxLines = 1
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        // Plain background: show regular Card Styles
+                        Text(
+                            text = "Card Styles",
+                            style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
+                            color = MaterialTheme.colorScheme.onBackground
+                        )
+
+                        StyleSelectorCarousel(
+                            selectedStyle = state.cardStyle,
+                            onStyleSelected = { viewModel.onStyleSelected(it) }
+                        )
+                    }
                 }
             }
 

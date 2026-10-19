@@ -7,6 +7,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
+import android.graphics.ColorMatrixColorFilter
 import android.graphics.LinearGradient
 import android.graphics.Paint
 import android.graphics.RectF
@@ -23,6 +24,7 @@ import android.widget.Toast
 import androidx.core.content.FileProvider
 import com.myplanetservices.stillwords.data.model.CardAspectRatio
 import com.myplanetservices.stillwords.data.model.CardStyle
+import com.myplanetservices.stillwords.data.model.PhotoFilter
 import com.myplanetservices.stillwords.data.model.QuoteFont
 import com.myplanetservices.stillwords.data.repository.BackgroundRepository
 import kotlinx.coroutines.CoroutineScope
@@ -44,7 +46,8 @@ object ImageExportUtil {
         quoteFont: QuoteFont,
         aspectRatio: CardAspectRatio,
         showWatermark: Boolean = true,
-        photoAssetPath: String? = null
+        photoAssetPath: String? = null,
+        photoFilter: PhotoFilter = PhotoFilter.ORIGINAL
     ): Bitmap = withContext(Dispatchers.Default) {
         val targetWidth = 1080
         val targetHeight = (targetWidth / aspectRatio.ratio).toInt()
@@ -64,7 +67,9 @@ object ImageExportUtil {
                     val scaledH = photoBitmap.height * scale
                     val left = (targetWidth - scaledW) / 2f
                     val top = (targetHeight - scaledH) / 2f
-                    val filterPaint = Paint(Paint.FILTER_BITMAP_FLAG)
+                    val filterPaint = Paint(Paint.FILTER_BITMAP_FLAG).apply {
+                        colorFilter = ColorMatrixColorFilter(photoFilter.toAndroidColorMatrix())
+                    }
                     canvas.drawBitmap(photoBitmap, null, RectF(left, top, left + scaledW, top + scaledH), filterPaint)
                     photoBitmap.recycle()
                     isPhotoDrawn = true
@@ -75,12 +80,30 @@ object ImageExportUtil {
         }
 
         if (isPhotoDrawn) {
-            // Draw dark gradient scrim (lighter at top, darker at bottom, ensures WCAG AA 4.5:1 contrast)
+            // Draw dark gradient scrim tuned for the filter to guarantee WCAG AA 4.5:1 contrast
+            val topColor = android.graphics.Color.argb(
+                (photoFilter.scrimTop.alpha * 255).toInt(),
+                (photoFilter.scrimTop.red * 255).toInt(),
+                (photoFilter.scrimTop.green * 255).toInt(),
+                (photoFilter.scrimTop.blue * 255).toInt()
+            )
+            val midColor = android.graphics.Color.argb(
+                (photoFilter.scrimMid.alpha * 255).toInt(),
+                (photoFilter.scrimMid.red * 255).toInt(),
+                (photoFilter.scrimMid.green * 255).toInt(),
+                (photoFilter.scrimMid.blue * 255).toInt()
+            )
+            val bottomColor = android.graphics.Color.argb(
+                (photoFilter.scrimBottom.alpha * 255).toInt(),
+                (photoFilter.scrimBottom.red * 255).toInt(),
+                (photoFilter.scrimBottom.green * 255).toInt(),
+                (photoFilter.scrimBottom.blue * 255).toInt()
+            )
             val scrimPaint = Paint().apply {
                 isAntiAlias = true
                 shader = LinearGradient(
                     0f, 0f, 0f, targetHeight.toFloat(),
-                    intArrayOf(0x66000000.toInt(), 0x99000000.toInt(), 0xDD000000.toInt()),
+                    intArrayOf(topColor, midColor, bottomColor),
                     floatArrayOf(0f, 0.45f, 1f),
                     Shader.TileMode.CLAMP
                 )
@@ -168,7 +191,12 @@ object ImageExportUtil {
             textAlign = Paint.Align.CENTER
             letterSpacing = 0.25f
         }
-        val topY = if (aspectRatio == CardAspectRatio.STORY_9_16) targetHeight * 0.22f else targetHeight * 0.16f
+        val topY = when (aspectRatio) {
+            CardAspectRatio.LANDSCAPE_16_9 -> 118f
+            CardAspectRatio.STORY_9_16 -> 320f
+            CardAspectRatio.PORTRAIT_4_5 -> 220f
+            CardAspectRatio.SQUARE_1_1 -> 190f
+        }
         canvas.drawText("“  ${category.uppercase()}  ”", targetWidth / 2f, topY, metaPaint)
 
         // Typeface selection
@@ -237,7 +265,7 @@ object ImageExportUtil {
 
         // Center quote vertically safely between header and author
         val textHeight = staticLayout.height
-        val startY = ((targetHeight - textHeight) / 2f - 30f).coerceAtLeast(topY + 60f)
+        val startY = ((targetHeight - textHeight) / 2f - 20f).coerceAtLeast(topY + 65f)
         val startX = (targetWidth - contentWidth) / 2f
 
         canvas.save()
@@ -358,7 +386,9 @@ object ImageExportUtil {
         quoteFont: QuoteFont = QuoteFont.EDITORIAL_SERIF,
         category: String = "Inspiration",
         photoAssetPath: String? = null,
-        quoteId: String? = null
+        quoteId: String? = null,
+        aspectRatio: CardAspectRatio = CardAspectRatio.PORTRAIT_4_5,
+        photoFilter: PhotoFilter = PhotoFilter.ORIGINAL
     ) {
         CoroutineScope(Dispatchers.Main).launch {
             try {
@@ -373,9 +403,10 @@ object ImageExportUtil {
                     category = category,
                     cardStyle = cardStyle,
                     quoteFont = quoteFont,
-                    aspectRatio = CardAspectRatio.SQUARE_1_1,
+                    aspectRatio = aspectRatio,
                     showWatermark = true,
-                    photoAssetPath = effectivePhoto
+                    photoAssetPath = effectivePhoto,
+                    photoFilter = photoFilter
                 )
                 val uri = cacheBitmapForSharing(context, bitmap)
                 if (uri != null) {

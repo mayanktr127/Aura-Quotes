@@ -31,7 +31,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.myplanetservices.stillwords.ui.components.QuoteCard
-import com.myplanetservices.stillwords.util.ImageExportUtil
 
 @Composable
 fun ExploreScreen(
@@ -182,7 +181,6 @@ fun ExploreScreen(
                             isHero = false,
                             modifier = Modifier.fillMaxWidth(),
                             onFavoriteToggle = { viewModel.toggleFavorite(quote.id) },
-                            onShare = { ImageExportUtil.shareCardImage(context, quote.text, quote.author, quote.defaultStyle, category = quote.category, quoteId = quote.id) },
                             onOpenDesigner = { onNavigateToDesigner(quote.id) },
                             onClick = {
                                 viewModel.recordHistory(quote.id)
@@ -423,7 +421,6 @@ fun ExploreScreen(
                             isHero = false,
                             modifier = Modifier.fillMaxWidth(),
                             onFavoriteToggle = { viewModel.toggleFavorite(quote.id) },
-                            onShare = { ImageExportUtil.shareCardImage(context, quote.text, quote.author, quote.defaultStyle, category = quote.category, quoteId = quote.id) },
                             onOpenDesigner = { onNavigateToDesigner(quote.id) },
                             onClick = {
                                 viewModel.recordHistory(quote.id)

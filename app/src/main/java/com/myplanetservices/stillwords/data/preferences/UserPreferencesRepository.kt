@@ -1,4 +1,4 @@
-﻿package com.myplanetservices.stillwords.data.preferences
+package com.myplanetservices.stillwords.data.preferences
 
 import android.content.Context
 import androidx.datastore.core.DataStore
@@ -86,6 +86,12 @@ class UserPreferencesRepository(private val context: Context) {
     suspend fun setDefaultQuoteStyle(style: String) {
         context.dataStore.edit { preferences ->
             preferences[PreferencesKeys.DEFAULT_QUOTE_STYLE] = style
+        }
+    }
+
+    suspend fun setDefaultAspectRatio(ratio: String) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.DEFAULT_ASPECT_RATIO] = ratio
         }
     }
 
