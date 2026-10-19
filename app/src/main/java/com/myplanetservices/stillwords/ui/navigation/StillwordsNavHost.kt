@@ -1,5 +1,8 @@
 package com.myplanetservices.stillwords.ui.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -209,7 +212,11 @@ private fun AppNavigationHost(
     val appContext = LocalContext.current.applicationContext
     NavHost(
         navController = navController,
-        startDestination = startDestination
+        startDestination = startDestination,
+        enterTransition = { fadeIn(animationSpec = tween(180)) },
+        exitTransition = { fadeOut(animationSpec = tween(180)) },
+        popEnterTransition = { fadeIn(animationSpec = tween(180)) },
+        popExitTransition = { fadeOut(animationSpec = tween(180)) }
     ) {
         // Onboarding
         composable(Screen.Onboarding.route) {

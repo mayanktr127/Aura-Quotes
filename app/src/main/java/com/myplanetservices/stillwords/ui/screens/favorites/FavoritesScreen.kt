@@ -7,6 +7,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -177,7 +178,7 @@ fun FavoritesScreen(
                         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        items(state.savedQuotes, key = { "fav_${it.id}" }) { quote ->
+                        itemsIndexed(state.savedQuotes, key = { index, quote -> "fav_${quote.id}_$index" }) { _, quote ->
                             QuoteCard(
                                 quote = quote,
                                 cardStyle = quote.defaultStyle,
@@ -273,7 +274,7 @@ fun FavoritesScreen(
                                 }
                             }
                         } else {
-                            items(state.collectionQuotes, key = { "col_${it.id}" }) { quote ->
+                            itemsIndexed(state.collectionQuotes, key = { index, quote -> "col_${quote.id}_$index" }) { _, quote ->
                                 QuoteCard(
                                     quote = quote,
                                     cardStyle = quote.defaultStyle,
@@ -445,7 +446,7 @@ fun FavoritesScreen(
                         contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
                         verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
-                        items(state.historyQuotes, key = { "hist_${it.id}" }) { quote ->
+                        itemsIndexed(state.historyQuotes, key = { index, quote -> "hist_${quote.id}_$index" }) { _, quote ->
                             QuoteCard(
                                 quote = quote,
                                 cardStyle = quote.defaultStyle,

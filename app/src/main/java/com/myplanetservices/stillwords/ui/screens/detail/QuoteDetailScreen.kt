@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -206,7 +207,7 @@ fun QuoteDetailScreen(
                     LazyRow(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        items(quote.tags, key = { "tag_$it" }) { tag ->
+                        itemsIndexed(quote.tags, key = { index, tag -> "tag_${tag}_$index" }) { _, tag ->
                             Surface(
                                 shape = RoundedCornerShape(12.dp),
                                 color = MaterialTheme.colorScheme.surfaceVariant,
@@ -400,7 +401,7 @@ fun QuoteDetailScreen(
                     }
                 }
 
-                items(state.relatedQuotes, key = { "rel_${it.id}" }) { relQuote ->
+                itemsIndexed(state.relatedQuotes, key = { index, relQuote -> "rel_${relQuote.id}_$index" }) { _, relQuote ->
                     QuoteCard(
                         quote = relQuote,
                         cardStyle = relQuote.defaultStyle,

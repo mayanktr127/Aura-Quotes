@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -176,7 +177,6 @@ fun HomeScreen(
                         onFavoriteToggle = { viewModel.toggleFavorite(qotd.id) },
                         onOpenDesigner = { onNavigateToDesigner(qotd.id) },
                         onClick = {
-                            viewModel.recordHistory(qotd.id)
                             onNavigateToDetail(qotd.id)
                         }
                     )
@@ -226,7 +226,7 @@ fun HomeScreen(
                     horizontalArrangement = Arrangement.spacedBy(14.dp),
                     modifier = Modifier.padding(vertical = 4.dp)
                 ) {
-                    items(state.moodQuotes, key = { "mood_${it.id}" }) { quote ->
+                    itemsIndexed(state.moodQuotes, key = { index, quote -> "mood_${quote.id}_$index" }) { _, quote ->
                         QuoteCard(
                             quote = quote,
                             cardStyle = quote.defaultStyle,
@@ -234,10 +234,7 @@ fun HomeScreen(
                             modifier = Modifier.width(300.dp),
                             onFavoriteToggle = { viewModel.toggleFavorite(quote.id) },
                             onOpenDesigner = { onNavigateToDesigner(quote.id) },
-                            onClick = {
-                                viewModel.recordHistory(quote.id)
-                                onNavigateToDetail(quote.id)
-                            }
+                            onClick = { onNavigateToDetail(quote.id) }
                         )
                     }
                 }
@@ -325,7 +322,7 @@ fun HomeScreen(
                         contentPadding = PaddingValues(horizontal = 20.dp),
                         horizontalArrangement = Arrangement.spacedBy(14.dp)
                     ) {
-                        items(state.forYouQuotes, key = { "for_you_${it.id}" }) { quote ->
+                        itemsIndexed(state.forYouQuotes, key = { index, quote -> "for_you_${quote.id}_$index" }) { _, quote ->
                             QuoteCard(
                                 quote = quote,
                                 cardStyle = quote.defaultStyle,
@@ -333,10 +330,7 @@ fun HomeScreen(
                                 modifier = Modifier.width(280.dp),
                                 onFavoriteToggle = { viewModel.toggleFavorite(quote.id) },
                                 onOpenDesigner = { onNavigateToDesigner(quote.id) },
-                                onClick = {
-                                    viewModel.recordHistory(quote.id)
-                                    onNavigateToDetail(quote.id)
-                                }
+                                onClick = { onNavigateToDetail(quote.id) }
                             )
                         }
                     }
@@ -425,7 +419,7 @@ fun HomeScreen(
                 }
             }
 
-            items(state.popularQuotes, key = { "popular_${it.id}" }) { quote ->
+            itemsIndexed(state.popularQuotes, key = { index, quote -> "popular_${quote.id}_$index" }) { _, quote ->
                 Box(modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp)) {
                     QuoteCard(
                         quote = quote,
@@ -434,10 +428,7 @@ fun HomeScreen(
                         modifier = Modifier.fillMaxWidth(),
                         onFavoriteToggle = { viewModel.toggleFavorite(quote.id) },
                         onOpenDesigner = { onNavigateToDesigner(quote.id) },
-                        onClick = {
-                            viewModel.recordHistory(quote.id)
-                            onNavigateToDetail(quote.id)
-                        }
+                        onClick = { onNavigateToDetail(quote.id) }
                     )
                 }
             }

@@ -1,6 +1,7 @@
 package com.myplanetservices.stillwords.ui.screens.designer
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -22,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -32,11 +34,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import coil.request.CachePolicy
 import coil.request.ImageRequest
+import coil.size.Precision
+import coil.size.Scale
 import com.myplanetservices.stillwords.data.model.CardAspectRatio
 import com.myplanetservices.stillwords.data.model.CardStyle
 import com.myplanetservices.stillwords.data.model.PhotoFilter
 import com.myplanetservices.stillwords.data.model.QuoteFont
+import com.myplanetservices.stillwords.data.repository.BackgroundRepository
 import com.myplanetservices.stillwords.ui.components.StyleSelectorCarousel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,6 +54,7 @@ fun QuoteDesignerScreen(
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val backgroundRepo = remember(context) { BackgroundRepository(context) }
     var selectedToolTab by remember { mutableStateOf(0) } // 0: Styles & Ratio, 1: Typography, 2: Text
 
     Scaffold(
@@ -196,8 +203,14 @@ fun QuoteDesignerScreen(
                     if (isPhoto && state.selectedPhotoPath != null) {
                         AsyncImage(
                             model = ImageRequest.Builder(context)
-                                .data("file:///android_asset/${state.selectedPhotoPath}")
-                                .crossfade(true)
+                                .data(backgroundRepo.getCoilUri(state.selectedPhotoPath!!))
+                                .memoryCacheKey(state.selectedPhotoPath)
+                                .diskCacheKey(state.selectedPhotoPath)
+                                .memoryCachePolicy(CachePolicy.ENABLED)
+                                .diskCachePolicy(CachePolicy.ENABLED)
+                                .precision(Precision.INEXACT)
+                                .scale(Scale.FILL)
+                                .crossfade(false)
                                 .build(),
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
@@ -476,15 +489,32 @@ fun QuoteDesignerScreen(
                                     .clip(shape)
                                     .clickable { viewModel.onPhotoSelected(photoPath) }
                             ) {
-                                AsyncImage(
-                                    model = ImageRequest.Builder(context)
-                                        .data("file:///android_asset/$photoPath")
-                                        .crossfade(true)
-                                        .build(),
-                                    contentDescription = theme.displayName,
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier.fillMaxSize()
-                                )
+                                val themeThumb = remember(photoPath) {
+                                    backgroundRepo.getThumbnailBitmap(photoPath, 160)
+                                }
+                                if (themeThumb != null) {
+                                    Image(
+                                        bitmap = themeThumb.asImageBitmap(),
+                                        contentDescription = theme.displayName,
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                } else {
+                                    AsyncImage(
+                                        model = ImageRequest.Builder(context)
+                                            .data(backgroundRepo.getCoilUri(photoPath))
+                                            .size(160, 160)
+                                            .precision(Precision.INEXACT)
+                                            .scale(Scale.FILL)
+                                            .memoryCacheKey("thumb_160_$photoPath")
+                                            .diskCacheKey("thumb_160_$photoPath")
+                                            .crossfade(false)
+                                            .build(),
+                                        contentDescription = theme.displayName,
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier.fillMaxSize()
+                                    )
+                                }
 
                                 Box(
                                     modifier = Modifier
@@ -559,16 +589,34 @@ fun QuoteDesignerScreen(
                                         .clip(shape)
                                         .clickable { viewModel.onFilterSelected(filter) }
                                 ) {
-                                    AsyncImage(
-                                        model = ImageRequest.Builder(context)
-                                            .data("file:///android_asset/${state.selectedPhotoPath}")
-                                            .crossfade(true)
-                                            .build(),
-                                        contentDescription = filter.displayName,
-                                        contentScale = ContentScale.Crop,
-                                        colorFilter = filter.composeColorFilter,
-                                        modifier = Modifier.fillMaxSize()
-                                    )
+                                    val filterThumb = remember(state.selectedPhotoPath) {
+                                        state.selectedPhotoPath?.let { backgroundRepo.getThumbnailBitmap(it, 160) }
+                                    }
+                                    if (filterThumb != null) {
+                                        Image(
+                                            bitmap = filterThumb.asImageBitmap(),
+                                            contentDescription = filter.displayName,
+                                            contentScale = ContentScale.Crop,
+                                            colorFilter = filter.composeColorFilter,
+                                            modifier = Modifier.fillMaxSize()
+                                        )
+                                    } else {
+                                        AsyncImage(
+                                            model = ImageRequest.Builder(context)
+                                                .data(backgroundRepo.getCoilUri(state.selectedPhotoPath!!))
+                                                .size(160, 160)
+                                                .precision(Precision.INEXACT)
+                                                .scale(Scale.FILL)
+                                                .memoryCacheKey("thumb_160_${state.selectedPhotoPath}")
+                                                .diskCacheKey("thumb_160_${state.selectedPhotoPath}")
+                                                .crossfade(false)
+                                                .build(),
+                                            contentDescription = filter.displayName,
+                                            contentScale = ContentScale.Crop,
+                                            colorFilter = filter.composeColorFilter,
+                                            modifier = Modifier.fillMaxSize()
+                                        )
+                                    }
 
                                     Box(
                                         modifier = Modifier

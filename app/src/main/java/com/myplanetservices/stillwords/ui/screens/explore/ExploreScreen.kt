@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -173,7 +174,7 @@ fun ExploreScreen(
                     }
                 }
             } else {
-                items(state.filteredQuotes, key = { "filtered_${it.id}" }) { quote ->
+                itemsIndexed(state.filteredQuotes, key = { index, quote -> "filtered_${quote.id}_$index" }) { _, quote ->
                     Box(modifier = Modifier.padding(horizontal = 20.dp, vertical = 8.dp)) {
                         QuoteCard(
                             quote = quote,
@@ -182,10 +183,7 @@ fun ExploreScreen(
                             modifier = Modifier.fillMaxWidth(),
                             onFavoriteToggle = { viewModel.toggleFavorite(quote.id) },
                             onOpenDesigner = { onNavigateToDesigner(quote.id) },
-                            onClick = {
-                                viewModel.recordHistory(quote.id)
-                                onNavigateToDetail(quote.id)
-                            }
+                            onClick = { onNavigateToDetail(quote.id) }
                         )
                     }
                 }
@@ -413,7 +411,7 @@ fun ExploreScreen(
                     }
                 }
 
-                items(state.trendingQuotes.take(6), key = { "trending_${it.id}" }) { quote ->
+                itemsIndexed(state.trendingQuotes.take(6), key = { index, quote -> "trending_${quote.id}_$index" }) { _, quote ->
                     Box(modifier = Modifier.padding(horizontal = 20.dp, vertical = 6.dp)) {
                         QuoteCard(
                             quote = quote,
@@ -422,10 +420,7 @@ fun ExploreScreen(
                             modifier = Modifier.fillMaxWidth(),
                             onFavoriteToggle = { viewModel.toggleFavorite(quote.id) },
                             onOpenDesigner = { onNavigateToDesigner(quote.id) },
-                            onClick = {
-                                viewModel.recordHistory(quote.id)
-                                onNavigateToDetail(quote.id)
-                            }
+                            onClick = { onNavigateToDetail(quote.id) }
                         )
                     }
                 }

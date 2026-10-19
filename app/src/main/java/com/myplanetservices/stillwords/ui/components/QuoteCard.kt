@@ -124,7 +124,7 @@ fun QuoteCard(
         modifier = modifier
             .testTag("quote_card_${quote.id}")
             .shadow(
-                elevation = if (isHero) 12.dp else 4.dp,
+                elevation = if (isHero) 8.dp else 3.dp,
                 shape = shape,
                 spotColor = if (isPhotoActive || cardStyle.isDark) Color(0x66000000) else Color(0x22000000)
             )
