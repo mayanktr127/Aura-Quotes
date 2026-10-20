@@ -24,7 +24,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.myplanetservices.stillwords.data.model.Quote
 import com.myplanetservices.stillwords.data.repository.BackgroundRepository
 import com.myplanetservices.stillwords.ui.components.AddToCollectionBottomSheet
+import com.myplanetservices.stillwords.ui.components.MiniQuoteCard
 import com.myplanetservices.stillwords.ui.components.PhotoQuoteCard
+import com.myplanetservices.stillwords.ui.components.SectionHeader
 import com.myplanetservices.stillwords.ui.components.ShareFormatBottomSheet
 import com.myplanetservices.stillwords.ui.components.StillwordsChip
 import com.myplanetservices.stillwords.ui.components.WeekDots
@@ -141,6 +143,14 @@ fun HomeScreen(
             }
         }
 
+        val keepReadingQuotes = remember(state.forYouQuotes, state.popularQuotes) {
+            if (state.forYouQuotes.isNotEmpty()) {
+                state.forYouQuotes.take(5)
+            } else {
+                state.popularQuotes.take(5)
+            }
+        }
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -195,11 +205,12 @@ fun HomeScreen(
                 }
             }
 
-            // 2. Week Card with WeekDots ("{n} quiet days")
+            // 2. Week Card with WeekDots ("{n} quiet days", "1 quiet day" when n = 1)
             item(key = "week_stillness_card") {
+                val quietDaysTitle = if (state.quietDaysThisWeek == 1) "1 quiet day" else "${state.quietDaysThisWeek} quiet days"
                 WeekDots(
                     daysCompleted = state.quietDaysThisWeek,
-                    title = "${state.quietDaysThisWeek} quiet days",
+                    title = quietDaysTitle,
                     subtitle = "Your week of stillness",
                     dayStatuses = state.weekDayStatuses,
                     modifier = Modifier.fillMaxWidth()
@@ -241,6 +252,40 @@ fun HomeScreen(
                                     onNavigateToRead(null, categories)
                                 }
                             )
+                        }
+                    }
+                }
+            }
+
+            // 4. "Keep reading" SectionHeader + 3-5 mini quote cards from user's preferred topics
+            if (keepReadingQuotes.isNotEmpty()) {
+                item(key = "keep_reading_section") {
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        SectionHeader(
+                            title = "Keep reading"
+                        )
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .horizontalScroll(rememberScrollState()),
+                            horizontalArrangement = Arrangement.spacedBy(10.dp)
+                        ) {
+                            keepReadingQuotes.forEach { quote ->
+                                val photoPath = remember(quote.id, quote.category) {
+                                    backgroundRepo.getBackgroundAssetPath(quote.id, quote.category)
+                                }
+                                MiniQuoteCard(
+                                    quoteText = quote.text,
+                                    photoPath = photoPath,
+                                    onClick = {
+                                        onNavigateToRead(quote.id, null)
+                                    }
+                                )
+                            }
                         }
                     }
                 }

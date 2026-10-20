@@ -11,30 +11,30 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
-import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.automirrored.outlined.KeyboardArrowLeft
 import androidx.compose.material.icons.outlined.CameraAlt
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import coil.size.Precision
+import coil.size.Scale
 import com.myplanetservices.stillwords.data.model.PhotoCreditItem
 import com.myplanetservices.stillwords.data.model.PhotoCreditsLoader
+import com.myplanetservices.stillwords.ui.components.SectionHeader
+import com.myplanetservices.stillwords.ui.theme.*
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PhotoCreditsScreen(
     onNavigateBack: () -> Unit,
@@ -43,136 +43,127 @@ fun PhotoCreditsScreen(
     val context = LocalContext.current
     val creditsData = remember(context) { PhotoCreditsLoader.load(context) }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Photo Credits",
-                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                },
-                navigationIcon = {
-                    IconButton(
-                        onClick = onNavigateBack,
-                        modifier = Modifier.testTag("credits_back_button")
-                    ) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Back",
-                            tint = MaterialTheme.colorScheme.onBackground
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.background
-                )
-            )
-        },
+    Box(
         modifier = modifier
-    ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background)
-                .padding(innerPadding)
-                .testTag("photo_credits_screen"),
-            contentPadding = PaddingValues(horizontal = 20.dp, vertical = 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            // AI Disclosure Notice Banner
-            item {
-                Card(
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.surfaceVariant
-                    ),
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .testTag("photo_credits_screen")
+    ) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            // Top Header: Pushed Screen Header
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    onClick = onNavigateBack,
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .shadow(4.dp, RoundedCornerShape(20.dp))
-                ) {
-                    Row(
-                        modifier = Modifier.padding(18.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(14.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(42.dp)
-                                .background(MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f), CircleShape),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.AutoAwesome,
-                                contentDescription = null,
-                                tint = MaterialTheme.colorScheme.tertiary,
-                                modifier = Modifier.size(22.dp)
-                            )
-                        }
-
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = "Background Art & Photography",
-                                style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
-                            )
-                            if (creditsData.hasAiEntries && creditsData.statement.isNotBlank()) {
-                                Spacer(modifier = Modifier.height(4.dp))
-                                Text(
-                                    text = creditsData.statement,
-                                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Medium),
-                                    color = MaterialTheme.colorScheme.tertiary
-                                )
-                            }
-                            Spacer(modifier = Modifier.height(2.dp))
-                            Text(
-                                text = "All photography is sourced under the free Pexels license with sincere gratitude to the photographers.",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.8f)
-                            )
-                        }
-                    }
-                }
-            }
-
-            // Photographers Section Header
-            item {
-                Row(
-                    modifier = Modifier.padding(top = 8.dp, bottom = 4.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                        .size(48.dp)
+                        .testTag("credits_back_button")
                 ) {
                     Icon(
-                        imageVector = Icons.Outlined.CameraAlt,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.tertiary,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Text(
-                        text = "Contributing Photographers (${creditsData.credits.size})",
-                        style = MaterialTheme.typography.titleSmall.copy(
-                            fontWeight = FontWeight.Bold,
-                            letterSpacing = 0.5.sp
-                        ),
-                        color = MaterialTheme.colorScheme.onBackground
+                        imageVector = Icons.AutoMirrored.Outlined.KeyboardArrowLeft,
+                        contentDescription = "Back",
+                        tint = MaterialTheme.colorScheme.onBackground,
+                        modifier = Modifier.size(24.dp)
                     )
                 }
+
+                Text(
+                    text = "Photo Credits",
+                    style = ScreenTitlePushedStyle,
+                    color = MaterialTheme.colorScheme.onBackground,
+                    modifier = Modifier.padding(start = 4.dp)
+                )
             }
 
-            // List of Photographers
-            items(creditsData.credits, key = { "${it.theme}_${it.file}" }) { credit ->
-                PhotoCreditCard(
-                    credit = credit,
-                    onOpenUrl = {
-                        try {
-                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(credit.sourceUrl))
-                            context.startActivity(intent)
-                        } catch (e: Exception) {
-                            // Ignore if no browser available
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 20.dp),
+                contentPadding = PaddingValues(top = 8.dp, bottom = 32.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                // Pexels & AI Disclosure Banner Card
+                item(key = "disclosure_banner") {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(CardShape)
+                            .background(MaterialTheme.colorScheme.surface)
+                            .border(1.dp, MaterialTheme.colorScheme.outline, CardShape)
+                            .padding(18.dp)
+                    ) {
+                        Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.CameraAlt,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(20.dp)
+                                )
+                                Text(
+                                    text = "Photography & Background Art",
+                                    fontFamily = FigtreeFontFamily,
+                                    fontWeight = FontWeight.SemiBold,
+                                    fontSize = 15.sp,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                            }
+
+                            if (creditsData.hasAiEntries && creditsData.statement.isNotBlank()) {
+                                Text(
+                                    text = creditsData.statement,
+                                    fontFamily = FigtreeFontFamily,
+                                    fontSize = 13.sp,
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+
+                            Text(
+                                text = "All photography is sourced under the free Pexels license with sincere gratitude to the photographers for capturing quiet, contemplative imagery.",
+                                fontFamily = FigtreeFontFamily,
+                                fontSize = 13.sp,
+                                lineHeight = 19.sp,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
                         }
                     }
-                )
+                }
+
+                // Section Header
+                item(key = "photographers_header") {
+                    SectionHeader(
+                        title = "Contributing Photographers (${creditsData.credits.size})"
+                    )
+                }
+
+                // Photographers List
+                items(
+                    items = creditsData.credits,
+                    key = { "${it.theme}_${it.file}" }
+                ) { credit ->
+                    PhotoCreditCard(
+                        credit = credit,
+                        onOpenUrl = {
+                            try {
+                                val intent = Intent(Intent.ACTION_VIEW, Uri.parse(credit.sourceUrl)).apply {
+                                    addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                }
+                                context.startActivity(intent)
+                            } catch (e: Exception) {
+                                // Ignore if browser is unavailable
+                            }
+                        }
+                    )
+                }
             }
         }
     }
@@ -184,37 +175,44 @@ fun PhotoCreditCard(
     onOpenUrl: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val cardShape = RoundedCornerShape(18.dp)
-    Card(
-        shape = cardShape,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.7f)
-        ),
+    val density = LocalDensity.current
+    val thumbWidthPx = remember(density) { density.run { 60.dp.roundToPx() } }
+    val thumbHeightPx = remember(density) { density.run { 75.dp.roundToPx() } }
+    val photoAssetPath = remember(credit.theme, credit.file) {
+        "file:///android_asset/backgrounds/${credit.theme}/${credit.file}"
+    }
+
+    Box(
         modifier = modifier
             .fillMaxWidth()
-            .clip(cardShape)
+            .clip(CardShape)
+            .background(MaterialTheme.colorScheme.surface)
+            .border(1.dp, MaterialTheme.colorScheme.outline, CardShape)
             .clickable(onClick = onOpenUrl)
+            .padding(12.dp)
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(12.dp),
+            modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            // Thumbnail Preview
+            // Thumbnail Preview (display-size inexact Coil cache)
             val thumbShape = RoundedCornerShape(12.dp)
             Box(
                 modifier = Modifier
                     .size(width = 60.dp, height = 75.dp)
                     .clip(thumbShape)
-                    .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.2f), thumbShape)
-                    .background(MaterialTheme.colorScheme.surface)
+                    .border(1.dp, MaterialTheme.colorScheme.outline, thumbShape)
+                    .background(MaterialTheme.colorScheme.background)
             ) {
                 AsyncImage(
                     model = ImageRequest.Builder(LocalContext.current)
-                        .data("file:///android_asset/backgrounds/${credit.theme}/${credit.file}")
-                        .crossfade(true)
+                        .data(photoAssetPath)
+                        .memoryCacheKey(photoAssetPath)
+                        .size(thumbWidthPx, thumbHeightPx)
+                        .precision(Precision.INEXACT)
+                        .scale(Scale.FILL)
+                        .crossfade(false)
                         .build(),
                     contentDescription = credit.photographer,
                     contentScale = ContentScale.Crop,
@@ -223,48 +221,44 @@ fun PhotoCreditCard(
             }
 
             // Info Column
-            Column(modifier = Modifier.weight(1f)) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
                 Text(
                     text = credit.photographer,
-                    style = MaterialTheme.typography.titleSmall.copy(
-                        fontFamily = FontFamily.Serif,
-                        fontWeight = FontWeight.SemiBold
-                    ),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    fontFamily = NewsreaderFontFamily,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 17.sp,
+                    color = MaterialTheme.colorScheme.onBackground
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+
+                Surface(
+                    color = MaterialTheme.colorScheme.primaryContainer,
+                    shape = RoundedCornerShape(6.dp)
                 ) {
-                    Surface(
-                        color = MaterialTheme.colorScheme.tertiary.copy(alpha = 0.15f),
-                        shape = RoundedCornerShape(6.dp)
-                    ) {
-                        Text(
-                            text = credit.theme.replace("-", " ").uppercase(),
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                fontSize = 9.sp,
-                                fontWeight = FontWeight.Bold,
-                                letterSpacing = 1.sp
-                            ),
-                            color = MaterialTheme.colorScheme.tertiary,
-                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
-                        )
-                    }
+                    Text(
+                        text = credit.theme.replace("-", " ").uppercase(),
+                        fontFamily = FigtreeFontFamily,
+                        fontSize = 10.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        letterSpacing = 1.sp,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 3.dp)
+                    )
                 }
             }
 
-            // Tappable Link Arrow / Button
+            // Tappable Link Icon
             IconButton(
                 onClick = onOpenUrl,
-                modifier = Modifier.size(36.dp)
+                modifier = Modifier.size(48.dp)
             ) {
                 Icon(
                     imageVector = Icons.AutoMirrored.Filled.OpenInNew,
                     contentDescription = "View on Pexels",
-                    tint = MaterialTheme.colorScheme.tertiary,
-                    modifier = Modifier.size(18.dp)
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.size(20.dp)
                 )
             }
         }

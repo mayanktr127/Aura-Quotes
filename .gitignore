@@ -22,3 +22,4 @@ __pycache__/
 *.pyc
 
 docs/phase4d-exports/
+.freebuff/

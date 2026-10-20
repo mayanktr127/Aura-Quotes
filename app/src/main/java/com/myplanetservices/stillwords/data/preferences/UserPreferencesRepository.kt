@@ -22,7 +22,8 @@ data class UserPreferences(
     val defaultAspectRatio: String = "PORTRAIT_4_5",
     val openedDates: Set<String> = emptySet(),
     val readSwipeHintCount: Int = 0,
-    val premiumUnlockedUntil: Long = 0L
+    val premiumUnlockedUntil: Long = 0L,
+    val quoteTextSize: String = "MEDIUM" // "SMALL", "MEDIUM", "LARGE"
 ) {
     val isPremiumUnlocked: Boolean
         get() = System.currentTimeMillis() < premiumUnlockedUntil
@@ -42,6 +43,7 @@ class UserPreferencesRepository(private val context: Context) {
         val OPENED_DATES = stringSetPreferencesKey("opened_dates")
         val READ_SWIPE_HINT_COUNT = intPreferencesKey("read_swipe_hint_count")
         val PREMIUM_UNLOCKED_UNTIL = longPreferencesKey("premium_unlocked_until")
+        val QUOTE_TEXT_SIZE = stringPreferencesKey("quote_text_size")
     }
 
     val userPreferencesFlow: Flow<UserPreferences> = context.dataStore.data
@@ -65,7 +67,8 @@ class UserPreferencesRepository(private val context: Context) {
                 defaultAspectRatio = preferences[PreferencesKeys.DEFAULT_ASPECT_RATIO] ?: "PORTRAIT_4_5",
                 openedDates = preferences[PreferencesKeys.OPENED_DATES] ?: emptySet(),
                 readSwipeHintCount = preferences[PreferencesKeys.READ_SWIPE_HINT_COUNT] ?: 0,
-                premiumUnlockedUntil = preferences[PreferencesKeys.PREMIUM_UNLOCKED_UNTIL] ?: 0L
+                premiumUnlockedUntil = preferences[PreferencesKeys.PREMIUM_UNLOCKED_UNTIL] ?: 0L,
+                quoteTextSize = preferences[PreferencesKeys.QUOTE_TEXT_SIZE] ?: "MEDIUM"
             )
         }
 
@@ -130,6 +133,12 @@ class UserPreferencesRepository(private val context: Context) {
     suspend fun unlockPremiumFor24Hours() {
         val expiryTime = System.currentTimeMillis() + (24L * 60 * 60 * 1000)
         setPremiumUnlockedUntil(expiryTime)
+    }
+
+    suspend fun setQuoteTextSize(size: String) {
+        context.dataStore.edit { preferences ->
+            preferences[PreferencesKeys.QUOTE_TEXT_SIZE] = size
+        }
     }
 
     suspend fun resetPreferences() {

@@ -17,7 +17,9 @@ class QuoteRepository(
 
     init {
         scope.launch {
-            seedOrUpdateDatabase()
+            try {
+                seedOrUpdateDatabase()
+            } catch (_: Exception) {}
         }
     }
 

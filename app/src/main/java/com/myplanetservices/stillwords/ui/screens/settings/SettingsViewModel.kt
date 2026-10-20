@@ -1,4 +1,4 @@
-﻿package com.myplanetservices.stillwords.ui.screens.settings
+package com.myplanetservices.stillwords.ui.screens.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -49,6 +49,18 @@ class SettingsViewModel(
             } else {
                 reminderManager.cancelDailyReminder()
             }
+        }
+    }
+
+    fun setQuoteTextSize(size: String) {
+        viewModelScope.launch {
+            preferencesRepository.setQuoteTextSize(size)
+        }
+    }
+
+    fun setSelectedCategories(categories: Set<String>) {
+        viewModelScope.launch {
+            preferencesRepository.setSelectedCategories(categories)
         }
     }
 

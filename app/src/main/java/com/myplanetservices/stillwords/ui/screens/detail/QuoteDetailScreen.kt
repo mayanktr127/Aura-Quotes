@@ -631,57 +631,10 @@ private fun DetailMiniCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val context = LocalContext.current
-    val backgroundRepo = remember(context) { BackgroundRepository(context) }
-    var hasError by remember(photoPath) { mutableStateOf(false) }
-
-    Box(
+    com.myplanetservices.stillwords.ui.components.MiniQuoteCard(
+        quoteText = quoteText,
+        photoPath = photoPath,
+        onClick = onClick,
         modifier = modifier
-            .width(120.dp)
-            .height(150.dp)
-            .clip(SmallCardShape)
-            .background(Charcoal)
-            .border(1.dp, HairlineDark, SmallCardShape)
-            .clickable(onClick = onClick)
-    ) {
-        if (photoPath != null && !hasError) {
-            AsyncImage(
-                model = ImageRequest.Builder(context)
-                    .data(backgroundRepo.getCoilUri(photoPath))
-                    .memoryCacheKey(photoPath)
-                    .precision(Precision.INEXACT)
-                    .scale(Scale.FILL)
-                    .crossfade(false)
-                    .build(),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize(),
-                onError = { hasError = true }
-            )
-        }
-
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    Brush.verticalGradient(
-                        0.0f to Color.Transparent,
-                        1.0f to Color(0xCC0F0E0C)
-                    )
-                )
-        )
-
-        Text(
-            text = quoteText,
-            fontFamily = NewsreaderFontFamily,
-            fontSize = 13.sp,
-            lineHeight = 17.sp,
-            color = Ivory,
-            maxLines = 4,
-            overflow = TextOverflow.Ellipsis,
-            modifier = Modifier
-                .align(Alignment.BottomStart)
-                .padding(10.dp)
-        )
-    }
+    )
 }

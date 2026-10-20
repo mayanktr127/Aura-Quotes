@@ -819,7 +819,7 @@ fun QuickTile(
 fun WeekDots(
     daysCompleted: Int,
     modifier: Modifier = Modifier,
-    title: String = "$daysCompleted quiet days",
+    title: String = if (daysCompleted == 1) "1 quiet day" else "$daysCompleted quiet days",
     subtitle: String = "Your week of stillness",
     dayStatuses: List<Boolean>? = null
 ) {
@@ -919,6 +919,76 @@ fun SectionHeader(
                     .padding(vertical = 4.dp, horizontal = 6.dp)
             )
         }
+    }
+}
+
+// ============================================================================
+// 13B. MINI QUOTE CARD — docs/DESIGN_SPEC.md Sec. 6 (Screen 4 & 6)
+// 120 x 150 mini cards, real photos, display-size Coil loading, no extra DB work
+// ============================================================================
+@Composable
+fun MiniQuoteCard(
+    quoteText: String,
+    photoPath: String?,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    val density = LocalDensity.current
+    val backgroundRepo = remember(context) { BackgroundRepository(context) }
+    var hasError by remember(photoPath) { mutableStateOf(false) }
+
+    Box(
+        modifier = modifier
+            .width(120.dp)
+            .height(150.dp)
+            .clip(SmallCardShape)
+            .background(MaterialTheme.colorScheme.surface)
+            .border(1.dp, MaterialTheme.colorScheme.outline, SmallCardShape)
+            .clickable(onClick = onClick)
+    ) {
+        if (photoPath != null && !hasError) {
+            val widthPx = remember(density) { density.run { 120.dp.roundToPx() } }
+            val heightPx = remember(density) { density.run { 150.dp.roundToPx() } }
+            AsyncImage(
+                model = ImageRequest.Builder(context)
+                    .data(backgroundRepo.getCoilUri(photoPath))
+                    .memoryCacheKey(photoPath)
+                    .size(widthPx, heightPx)
+                    .precision(Precision.INEXACT)
+                    .scale(Scale.FILL)
+                    .crossfade(false)
+                    .build(),
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.fillMaxSize(),
+                onError = { hasError = true }
+            )
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    androidx.compose.ui.graphics.Brush.verticalGradient(
+                        0.0f to Color(0x1A0F0E0C),
+                        1.0f to Color(0xC70F0E0C)
+                    )
+                )
+        )
+
+        Text(
+            text = quoteText,
+            fontFamily = NewsreaderFontFamily,
+            fontSize = 13.sp,
+            lineHeight = 17.sp,
+            color = PhotoTextIvory,
+            maxLines = 4,
+            overflow = TextOverflow.Ellipsis,
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .padding(10.dp)
+        )
     }
 }
 
