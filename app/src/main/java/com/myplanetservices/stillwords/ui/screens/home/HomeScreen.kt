@@ -1,5 +1,8 @@
 package com.myplanetservices.stillwords.ui.screens.home
 
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
@@ -13,7 +16,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -151,6 +156,21 @@ fun HomeScreen(
             }
         }
 
+        val density = LocalDensity.current
+        val heroAlpha = remember { Animatable(if (state.isFirstOpenToday) 0f else 1f) }
+        val heroOffsetY = remember { Animatable(if (state.isFirstOpenToday) 12f else 0f) }
+
+        LaunchedEffect(state.isFirstOpenToday) {
+            if (state.isFirstOpenToday) {
+                launch {
+                    heroAlpha.animateTo(1f, animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing))
+                }
+                launch {
+                    heroOffsetY.animateTo(0f, animationSpec = tween(durationMillis = 300, easing = FastOutSlowInEasing))
+                }
+            }
+        }
+
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
@@ -200,7 +220,13 @@ fun HomeScreen(
                         onDownload = { shareQuote = qotd },
                         onEdit = { onNavigateToDesigner(qotd.id) },
                         onClick = { onNavigateToRead(qotd.id, null) },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .testTag("today_hero_card")
+                            .graphicsLayer {
+                                alpha = heroAlpha.value
+                                translationY = heroOffsetY.value * density.density
+                            }
                     )
                 }
             }
@@ -213,6 +239,7 @@ fun HomeScreen(
                     title = quietDaysTitle,
                     subtitle = "Your week of stillness",
                     dayStatuses = state.weekDayStatuses,
+                    animateTodayDot = state.isFirstOpenToday,
                     modifier = Modifier.fillMaxWidth()
                 )
             }

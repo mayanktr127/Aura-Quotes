@@ -28,6 +28,7 @@ data class HomeUiState(
     val categories: List<String> = listOf("Motivation", "Confidence", "Gratitude", "Mindfulness", "Relationships", "Resilience", "Creativity", "Growth", "Wisdom"),
     val quietDaysThisWeek: Int = 1,
     val weekDayStatuses: List<Boolean> = List(7) { false },
+    val isFirstOpenToday: Boolean = false,
     val isLoading: Boolean = false
 )
 
@@ -38,10 +39,15 @@ class HomeViewModel(
 
     private val _heroStyle = MutableStateFlow(CardStyle.NOIR_STILLWORDS)
     private val _selectedMood = MutableStateFlow("All")
+    private val _isFirstOpenToday = MutableStateFlow(false)
 
     init {
         val todayStr = SimpleDateFormat("yyyy-MM-dd", Locale.US).format(Date())
         viewModelScope.launch {
+            val initialPrefs = preferencesRepository.userPreferencesFlow.first()
+            if (todayStr !in initialPrefs.openedDates) {
+                _isFirstOpenToday.value = true
+            }
             preferencesRepository.recordAppOpened(todayStr)
         }
     }
@@ -60,9 +66,17 @@ class HomeViewModel(
         repository.quoteOfTheDayFlow,
         _heroStyle,
         _selectedMood,
+        _isFirstOpenToday,
         repository.popularQuotesFlow,
         preferencesRepository.userPreferencesFlow
-    ) { qotd, heroStyle, selectedMood, popular, prefs ->
+    ) { args: Array<Any?> ->
+        val qotd = args[0] as? Quote
+        val heroStyle = args[1] as CardStyle
+        val selectedMood = args[2] as String
+        val isFirstOpen = args[3] as Boolean
+        val popular = (args[4] as? List<*>)?.filterIsInstance<Quote>() ?: emptyList()
+        val prefs = args[5] as com.myplanetservices.stillwords.data.preferences.UserPreferences
+
         val moodQuotes = if (selectedMood == "All") {
             repository.allQuotesFlow.firstOrNull() ?: emptyList()
         } else {
@@ -94,7 +108,8 @@ class HomeViewModel(
             greeting = greeting,
             subGreeting = "Find something meaningful today.",
             quietDaysThisWeek = quietDays,
-            weekDayStatuses = weekStatuses
+            weekDayStatuses = weekStatuses,
+            isFirstOpenToday = isFirstOpen
         )
     }.stateIn(
         scope = viewModelScope,

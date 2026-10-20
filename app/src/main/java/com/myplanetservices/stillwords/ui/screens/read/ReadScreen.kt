@@ -2,6 +2,11 @@ package com.myplanetservices.stillwords.ui.screens.read
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -28,6 +33,9 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -75,8 +83,11 @@ fun ReadScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
 
-    BackHandler {
-        onNavigateBack()
+    if (activeShareQuote != null || activeCollectionQuoteId != null) {
+        BackHandler {
+            activeShareQuote = null
+            activeCollectionQuoteId = null
+        }
     }
 
     if (activeShareQuote != null) {
@@ -165,7 +176,9 @@ fun ReadScreen(
     ) {
         VerticalPager(
             state = pagerState,
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .testTag("read_pager"),
             key = { index -> quotes.getOrNull(index)?.id ?: index }
         ) { page ->
             val quote = quotes.getOrNull(page) ?: return@VerticalPager
@@ -265,7 +278,7 @@ private fun ReadQuotePage(
                     .diskCachePolicy(CachePolicy.ENABLED)
                     .precision(Precision.INEXACT)
                     .scale(Scale.FILL)
-                    .crossfade(false)
+                    .crossfade(300)
                     .build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
@@ -387,6 +400,7 @@ private fun ReadQuotePage(
                         tint = if (quote.isFavorite) Brass else Ivory,
                         borderColor = if (quote.isFavorite) Brass else Color(0x38F3EDE3),
                         backgroundColor = if (quote.isFavorite) BrassAlpha12 else Color(0x590F0E0C),
+                        isHeartAction = true,
                         onClick = onFavoriteToggle
                     )
 
@@ -453,22 +467,71 @@ private fun ReadActionButton(
     modifier: Modifier = Modifier,
     tint: Color = Ivory,
     borderColor: Color = Color(0x38F3EDE3),
-    backgroundColor: Color = Color(0x590F0E0C)
+    backgroundColor: Color = Color(0x590F0E0C),
+    isHeartAction: Boolean = false
 ) {
+    val haptic = LocalHapticFeedback.current
+    val coroutineScope = rememberCoroutineScope()
+    val scale = remember { Animatable(1f) }
+
+    val animTint by animateColorAsState(
+        targetValue = tint,
+        animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing),
+        label = "readActionTint"
+    )
+    val animBorder by animateColorAsState(
+        targetValue = borderColor,
+        animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing),
+        label = "readActionBorder"
+    )
+    val animBg by animateColorAsState(
+        targetValue = backgroundColor,
+        animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing),
+        label = "readActionBg"
+    )
+
     Box(
         modifier = modifier
             .size(52.dp)
             .clip(CircleShape)
-            .background(backgroundColor)
-            .border(1.dp, borderColor, CircleShape)
-            .clickable(onClick = onClick),
+            .background(animBg)
+            .border(1.dp, animBorder, CircleShape)
+            .clickable(onClick = {
+                if (isHeartAction) {
+                    try {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    } catch (_: Exception) {}
+                    coroutineScope.launch {
+                        scale.animateTo(
+                            1.2f,
+                            animationSpec = spring(
+                                dampingRatio = Spring.DampingRatioNoBouncy,
+                                stiffness = Spring.StiffnessMediumLow
+                            )
+                        )
+                        scale.animateTo(
+                            1f,
+                            animationSpec = spring(
+                                dampingRatio = Spring.DampingRatioNoBouncy,
+                                stiffness = Spring.StiffnessMediumLow
+                            )
+                        )
+                    }
+                }
+                onClick()
+            }),
         contentAlignment = Alignment.Center
     ) {
         Icon(
             imageVector = icon,
             contentDescription = contentDescription,
-            tint = tint,
-            modifier = Modifier.size(24.dp)
+            tint = animTint,
+            modifier = Modifier
+                .size(24.dp)
+                .graphicsLayer {
+                    scaleX = scale.value
+                    scaleY = scale.value
+                }
         )
     }
 }

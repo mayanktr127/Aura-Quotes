@@ -22,4 +22,5 @@ __pycache__/
 *.pyc
 
 docs/phase4d-exports/
+docs/*.mp4
 .freebuff/

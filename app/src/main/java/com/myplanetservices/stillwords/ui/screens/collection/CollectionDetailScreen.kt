@@ -191,7 +191,7 @@ fun CollectionDetailScreen(
                         .memoryCacheKey(headerPhotoPath)
                         .precision(Precision.INEXACT)
                         .scale(Scale.FILL)
-                        .crossfade(false)
+                        .crossfade(300)
                         .build(),
                     contentDescription = null,
                     contentScale = ContentScale.Crop,
@@ -200,11 +200,14 @@ fun CollectionDetailScreen(
             }
 
             // Multi-stop scrim fading to background (Collection.dc.html line 25)
-            val headerScrim = Brush.verticalGradient(
-                0.00f to Color(0x730F0E0C), // 45% black at top
-                0.35f to Color(0x000F0E0C), // transparent at 35%
-                1.00f to MaterialTheme.colorScheme.background // 100% background at bottom
-            )
+            val backgroundColor = MaterialTheme.colorScheme.background
+            val headerScrim = remember(backgroundColor) {
+                Brush.verticalGradient(
+                    0.00f to Color(0x730F0E0C), // 45% black at top
+                    0.35f to Color(0x000F0E0C), // transparent at 35%
+                    1.00f to backgroundColor // 100% background at bottom
+                )
+            }
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -371,6 +374,7 @@ fun CollectionDetailScreen(
 
                 Column(
                     modifier = Modifier
+                        .animateItem()
                         .fillMaxWidth()
                         .clickable { onNavigateToDetail(quote.id) }
                 ) {
@@ -394,7 +398,7 @@ fun CollectionDetailScreen(
                                     .memoryCacheKey(photoPath)
                                     .precision(Precision.INEXACT)
                                     .scale(Scale.FILL)
-                                    .crossfade(false)
+                                    .crossfade(300)
                                     .build(),
                                 contentDescription = null,
                                 contentScale = ContentScale.Crop,

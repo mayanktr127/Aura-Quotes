@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.google.devtools.ksp)
+    alias(libs.plugins.androidx.baselineprofile)
 }
 
 val appVersionCode: Int = (project.findProperty("APP_VERSION_CODE") as? String)?.toInt() ?: 1
@@ -123,6 +124,7 @@ dependencies {
     implementation(libs.play.app.update.ktx)
     implementation(libs.androidx.core.splashscreen)
     implementation(libs.androidx.profileinstaller)
+    baselineProfile(project(":benchmark"))
 
     "ksp"(libs.androidx.room.compiler)
 

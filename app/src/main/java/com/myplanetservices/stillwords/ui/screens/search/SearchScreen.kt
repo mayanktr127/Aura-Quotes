@@ -1,5 +1,11 @@
 package com.myplanetservices.stillwords.ui.screens.search
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -241,12 +247,29 @@ fun SearchScreen(
         // ====================================================================
         // 3. SEARCH RESULTS OR EMPTY STATES
         // ====================================================================
-        if (state.query.isBlank()) {
-            // Initial Empty Query State: suggestions
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .testTag("search_suggestions_list"),
+        val searchViewMode = remember(state.query.isBlank(), state.results.isEmpty(), state.matchingTopics.isEmpty()) {
+            when {
+                state.query.isBlank() -> 0
+                state.results.isEmpty() && state.matchingTopics.isEmpty() -> 1
+                else -> 2
+            }
+        }
+
+        AnimatedContent(
+            targetState = searchViewMode,
+            transitionSpec = {
+                fadeIn(animationSpec = tween(durationMillis = 150, easing = FastOutSlowInEasing)) togetherWith
+                    fadeOut(animationSpec = tween(durationMillis = 150, easing = FastOutSlowInEasing))
+            },
+            label = "search_crossfade"
+        ) { mode ->
+            when (mode) {
+                0 -> {
+                    // Initial Empty Query State: suggestions
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .testTag("search_suggestions_list"),
                 contentPadding = PaddingValues(horizontal = 20.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
@@ -283,7 +306,9 @@ fun SearchScreen(
                     }
                 }
             }
-        } else if (state.results.isEmpty() && state.matchingTopics.isEmpty()) {
+        }
+
+        1 -> {
             // ================================================================
             // NO RESULTS STATE (EmptySearch.dc.html lines 31-52)
             // ================================================================
@@ -381,7 +406,9 @@ fun SearchScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
             }
-        } else {
+        }
+
+        else -> {
             // ================================================================
             // RESULTS LIST (Search.dc.html lines 45-57)
             // ================================================================
@@ -441,7 +468,7 @@ fun SearchScreen(
                                                 .memoryCacheKey(photoPath)
                                                 .precision(Precision.INEXACT)
                                                 .scale(Scale.FILL)
-                                                .crossfade(false)
+                                                .crossfade(300)
                                                 .build(),
                                             contentDescription = null,
                                             contentScale = ContentScale.Crop,
@@ -479,6 +506,7 @@ fun SearchScreen(
 
                     Column(
                         modifier = Modifier
+                            .animateItem()
                             .fillMaxWidth()
                             .clickable {
                                 viewModel.recordHistory(quote.id)
@@ -505,7 +533,7 @@ fun SearchScreen(
                                         .memoryCacheKey(photoPath)
                                         .precision(Precision.INEXACT)
                                         .scale(Scale.FILL)
-                                        .crossfade(false)
+                                        .crossfade(300)
                                         .build(),
                                     contentDescription = null,
                                     contentScale = ContentScale.Crop,
@@ -547,6 +575,8 @@ fun SearchScreen(
             }
         }
     }
+}
+}
 }
 
 /**

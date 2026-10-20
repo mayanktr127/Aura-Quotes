@@ -95,7 +95,10 @@ fun QuoteDesignerScreen(
                 },
                 navigationIcon = {
                     if (onNavigateBack != null) {
-                        IconButton(onClick = onNavigateBack) {
+                        IconButton(
+                            onClick = onNavigateBack,
+                            modifier = Modifier.testTag("designer_back_button")
+                        ) {
                             Icon(
                                 imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                                 contentDescription = "Back",
@@ -271,14 +274,15 @@ fun QuoteDesignerScreen(
                     // Scrim gradient
                     val scrimTop = if (state.selectedFilter == PhotoFilter.MIST) state.selectedFilter.scrimTop else Color(0x330F0E0C)
                     val scrimBottom = if (state.selectedFilter == PhotoFilter.MIST) state.selectedFilter.scrimBottom else Color(0xA60F0E0C)
+                    val scrimBrush = remember(scrimTop, scrimBottom) {
+                        Brush.verticalGradient(
+                            colors = listOf(scrimTop, Color(0x660F0E0C), scrimBottom)
+                        )
+                    }
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
-                            .background(
-                                Brush.verticalGradient(
-                                    colors = listOf(scrimTop, Color(0x660F0E0C), scrimBottom)
-                                )
-                            )
+                            .background(scrimBrush)
                     )
                 } else if (state.cardStyle.gradient != null) {
                     Box(

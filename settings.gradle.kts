@@ -25,3 +25,4 @@ dependencyResolutionManagement {
 rootProject.name = "Stillwords"
 
 include(":app")
+include(":benchmark")

@@ -38,6 +38,10 @@ class QuoteRepository(
             for (ref in crossRefs) {
                 quoteDao.addQuoteToCollection(ref)
             }
+            val initialFavorites = assetQuotes.take(6)
+            for (fav in initialFavorites) {
+                quoteDao.insertFavorite(FavoriteEntity(quoteId = fav.id))
+            }
         }
     }
 

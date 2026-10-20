@@ -5,6 +5,12 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -31,8 +37,11 @@ import kotlinx.coroutines.launch
 import com.myplanetservices.stillwords.ui.components.AddToCollectionBottomSheet
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontStyle
@@ -77,8 +86,12 @@ fun QuoteDetailScreen(
     val coroutineScope = rememberCoroutineScope()
     val reflectionBringIntoView = remember { BringIntoViewRequester() }
 
-    BackHandler {
-        onNavigateBack()
+    if (showShareSheet || showCollectionSheet || showMoreMenu) {
+        BackHandler {
+            showShareSheet = false
+            showCollectionSheet = false
+            showMoreMenu = false
+        }
     }
 
     if (quote == null) {
@@ -127,7 +140,7 @@ fun QuoteDetailScreen(
                     .diskCachePolicy(CachePolicy.ENABLED)
                     .precision(Precision.INEXACT)
                     .scale(Scale.FILL)
-                    .crossfade(false)
+                    .crossfade(300)
                     .build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
@@ -300,6 +313,7 @@ fun QuoteDetailScreen(
                             label = if (quote.isFavorite) "Saved" else "Save",
                             isSelected = quote.isFavorite,
                             accentColor = Brass,
+                            isHeartAction = true,
                             onClick = {
                                 coroutineScope.launch {
                                     if (!quote.isFavorite) {
@@ -567,32 +581,81 @@ private fun DetailActionButton(
     modifier: Modifier = Modifier,
     isSelected: Boolean = false,
     isRestyle: Boolean = false,
-    accentColor: Color = Brass
+    accentColor: Color = Brass,
+    isHeartAction: Boolean = false
 ) {
-    val circleBg = when {
+    val haptic = LocalHapticFeedback.current
+    val coroutineScope = rememberCoroutineScope()
+    val scale = remember { Animatable(1f) }
+
+    val targetCircleBg = when {
         isRestyle -> accentColor
         isSelected -> BrassAlpha12
         else -> Color(0x1AF3EDE3)
     }
-    val circleBorder = when {
+    val targetCircleBorder = when {
         isRestyle -> accentColor
         isSelected -> accentColor
         else -> Color(0x29F3EDE3)
     }
-    val iconTint = when {
+    val targetIconTint = when {
         isRestyle -> Ink
         isSelected -> accentColor
         else -> Ivory
     }
-    val labelColor = when {
+    val targetLabelColor = when {
         isSelected -> accentColor
         else -> Ivory
     }
 
+    val circleBg by animateColorAsState(
+        targetValue = targetCircleBg,
+        animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing),
+        label = "detailActionCircleBg"
+    )
+    val circleBorder by animateColorAsState(
+        targetValue = targetCircleBorder,
+        animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing),
+        label = "detailActionCircleBorder"
+    )
+    val iconTint by animateColorAsState(
+        targetValue = targetIconTint,
+        animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing),
+        label = "detailActionIconTint"
+    )
+    val labelColor by animateColorAsState(
+        targetValue = targetLabelColor,
+        animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing),
+        label = "detailActionLabelColor"
+    )
+
     Column(
         modifier = modifier
             .width(56.dp)
-            .clickable(onClick = onClick),
+            .clickable(onClick = {
+                if (isHeartAction) {
+                    try {
+                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                    } catch (_: Exception) {}
+                    coroutineScope.launch {
+                        scale.animateTo(
+                            1.2f,
+                            animationSpec = spring(
+                                dampingRatio = Spring.DampingRatioNoBouncy,
+                                stiffness = Spring.StiffnessMediumLow
+                            )
+                        )
+                        scale.animateTo(
+                            1f,
+                            animationSpec = spring(
+                                dampingRatio = Spring.DampingRatioNoBouncy,
+                                stiffness = Spring.StiffnessMediumLow
+                            )
+                        )
+                    }
+                }
+                onClick()
+            }),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
@@ -608,7 +671,12 @@ private fun DetailActionButton(
                 imageVector = icon,
                 contentDescription = label,
                 tint = iconTint,
-                modifier = Modifier.size(22.dp)
+                modifier = Modifier
+                    .size(22.dp)
+                    .graphicsLayer {
+                        scaleX = scale.value
+                        scaleY = scale.value
+                    }
             )
         }
 

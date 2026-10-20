@@ -322,6 +322,7 @@ fun FavoritesScreen(
                                 QuoteTile(
                                     category = quote.category,
                                     quoteText = quote.text,
+                                    modifier = Modifier.animateItem(),
                                     photoPath = photoPath,
                                     onClick = { onNavigateToDetail(quote.id) }
                                 )
@@ -362,6 +363,7 @@ fun FavoritesScreen(
 
                                 Row(
                                     modifier = Modifier
+                                        .animateItem()
                                         .fillMaxWidth()
                                         .clip(CardShape)
                                         .background(MaterialTheme.colorScheme.surface)
@@ -379,7 +381,7 @@ fun FavoritesScreen(
                                                 .memoryCacheKey(photoPath)
                                                 .precision(Precision.INEXACT)
                                                 .scale(Scale.FILL)
-                                                .crossfade(false)
+                                                .crossfade(300)
                                                 .build(),
                                             contentDescription = null,
                                             contentScale = ContentScale.Crop,
@@ -476,6 +478,7 @@ fun FavoritesScreen(
 
                                 Column(
                                     modifier = Modifier
+                                        .animateItem()
                                         .fillMaxWidth()
                                         .clickable { onNavigateToDetail(quote.id) }
                                 ) {
@@ -499,7 +502,7 @@ fun FavoritesScreen(
                                                     .memoryCacheKey(photoPath)
                                                     .precision(Precision.INEXACT)
                                                     .scale(Scale.FILL)
-                                                    .crossfade(false)
+                                                    .crossfade(300)
                                                     .build(),
                                                 contentDescription = null,
                                                 contentScale = ContentScale.Crop,

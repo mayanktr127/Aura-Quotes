@@ -1,8 +1,11 @@
 package com.myplanetservices.stillwords.ui.navigation
 
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -253,6 +256,15 @@ fun StillwordsApp(
     }
 }
 
+private fun isBottomNavTabRoute(route: String?): Boolean {
+    if (route == null) return false
+    return route == Screen.Home.route ||
+           route == Screen.Explore.route ||
+           route.startsWith(Screen.Create.route) ||
+           route == "create" ||
+           route.startsWith(Screen.Favorites.route)
+}
+
 @Composable
 private fun AppNavigationHost(
     navController: NavHostController,
@@ -264,7 +276,35 @@ private fun AppNavigationHost(
     val appContext = LocalContext.current.applicationContext
     NavHost(
         navController = navController,
-        startDestination = startDestination
+        startDestination = startDestination,
+        enterTransition = {
+            if (isBottomNavTabRoute(initialState.destination.route) && isBottomNavTabRoute(targetState.destination.route)) {
+                fadeIn(animationSpec = tween(200, easing = FastOutSlowInEasing))
+            } else {
+                fadeIn(animationSpec = tween(250, easing = FastOutSlowInEasing)) +
+                    slideInHorizontally(
+                        animationSpec = tween(250, easing = FastOutSlowInEasing),
+                        initialOffsetX = { (it * 0.08f).toInt() }
+                    )
+            }
+        },
+        exitTransition = {
+            if (isBottomNavTabRoute(initialState.destination.route) && isBottomNavTabRoute(targetState.destination.route)) {
+                fadeOut(animationSpec = tween(200, easing = FastOutSlowInEasing))
+            } else {
+                fadeOut(animationSpec = tween(250, easing = FastOutSlowInEasing)) +
+                    slideOutHorizontally(
+                        animationSpec = tween(250, easing = FastOutSlowInEasing),
+                        targetOffsetX = { -(it * 0.08f).toInt() }
+                    )
+            }
+        },
+        popEnterTransition = {
+            fadeIn(animationSpec = tween(180, easing = FastOutSlowInEasing))
+        },
+        popExitTransition = {
+            fadeOut(animationSpec = tween(180, easing = FastOutSlowInEasing))
+        }
     ) {
         // Onboarding
         composable(Screen.Onboarding.route) {

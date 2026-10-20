@@ -206,18 +206,27 @@ private fun WelcomeStep(
     onSkip: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val bgGradient = remember {
+        Brush.verticalGradient(
+            0.0f to Color(0xFF0B0F1C),
+            0.48f to Color(0xFF1C2540),
+            0.66f to Color(0xFF5A5266),
+            0.74f to Color(0xFF8B6B58),
+            1.00f to Color(0xFF0F0E0C)
+        )
+    }
+    val fadeGradient = remember {
+        Brush.verticalGradient(
+            0.0f to Color.Transparent,
+            0.45f to Color(0xFF0F0E0C),
+            1.0f to Color(0xFF0F0E0C)
+        )
+    }
+
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    0.0f to Color(0xFF0B0F1C),
-                    0.48f to Color(0xFF1C2540),
-                    0.66f to Color(0xFF5A5266),
-                    0.74f to Color(0xFF8B6B58),
-                    1.00f to Color(0xFF0F0E0C)
-                )
-            )
+            .background(bgGradient)
     ) {
         // Bottom fade overlay to #0F0E0C
         Box(
@@ -225,13 +234,7 @@ private fun WelcomeStep(
                 .fillMaxWidth()
                 .fillMaxHeight(0.55f)
                 .align(Alignment.BottomCenter)
-                .background(
-                    Brush.verticalGradient(
-                        0.0f to Color.Transparent,
-                        0.45f to Color(0xFF0F0E0C),
-                        1.0f to Color(0xFF0F0E0C)
-                    )
-                )
+                .background(fadeGradient)
         )
 
         Column(
@@ -545,19 +548,20 @@ private fun ReminderStep(
         Spacer(modifier = Modifier.height(24.dp))
 
         // Dawn Preview Card (matches Onboarding3.dc.html)
+        val previewCardGradient = remember {
+            Brush.verticalGradient(
+                0.0f to Color(0xFF0F0E0C),
+                0.40f to Color(0xFF1C1A22),
+                1.00f to Color(0xFF4A3A3A)
+            )
+        }
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 24.dp)
                 .height(150.dp)
                 .clip(RoundedCornerShape(24.dp))
-                .background(
-                    Brush.verticalGradient(
-                        0.0f to Color(0xFF0F0E0C),
-                        0.40f to Color(0xFF1C1A22),
-                        1.00f to Color(0xFF4A3A3A)
-                    )
-                )
+                .background(previewCardGradient)
                 .border(1.dp, HairlineDark, RoundedCornerShape(24.dp)),
             contentAlignment = Alignment.Center
         ) {

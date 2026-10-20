@@ -1,6 +1,9 @@
 package com.myplanetservices.stillwords.ui.components
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.togetherWith
@@ -20,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
@@ -79,6 +83,14 @@ fun UnlockSheet(
                     sdf.format(Date(targetTime))
                 }
 
+                val checkScale = remember { Animatable(0f) }
+                LaunchedEffect(Unit) {
+                    checkScale.animateTo(
+                        1f,
+                        animationSpec = tween(durationMillis = 250, easing = FastOutSlowInEasing)
+                    )
+                }
+
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -93,6 +105,10 @@ fun UnlockSheet(
                     Box(
                         modifier = Modifier
                             .size(64.dp)
+                            .graphicsLayer {
+                                scaleX = checkScale.value
+                                scaleY = checkScale.value
+                            }
                             .clip(CircleShape)
                             .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.14f))
                             .border(1.dp, MaterialTheme.colorScheme.primary, CircleShape),

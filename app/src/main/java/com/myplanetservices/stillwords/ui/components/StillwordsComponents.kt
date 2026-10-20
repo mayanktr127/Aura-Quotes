@@ -2,7 +2,11 @@ package com.myplanetservices.stillwords.ui.components
 
 import android.content.res.Configuration
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -21,10 +25,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -35,6 +42,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.launch
 import coil.compose.AsyncImage
 import coil.request.CachePolicy
 import coil.request.ImageRequest
@@ -56,6 +64,17 @@ fun PrimaryButton(
     height: Dp = 54.dp,
     icon: ImageVector? = null
 ) {
+    val containerColor by animateColorAsState(
+        targetValue = if (enabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
+        animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing),
+        label = "primaryButtonContainerColor"
+    )
+    val contentColor by animateColorAsState(
+        targetValue = if (enabled) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f),
+        animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing),
+        label = "primaryButtonContentColor"
+    )
+
     Button(
         onClick = onClick,
         enabled = enabled,
@@ -65,10 +84,10 @@ fun PrimaryButton(
             .height(height),
         shape = ButtonShape,
         colors = ButtonDefaults.buttonColors(
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
-            disabledContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
-            disabledContentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.6f)
+            containerColor = containerColor,
+            contentColor = contentColor,
+            disabledContainerColor = containerColor,
+            disabledContentColor = contentColor
         ),
         contentPadding = PaddingValues(horizontal = 24.dp)
     ) {
@@ -182,13 +201,25 @@ fun StillwordsChip(
     selected: Boolean = false,
     icon: ImageVector? = null
 ) {
-    val borderColor = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline
-    val backgroundColor = if (selected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent
-    val textColor = if (selected) {
-        MaterialTheme.colorScheme.onPrimaryContainer
-    } else {
-        MaterialTheme.colorScheme.onBackground
-    }
+    val borderColor by animateColorAsState(
+        targetValue = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
+        animationSpec = tween(durationMillis = 150, easing = FastOutSlowInEasing),
+        label = "chipBorderColor"
+    )
+    val backgroundColor by animateColorAsState(
+        targetValue = if (selected) MaterialTheme.colorScheme.primaryContainer else Color.Transparent,
+        animationSpec = tween(durationMillis = 150, easing = FastOutSlowInEasing),
+        label = "chipBackgroundColor"
+    )
+    val textColor by animateColorAsState(
+        targetValue = if (selected) {
+            MaterialTheme.colorScheme.onPrimaryContainer
+        } else {
+            MaterialTheme.colorScheme.onBackground
+        },
+        animationSpec = tween(durationMillis = 150, easing = FastOutSlowInEasing),
+        label = "chipTextColor"
+    )
 
     Box(
         modifier = modifier
@@ -236,7 +267,7 @@ fun SegmentedControl(
     modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.colorScheme.surface
 ) {
-    Box(
+    BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth()
             .clip(SegmentedControlShape)
@@ -244,23 +275,47 @@ fun SegmentedControl(
             .border(1.dp, MaterialTheme.colorScheme.outline, SegmentedControlShape)
             .padding(4.dp)
     ) {
+        val count = items.size.coerceAtLeast(1)
+        val segmentWidth = maxWidth / count
+        val targetOffset = segmentWidth * selectedIndex.coerceIn(0, count - 1)
+        val indicatorOffset by animateDpAsState(
+            targetValue = targetOffset,
+            animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing),
+            label = "segmentedIndicatorOffset"
+        )
+
+        // Sliding indicator pill
+        Box(
+            modifier = Modifier
+                .offset(x = indicatorOffset)
+                .width(segmentWidth)
+                .height(34.dp)
+                .clip(SegmentedItemShape)
+                .background(MaterialTheme.colorScheme.outline)
+        )
+
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
             items.forEachIndexed { index, title ->
                 val isSelected = index == selectedIndex
-                val segmentBackground = if (isSelected) MaterialTheme.colorScheme.outline else Color.Transparent
-                val segmentTextColor = if (isSelected) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onSurfaceVariant
+                val segmentTextColor by animateColorAsState(
+                    targetValue = if (isSelected) MaterialTheme.colorScheme.onBackground else MaterialTheme.colorScheme.onSurfaceVariant,
+                    animationSpec = tween(durationMillis = 150, easing = FastOutSlowInEasing),
+                    label = "segmentedTextColor_$index"
+                )
 
                 Box(
                     modifier = Modifier
                         .weight(1f)
                         .height(34.dp)
                         .clip(SegmentedItemShape)
-                        .background(segmentBackground)
-                        .clickable { onItemSelected(index) },
+                        .clickable(
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null
+                        ) { onItemSelected(index) },
                     contentAlignment = Alignment.Center
                 ) {
                     Text(
@@ -420,6 +475,69 @@ fun StillwordsSwitch(
 }
 
 // ============================================================================
+// 7B. SAVE HEART ICON BUTTON — docs/DESIGN_SPEC.md Sec. 10
+// Scale 1 -> 1.2 -> 1 (spring, no visible bounce) + fill colour 200 ms + light haptic
+// ============================================================================
+@Composable
+fun SaveHeartIconButton(
+    isFavorite: Boolean,
+    onToggle: () -> Unit,
+    modifier: Modifier = Modifier,
+    activeColor: Color = MaterialTheme.colorScheme.primary,
+    inactiveColor: Color = StillwordsTheme.colors.onPhotoText,
+    size: Dp = 44.dp,
+    iconSize: Dp = 22.dp
+) {
+    val haptic = LocalHapticFeedback.current
+    val coroutineScope = rememberCoroutineScope()
+    val scale = remember { Animatable(1f) }
+
+    val tint by animateColorAsState(
+        targetValue = if (isFavorite) activeColor else inactiveColor,
+        animationSpec = tween(durationMillis = 200, easing = FastOutSlowInEasing),
+        label = "heartTintColor"
+    )
+
+    IconButton(
+        onClick = {
+            try {
+                haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+            } catch (_: Exception) {}
+            coroutineScope.launch {
+                scale.animateTo(
+                    targetValue = 1.2f,
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        stiffness = Spring.StiffnessMediumLow
+                    )
+                )
+                scale.animateTo(
+                    targetValue = 1f,
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        stiffness = Spring.StiffnessMediumLow
+                    )
+                )
+            }
+            onToggle()
+        },
+        modifier = modifier.size(size)
+    ) {
+        Icon(
+            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
+            contentDescription = if (isFavorite) "Saved" else "Save to favorites",
+            tint = tint,
+            modifier = Modifier
+                .size(iconSize)
+                .graphicsLayer {
+                    scaleX = scale.value
+                    scaleY = scale.value
+                }
+        )
+    }
+}
+
+// ============================================================================
 // 8. PHOTO QUOTE CARD — docs/DESIGN_SPEC.md Sec. 5 & PHASE 3.5 SAFE DECODE
 // Photo + scrim + category label (top-left) + "Photo · Pexels" (top-right) +
 // quote (Newsreader 27 auto-shrink) + author + action row.
@@ -463,7 +581,7 @@ fun PhotoQuoteCard(
                     .diskCachePolicy(CachePolicy.ENABLED)
                     .precision(Precision.INEXACT)
                     .scale(Scale.FILL)
-                    .crossfade(false)
+                    .crossfade(300)
                     .build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
@@ -532,17 +650,10 @@ fun PhotoQuoteCard(
                     horizontalArrangement = Arrangement.spacedBy(2.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    IconButton(
-                        onClick = onFavoriteToggle,
-                        modifier = Modifier.size(44.dp)
-                    ) {
-                        Icon(
-                            imageVector = if (isFavorite) Icons.Filled.Favorite else Icons.Outlined.FavoriteBorder,
-                            contentDescription = "Save to favorites",
-                            tint = if (isFavorite) MaterialTheme.colorScheme.primary else StillwordsTheme.colors.onPhotoText,
-                            modifier = Modifier.size(22.dp)
-                        )
-                    }
+                    SaveHeartIconButton(
+                        isFavorite = isFavorite,
+                        onToggle = onFavoriteToggle
+                    )
 
                     IconButton(
                         onClick = onShare,
@@ -667,7 +778,7 @@ fun QuoteTile(
                     .memoryCacheKey(photoPath)
                     .precision(Precision.INEXACT)
                     .scale(Scale.FILL)
-                    .crossfade(false)
+                    .crossfade(300)
                     .build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
@@ -737,7 +848,7 @@ fun TopicTile(
                     .memoryCacheKey(photoPath)
                     .precision(Precision.INEXACT)
                     .scale(Scale.FILL)
-                    .crossfade(false)
+                    .crossfade(300)
                     .build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
@@ -821,7 +932,9 @@ fun WeekDots(
     modifier: Modifier = Modifier,
     title: String = if (daysCompleted == 1) "1 quiet day" else "$daysCompleted quiet days",
     subtitle: String = "Your week of stillness",
-    dayStatuses: List<Boolean>? = null
+    dayStatuses: List<Boolean>? = null,
+    animateTodayDot: Boolean = false,
+    todayIndex: Int = (java.util.Calendar.getInstance().get(java.util.Calendar.DAY_OF_WEEK) - java.util.Calendar.MONDAY + 7) % 7
 ) {
     val dayLabels = listOf("M", "T", "W", "T", "F", "S", "S")
 
@@ -854,6 +967,15 @@ fun WeekDots(
         ) {
             dayLabels.forEachIndexed { index, label ->
                 val isDone = dayStatuses?.getOrNull(index) ?: (index < daysCompleted)
+                val isToday = index == todayIndex
+                val dotScale = if (animateTodayDot && isToday && isDone) {
+                    val scaleAnim = remember { Animatable(0f) }
+                    LaunchedEffect(Unit) {
+                        scaleAnim.animateTo(1f, animationSpec = tween(250, easing = FastOutSlowInEasing))
+                    }
+                    scaleAnim.value
+                } else 1f
+
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(6.dp)
@@ -861,6 +983,14 @@ fun WeekDots(
                     Box(
                         modifier = Modifier
                             .size(10.dp)
+                            .then(
+                                if (dotScale < 1f) {
+                                    Modifier.graphicsLayer {
+                                        scaleX = dotScale
+                                        scaleY = dotScale
+                                    }
+                                } else Modifier
+                            )
                             .clip(CircleShape)
                             .then(
                                 if (isDone) {
@@ -957,7 +1087,7 @@ fun MiniQuoteCard(
                     .size(widthPx, heightPx)
                     .precision(Precision.INEXACT)
                     .scale(Scale.FILL)
-                    .crossfade(false)
+                    .crossfade(300)
                     .build(),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
@@ -966,15 +1096,16 @@ fun MiniQuoteCard(
             )
         }
 
+        val miniScrim = remember {
+            androidx.compose.ui.graphics.Brush.verticalGradient(
+                0.0f to Color(0x1A0F0E0C),
+                1.0f to Color(0xC70F0E0C)
+            )
+        }
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    androidx.compose.ui.graphics.Brush.verticalGradient(
-                        0.0f to Color(0x1A0F0E0C),
-                        1.0f to Color(0xC70F0E0C)
-                    )
-                )
+                .background(miniScrim)
         )
 
         Text(
